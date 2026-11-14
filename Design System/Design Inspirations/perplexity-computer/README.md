@@ -169,3 +169,10 @@ This is a **game**, not a website. The landing screen must be **fast and respons
 - Simplest route to a convincing result: **pre-render a looping 16:9 video** of the glass sphere on a lunar surface under a starry sky (Blender), then play it as a texture in three.js with a subtle refraction/shimmer shader, the way Perplexity does. Add a **live star layer** (a canvas or three.js `Points`) on top for twinkle and parallax.
 - Live alternative: three.js `MeshPhysicalMaterial({ transmission: 1, roughness: .05, ior: 1.5, thickness: 2 })` with a starfield cubemap or HDRI as `scene.environment`, plus a low-poly regolith ground.
 - Keep the same layout numbers: background box 1610×906 shifted `-160px`; headline at `top: 17.5rem; right: 18rem`; cards in a 15rem column at `top: 10.5rem`.
+
+### Update 2026-11-14: decisions from Mevin (these replace the space-ground notes above)
+- **Page background:** Comet cream `#FBFAF4`. **Only the top-right corner** melts into a dark starry night (Warm Nebula: `#08070F` → `#2A1E3A`, with a faint ember/amber glow at the edge).
+- **Stones and flowers stay.** Put them along the **bottom, towards the left** (not in the corner): grey rounded stones, white daisies with amber centres, orange poppies, teal spikes and grass. They fade out toward the centre.
+- **Light shimmer: keep it.** The soft light shimmer/glimmer over the hero (Perplexity's three.js glimmer pass, plus light rays) must be in the real build. It is left out of the demo only.
+- **Fonts:** display = Game Paused (digits fall back to Silkscreen); UI = Geist; labels and HUD = Geist Mono (provisional).
+- **Demo:** `Design System/palette-and-fonts.html` (published as the "Horizons Home Screen" artifact).
