@@ -5,6 +5,7 @@
 | 1 | Home | `home-screen-demo.html` | https://claude.ai/artifact/HTTTSy4zX7pkvTAkExMDJz | Draft. Needs the game-feel pass. |
 | 2 | Mission select | `mission-select-demo.html` | https://claude.ai/artifact/R9HaPmZ8Crbu4DCF3f9YSs | Draft. Needs the game-feel pass. |
 | 3 | Base and workshops | `base-workshop-demo.html` | https://claude.ai/artifact/4F9c4SRshinNrKqwwXXA13 | Draft |
+| 4 | Mission control | `mission-control-demo.html` | https://claude.ai/artifact/RGniegCBEFYZUELvYUxmhE | Draft |
 | – | Game feel (style options) | `game-feel-demo.html` | https://claude.ai/artifact/UQbCc3uns31YmFbA7oaPc9 | Pick A, B or C, then apply it to every screen |
 
 ## Open item for every screen
@@ -55,3 +56,13 @@ Applied to the home and mission select screens. The other two styles (Console, S
 - **Models:** see `Design System/models/CREDITS.md`. In the artifact the models ship as base64 `.txt` files because the host serves no `.glb` type. A real build should serve the `.glb` files directly.
 - **Colour rule (Mevin):** NASA **rockets and spacecraft parts use their original NASA colours**, lit by a soft hemisphere and sun light. **All markings are removed** (no "USA"/"UNITED STATES" lettering). Everything else, including the base, rooms, procedural stand-ins and the Landsat display, keeps the Comet palette shader.
 - Known issue: the NASA "Atlas 9 (Faith 7)" file is dominated by the Mercury capsule and reads as a wide cone. Swap it for a better medium rocket in the build phase.
+
+## Mission control: what the demo shows
+- **Full-screen console** on the cream page with the starry corner, styled with Tactile glass.
+- **Header:** a back button, the "Mission control" ribbon, a **status pill** (Nominal / Watch / Critical / Decision needed), a **T+ clock** and speed controls (Pause · 1× · 4×).
+- **Timeline:** seven phase chips (Launch, Cruise, Orbit insertion, Ops 1–4). The live phase fills in amber, completed phases turn green, and red dots mark the phases with events.
+- **Live view:** a Comet-style grainy Earth with the spacecraft on a dashed orbit and a trail. Amber dots mark the fires spotted, alongside a counter.
+- **Telemetry:** **battery, storage and propellant**. Each is its own single-series line chart in one teal (no legend needed; the title names it), with dashed warning and critical thresholds, a big value, a **labelled status pill** (OK / Watch / Critical, never colour alone) and a hover crosshair with a tooltip.
+- **Event log:** newest first, with icon chips: micrometeoroid (automatic), pointing glitch, solar flare and wildfire alert. **Decision events pause the clock** and offer two Tactile buttons. The choice feeds the Decisions and Resilience scores.
+- **Report** (when Ops 4 ends): a score ring that counts up out of 100, 1–3 stars, and the breakdown from the gameplay doc (**Performance 40, Efficiency 20, Decisions 20, Resilience 20**). It adds short notes, plus **Fly again** and **Redesign spacecraft**.
+- The simulation numbers here are a stand-in. The real game runs the existing seeded simulation and evaluator.
