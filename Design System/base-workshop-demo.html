@@ -191,15 +191,17 @@ svg.i{width:18px;height:18px;flex:none}
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
 <script>
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduce = (matchMedia('(prefers-reduced-motion: reduce)').matches||!!(window.HZ&&HZ.settings&&HZ.settings.motion));
 
 /* ================= Game data ================= */
 // model: NASA GLB file (models/…); proc: procedural stand-in where NASA has no separate part model
 const PARTS = {
   rocket:{label:'Rocket', where:'rocket', opts:[
-    {id:'r1',name:'Jupiter-C', src:'NASA', model:'rocket-jupiter-c', h:6,  cost:15, time:1, cap:300},
-    {id:'r2',name:'Atlas',     src:'NASA', model:'rocket-atlas',     h:8,  cost:40, time:2, cap:800},
-    {id:'r3',name:'Saturn V',  src:'NASA', model:'rocket-saturn-v',  h:12, cost:90, time:3, cap:2000}]},
+    {id:'r1',name:'Jupiter-C',     src:'NASA', model:'rocket-jupiter-c', h:6,  cost:15,  time:1, cap:300},
+    {id:'r2',name:'Ares I',        src:'NASA', model:'rocket-ares-1',    h:9,  cost:40,  time:2, cap:800},
+    {id:'r3',name:'Saturn V',      src:'NASA', model:'rocket-saturn-v',  h:12, cost:90,  time:3, cap:2000},
+    {id:'r4',name:'Space Shuttle', src:'NASA', model:'rocket-shuttle',   h:9,  cost:110, time:4, cap:2600},
+    {id:'r5',name:'SLS',           src:'NASA', model:'rocket-sls',       h:12, cost:140, time:4, cap:4000}]},
   orbit:{label:'Orbit', where:'rocket', opts:[
     {id:'o1',name:'Sun-sync 550 km', proc:'orbit', link:1, note:'Same light every pass'},
     {id:'o2',name:'Low 400 km', proc:'orbit', cost:-3, link:.8, note:'Cheaper, fewer ground passes'}]},
@@ -258,7 +260,7 @@ dockEl.addEventListener('click',e=>{const b=e.target.closest('.tile');if(!b)retu
 /* ================= Renderer, camera ================= */
 const canvas=document.getElementById('gl');
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5)); renderer.setClearColor(0,0);
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,(window.HZ&&HZ.settings&&HZ.settings.gfx==='low')?1:1.5)); renderer.setClearColor(0,0);
 const scene=new THREE.Scene();
 const cam=new THREE.OrthographicCamera(-1,1,1,-1,-300,500);
 scene.add(new THREE.HemisphereLight(0xFBFAF4,0x6E6457,.9)); const sun=new THREE.DirectionalLight(0xffffff,.9); sun.position.set(-20,40,14); scene.add(sun);
@@ -309,7 +311,7 @@ function label(text,x,y,z,w=3.2){const c=document.createElement('canvas');c.widt
 
 /* ================= NASA model loading ================= */
 const loader=new THREE.GLTFLoader(); const MODELS={};
-const MODEL_FILES=['kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-atlas','rocket-saturn-v'];
+const MODEL_FILES=['kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-ares-1','rocket-saturn-v','rocket-shuttle','rocket-sls','orion','capsule-mercury'];
 // Bake every mesh into one geometry (one draw call per model), drop NASA textures/logos, keep shape only.
 // Original NASA colours, minus markings: each texture is replaced by its dominant colour (this removes all
 // lettering such as "USA"/"UNITED STATES"); meshes are merged per material to keep draw calls low.
@@ -319,7 +321,7 @@ function dominant(img){ try{ const c=document.createElement('canvas'); c.width=c
 function bake(gltf){ gltf.scene.updateMatrixWorld(true); const all=[], byMat=new Map(); const v=new THREE.Vector3();
   gltf.scene.traverse(o=>{ if(!o.isMesh||!o.geometry) return; const g=o.geometry, P=g.getAttribute('position'), I=g.index; const arr=[];
     const n=I?I.count:P.count; for(let i=0;i<n;i++){ const k=I?I.getX(i):i; v.fromBufferAttribute(P,k).applyMatrix4(o.matrixWorld); arr.push(v.x,v.y,v.z); }
-    all.push(...arr); const m=Array.isArray(o.material)?o.material[0]:o.material; if(!byMat.has(m)) byMat.set(m,[]); byMat.get(m).push(...arr); });
+    for(let i=0;i<arr.length;i++) all.push(arr[i]); const m=Array.isArray(o.material)?o.material[0]:o.material; if(!byMat.has(m)) byMat.set(m,[]); { const t=byMat.get(m); for(let i=0;i<arr.length;i++) t.push(arr[i]); }; });
   const geo=a=>{const out=new THREE.BufferGeometry(); out.setAttribute('position',new THREE.Float32BufferAttribute(a,3)); out.computeVertexNormals(); return out;};
   const parts=[...byMat].map(([m,a])=>{ const col=(m&&m.color?m.color.clone():new THREE.Color(1,1,1)); if(m&&m.map&&m.map.image) col.multiply(dominant(m.map.image));
     return {geo:geo(a), mat:new THREE.MeshStandardMaterial({color:col, roughness:.55, metalness:Math.min(m&&m.metalness||0,.35), side:THREE.DoubleSide})}; });
@@ -439,18 +441,20 @@ function refreshBuildBay(){ if(!buildBay) return; buildBay.clear(); const s=new 
 
 // ---------- ROCKET WORKSHOP ----------
 function buildRocketRoom(){
-  const A=area('rocket'); root=A.group; buildHall(A,-14,-10,14,10,'Rocket workshop');
-  label('ROCKETS',-10,2,-6,3.4);
-  PARTS.rocket.opts.forEach((o,i)=>{ const x=-4+i*7, z=-5; cyl(2,2.1,.5,DARK,x,.25,z,32); cyl(1.8,1.8,.05,STONE,x,.52,z,32);
+  const A=area('rocket'); root=A.group; buildHall(A,-18,-10,18,10,'Rocket workshop');
+  label('ROCKETS',-16.4,2,-1.6,3.4);
+  PARTS.rocket.opts.forEach((o,i)=>{ const x=-13+i*6.5, z=-5; cyl(2,2.1,.5,DARK,x,.25,z,32); cyl(1.8,1.8,.05,STONE,x,.52,z,32);
     const r=fromModel(o.model,null,o.h,{upright:true}); r.position.set(x,.55,z); root.add(r); exhibits.push({obj:r,cat:'rocket',id:o.id,rocket:true});
     label(o.name.toUpperCase(),x,o.h+1.8,z,3.6);
     A.spots.push({id:o.id,cat:'rocket',o,pos:new THREE.Vector3(x,0,z+3),ring:ring(x,z,2.15,2.4),kind:'part'}); A.block.push([x-2.1,z-2.1,x+2.1,z+2.1]); });
   label('ORBIT',-10,2,3.5,3);
   PARTS.orbit.opts.forEach((o,i)=>{ const x=-3+i*7, z=3.5; cyl(.7,.9,1.1,DARK,x,.55,z,24); const p=procPart('orbit'); p.position.set(x,.9,z); root.add(p); exhibits.push({obj:p,cat:'orbit',id:o.id});
     label(o.name.toUpperCase(),x,3.6,z,4.2); A.spots.push({id:o.id,cat:'orbit',o,pos:new THREE.Vector3(x+1.6,0,z+1.6),ring:ring(x,z,1.05,1.3),kind:'part'}); A.block.push([x-.95,z-.95,x+.95,z+.95]); });
-  A.spots.push({id:'exit',pos:new THREE.Vector3(10,0,8.6),ring:ring(10,8.6),label:'Exit to base',act:()=>exitRoom()});
-  label('EXIT',10,1.8,9.6,2.2);
-  A.spawn=new THREE.Vector3(10,0,7.4);
+  // NASA capsules on display (hall of fame)
+  [['orion','ORION',-14,6,2.2],['capsule-mercury','MERCURY',-9.5,6,1.9]].forEach(([m,n,x,z,sz])=>{ pedestal(x,z); const c=fromModel(m,null,sz); c.position.set(x,.56,z); root.add(c); exhibits.push({obj:c}); label(n,x,3.6,z,3); A.block.push([x-1.1,z-1.1,x+1.1,z+1.1]); });
+  A.spots.push({id:'exit',pos:new THREE.Vector3(14,0,8.6),ring:ring(14,8.6),label:'Exit to base',act:()=>exitRoom()});
+  label('EXIT',14,1.8,9.6,2.2);
+  A.spawn=new THREE.Vector3(14,0,7.4);
 }
 
 /* ================= Character ================= */
@@ -574,7 +578,7 @@ function tick(now){
 }
 
 /* ================= Boot ================= */
-renderHUD(); setStep(0);
+renderHUD(); setStep(0); if(window.HZ&&HZ.settings&&HZ.settings.hints===false&&!HZ.tutorial) calloutEl.style.display='none';
 loadAll().then(()=>{ buildBase(); buildCraftRoom(); buildRocketRoom(); root=scene;
   refreshPadRocket(); refreshBuildBay(); swapTo('base',AREAS.base.spawn.start.clone());
   document.getElementById('loading').style.display='none'; requestAnimationFrame(tick); });

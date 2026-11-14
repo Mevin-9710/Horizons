@@ -140,7 +140,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 <div class="scrim" id="scrim"><div id="modal"></div></div>
 
 <script>
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduce=(matchMedia('(prefers-reduced-motion: reduce)').matches||!!(window.HZ&&HZ.settings&&HZ.settings.motion));
 /* ===== Design coming from the workshops (demo values) ===== */
 const DESIGN=Object.assign({mission:'Wildfire watch', inst:'Thermal IR imager', rocket:'Jupiter-C', orbit:'Sun-sync 550 km'}, (window.HZ&&HZ.design)||{});
 /* ===== Phases: one focus each, with a plain-language "what and why" ===== */

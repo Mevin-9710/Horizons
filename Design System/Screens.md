@@ -15,6 +15,14 @@
 ## Open item for every screen
 Every screen still reads more like a **website than a game**. A shared "game feel" layer will be designed later and applied to all screens.
 
+## Home: what the demo shows (2026-11-14)
+- Same layout as before: cream page, starry top-right corner, glass ball, mission cards, rotating headline, Tactile Play and Tutorial buttons. The stones, grass and flowers are gone.
+- **A real NASA rocket spins inside the glass ball.** ◀ ▶ (or the arrow keys) switch between Jupiter-C, Ares I, Saturn V, Space Shuttle and SLS. Drag the ball to spin it. The choice is remembered.
+- **Mission cards** show the mission name and difficulty stars, and open mission select for that mission.
+- **Settings** (gear, or S): sound effects, reduce motion, tutorial hints, graphics low/high. They are saved in the browser and passed to every screen (the base hides the tutorial callout, uses a lower pixel ratio on Low, and stops motion).
+- **Credits** (ⓘ): NASA model credits and the "not affiliated with NASA" line.
+- **Keys:** Enter plays, ◀ ▶ switch rockets, S opens Settings, Esc closes a window.
+
 ## Mission select: what the demo shows
 - **Cream page** (`#FBFAF4`, as on Comet). Only the top-right corner melts into a starry night, the same as the home screen. Planets sit on the cream like the Comet spheres.
 - A full-screen **3D solar system** (three.js) that revolves slowly and auto-orbits the camera. Drag to look around.

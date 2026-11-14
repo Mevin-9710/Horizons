@@ -1,0 +1,12 @@
+{
+  "name": "horizons-model-convert",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@gltf-transform/core": "^4",
+    "@gltf-transform/extensions": "^4",
+    "@gltf-transform/functions": "^4",
+    "draco3dgltf": "^1.5.9",
+    "meshoptimizer": "^1.3.0"
+  }
+}
