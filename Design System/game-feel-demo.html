@@ -1,0 +1,250 @@
+<title>Horizons Game Feel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;600&display=swap">
+<style>
+@font-face{font-family:'Game Paused';src:url(data:font/otf;base64,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TwBSAGUAZwB1AGwAYQByAFYAZQByAHMAaQBvAG4AIAAxAC4AMAAwADAAOwBQAFkAUgBTADsARwBhAG0AZQBQAGEAdQBzAGUAZABEAEUATQBPAC0AUgBlAGcAdQBsAGEAcgA7ADIAMAAyADMAOwBGAEwANwAyADAARwBhAG0AZQBQAGEAdQBzAGUAZABEAEUATQBPAC0AUgBlAGcAdQBsAGEAcgBWAGUAcgBzAGkAbwBuACAAMQAuADAAMAAwAEcAYQBtAGUAUABhAHUAcwBlAGQARABFAE0ATwAtAFIAZQBnAHUAbABhAHIARwBhAG0AZQAgAFAAYQB1AHMAZQBkACAARABFAE0ATwAgAGkAcwAgAGEAIAB0AHIAYQBkAGUAbQBhAHIAawAgAG8AZgAgAEQAaABhAHIAbQBhAHMAIABTAHQAdQBkAGkAbwBEAGgAYQByAG0AYQBzACAAUwB0AHUAZABpAG8AQwBvAHAAeQByAGkAZwBoAHQAIAAoAGMAKQAgADIAMAAyADMAIABiAHkAIABEAGgAYQByAG0AYQBzACAAUwB0AHUAZABpAG8ALgAgAEEAbABsACAAcgBpAGcAaAB0AHMAIAByAGUAcwBlAHIAdgBlAGQALgBoAHQAdABwAHMAOgAvAC8AZABoAGEAcgBtAGEAcwBzAHQAdQBkAGkAbwAuAGMAbwBtAC8AAAMAAAAAAAD/nAAyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAwAAAAAAAAAAgABAAIANwABAAAAAAABAAAAAA==) format('opentype');font-display:block}
+/* Layout: three stacked "styles", each a full game-UI kit on the cream + starry-corner stage: top resource bar, framed brief window, buttons, dock, toast. Palette and fonts unchanged. */
+:root{
+  color-scheme: light;
+  --cream:#FBFAF4; --ink:#1A1206; --muted:#6E6457; --night:#08070F; --nebula:#2A1E3A;
+  --amber:#F2A541; --amber-d:#C27F22; --ember:#C2643A; --ember-d:#8E4322; --teal:#2C5B65; --teal-d:#173840; --crimson:#A73B42; --crimson-d:#6E2129;
+  --ok:#4CC38A; --ok-d:#2B8A5D; --warn:#F2B33D; --bad:#E5484D;
+  --f-display:'Game Paused','Silkscreen',monospace; --f-num:'Silkscreen',monospace; --f-ui:'Geist',system-ui,sans-serif; --f-mono:'Geist Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--f-ui);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 80px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+.intro h1{font-family:var(--f-display);font-weight:400;font-size:clamp(36px,6vw,64px);line-height:1;margin:0 0 10px}
+.intro p{margin:0;max-width:64ch;color:var(--muted);line-height:1.55}
+.opt-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.opt-head h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:30px}
+.opt-head p{margin:4px 0 0;color:var(--muted);font-size:14px;max-width:60ch}
+.pickbtn{font:600 13px var(--f-ui);padding:10px 16px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;cursor:pointer}
+.opt.chosen .pickbtn{background:var(--ink);color:var(--cream)}
+.opt.chosen .stage{outline:3px solid var(--ember);outline-offset:4px}
+
+/* stage = a mini game screen */
+.stage{position:relative;border-radius:18px;overflow:hidden;background:var(--cream);border:1px solid rgba(26,18,6,.1);min-height:600px;padding:16px;display:grid;grid-template-rows:auto 1fr auto;gap:16px}
+.stage::before{content:"";position:absolute;inset:0;background:radial-gradient(55% 70% at 100% 0%, #08070F 0%, #120C1E 26%, #2A1E3A 42%, rgba(194,100,58,.24) 56%, rgba(251,250,244,0) 72%);pointer-events:none}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.stage > *:not(canvas):not(.planet){position:relative}
+.planet{position:absolute;left:6%;top:26%;width:min(240px,34%);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 30% 28%,transparent 40%,rgba(8,18,20,.8) 92%),linear-gradient(120deg,#0B1F24 0 30%,#2C5B65 30% 52%,#95B3B6 58% 70%,#2C5B65 78%,#081214 100%);box-shadow:0 30px 50px -24px rgba(26,18,6,.5)}
+.mid{display:flex;justify-content:flex-end;align-items:center;gap:16px;flex-wrap:wrap}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.res{display:flex;gap:8px;flex-wrap:wrap}
+.toast{position:absolute;left:10%;top:16%;max-width:230px}
+@media (max-width:760px){.planet{width:42%;top:22%;opacity:.9}.toast{position:relative;left:auto;top:auto}.mid{justify-content:stretch}.win{width:100%!important}}
+svg.i{width:18px;height:18px;flex:none}
+
+/* ================= STYLE A: TACTILE (chunky toy buttons) ================= */
+.A .resource{display:flex;align-items:center;gap:7px;padding:4px 4px 4px 6px;border-radius:999px;background:#fff;border:2.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);font:400 13px var(--f-num)}
+.A .resource .ic{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--ink);color:#fff}
+.A .resource .plus{width:22px;height:22px;border-radius:50%;background:var(--ok);border:2px solid var(--ink);color:#fff;font:700 14px var(--f-ui);display:grid;place-items:center;line-height:1}
+.A .resource.bad{background:#FFE9E9}
+.A .btn{position:relative;border:3px solid var(--ink);border-radius:16px;padding:12px 26px 14px;font:400 20px var(--f-display);letter-spacing:.03em;color:#fff;cursor:pointer;
+  background:linear-gradient(var(--c) 0 0);box-shadow:inset 0 -5px 0 var(--cd),inset 0 3px 0 rgba(255,255,255,.35),0 5px 0 var(--ink);transition:transform .08s,box-shadow .08s;text-shadow:0 2px 0 rgba(26,18,6,.35)}
+.A .btn:active,.A .btn.pressed{transform:translateY(4px);box-shadow:inset 0 -2px 0 var(--cd),inset 0 3px 0 rgba(255,255,255,.35),0 1px 0 var(--ink)}
+.A .btn.primary{--c:var(--amber);--cd:var(--amber-d);color:var(--ink);text-shadow:0 2px 0 rgba(255,255,255,.4)}
+.A .btn.go{--c:var(--ember);--cd:var(--ember-d)}
+.A .btn.ghost{--c:#fff;--cd:#E4DED2;color:var(--ink);text-shadow:none;font:600 15px var(--f-ui)}
+.A .round{position:relative;width:48px;height:48px;border-radius:50%;border:3px solid var(--ink);background:var(--c,#fff);box-shadow:inset 0 -4px 0 var(--cd,#E4DED2),0 4px 0 var(--ink);display:grid;place-items:center;cursor:pointer;color:var(--ink)}
+.A .round:active{transform:translateY(3px);box-shadow:inset 0 -2px 0 var(--cd,#E4DED2),0 1px 0 var(--ink)}
+.A .dot{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;border-radius:10px;background:var(--bad);color:#fff;border:2px solid var(--ink);font:400 10px var(--f-num);display:grid;place-items:center;padding:0 4px}
+.A .win{width:min(420px,100%);background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:0 7px 0 var(--ink);position:relative;padding:34px 18px 18px}
+.A .ribbon{position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:var(--ember);color:#fff;border:3px solid var(--ink);border-radius:12px;padding:8px 22px;font:400 20px var(--f-display);white-space:nowrap;box-shadow:inset 0 -4px 0 var(--ember-d),0 4px 0 var(--ink)}
+.A .ribbon::before,.A .ribbon::after{content:"";position:absolute;top:10px;width:18px;height:28px;background:var(--ember-d);border:3px solid var(--ink);z-index:-1}
+.A .ribbon::before{left:-14px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,40% 50%)}
+.A .ribbon::after{right:-14px;clip-path:polygon(0 0,100% 0,60% 50%,100% 100%,0 100%)}
+.A .x{position:absolute;top:-14px;right:-14px;--c:var(--bad);--cd:#A3262A;width:40px;height:40px;color:#fff}
+.A h3{margin:0 0 4px;font:400 28px var(--f-display);text-align:center}
+.A .sub{text-align:center;color:var(--muted);font-size:14px;margin:0 0 14px}
+.A .stars{display:flex;justify-content:center;gap:4px;margin-bottom:12px}
+.A .stars svg{width:26px;height:26px}
+.A .stat{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:center;margin-bottom:8px;font-size:13px;font-weight:600}
+.A .bar{height:16px;border-radius:10px;background:#EDE7DB;border:2.5px solid var(--ink);overflow:hidden;position:relative}
+.A .bar i{display:block;height:100%;background:var(--c);box-shadow:inset 0 -4px 0 rgba(0,0,0,.15);position:relative}
+.A .bar i::after{content:"";position:absolute;left:6px;right:6px;top:2px;height:3px;border-radius:2px;background:rgba(255,255,255,.55)}
+.A .num{font:400 12px var(--f-num);min-width:58px;text-align:right}
+.A .dock{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:10px;border-radius:22px;background:rgba(255,255,255,.75);border:3px solid var(--ink);box-shadow:0 5px 0 var(--ink);justify-self:center}
+.A .tile{position:relative;width:76px;height:72px;border-radius:16px;border:3px solid var(--ink);background:var(--c,#fff);box-shadow:inset 0 -5px 0 var(--cd,#E4DED2),0 4px 0 var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:700 10.5px var(--f-ui);cursor:pointer;color:var(--ink)}
+.A .tile svg{width:24px;height:24px}
+.A .tile.on{--c:var(--amber);--cd:var(--amber-d)}
+.A .tile.lock{--c:#E9E4DA;--cd:#CFC8BA;color:var(--muted)}
+.A .callout{background:var(--ink);color:var(--cream);border-radius:14px;padding:12px 14px;font-size:13.5px;font-weight:600;line-height:1.35;box-shadow:0 4px 0 rgba(26,18,6,.3);position:relative;animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
+.A .callout::after{content:"";position:absolute;left:24px;bottom:-9px;width:18px;height:18px;background:var(--ink);transform:rotate(45deg);border-radius:3px}
+.A .new{position:absolute;top:-10px;left:-8px;background:var(--ok);color:#fff;border:2px solid var(--ink);border-radius:6px;font:400 10px var(--f-num);padding:2px 5px;transform:rotate(-10deg)}
+
+/* ================= STYLE B: CONSOLE (chamfered sci-fi) ================= */
+.B{--cut:12px}
+.B .resource{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;background:rgba(26,18,6,.88);color:var(--cream);font:400 12px var(--f-num);clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
+.B .resource .ic{color:var(--amber);display:grid}
+.B .resource .seg{display:flex;gap:2px}.B .resource .seg i{width:5px;height:10px;background:rgba(251,250,244,.18)}.B .resource .seg i.on{background:var(--ok)}
+.B .resource.bad .seg i.on{background:var(--bad)}
+.B .btn{position:relative;border:0;padding:13px 28px;font:400 19px var(--f-display);letter-spacing:.05em;cursor:pointer;color:var(--ink);background:var(--c,var(--amber));
+  clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));transition:filter .15s,transform .08s}
+.B .btn:hover{filter:brightness(1.08)}.B .btn:active{transform:scale(.97)}
+.B .btn.go{--c:var(--ember);color:#fff}
+.B .btn.ghost{--c:rgba(26,18,6,.08);font:600 14px var(--f-ui);letter-spacing:0;box-shadow:inset 0 0 0 1.5px var(--ink)}
+.B .round{position:relative;width:46px;height:46px;border:0;background:rgba(26,18,6,.88);color:var(--cream);display:grid;place-items:center;cursor:pointer;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
+.B .dot{position:absolute;top:4px;right:4px;width:9px;height:9px;background:var(--bad);font-size:0}
+.B .win{width:min(420px,100%);position:relative;padding:44px 20px 18px;background:rgba(251,250,244,.9);backdrop-filter:blur(12px);
+  clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);box-shadow:inset 0 0 0 2px var(--ink)}
+.B .win::before{content:"";position:absolute;left:0;right:0;top:0;height:30px;background:var(--ink)}
+.B .win::after{content:"";position:absolute;inset:6px;pointer-events:none;background:
+  linear-gradient(var(--ember),var(--ember)) right 0 bottom 0/18px 2px no-repeat,linear-gradient(var(--ember),var(--ember)) right 0 bottom 0/2px 18px no-repeat}
+.B .ribbon{position:absolute;top:7px;left:20px;color:var(--amber);font:400 11px var(--f-num);letter-spacing:.14em;z-index:1}
+.B .x{position:absolute;top:4px;right:6px;width:22px;height:22px;background:transparent;color:var(--cream);clip-path:none;z-index:1}
+.B h3{margin:0 0 4px;font:400 30px var(--f-display)}
+.B .sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.B .stars{display:flex;gap:4px;margin-bottom:12px}.B .stars svg{width:18px;height:18px}
+.B .stat{display:grid;grid-template-columns:80px 1fr auto;gap:10px;align-items:center;margin-bottom:9px;font:400 10.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.B .bar{height:12px;display:flex;gap:2px}
+.B .bar b{flex:1;background:rgba(26,18,6,.1)}
+.B .num{font:400 12px var(--f-num);min-width:58px;text-align:right}
+.B .dock{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;justify-self:center;padding:6px;background:rgba(26,18,6,.9);clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,14px 100%,0 50%)}
+.B .tile{position:relative;width:78px;height:60px;border:0;background:transparent;color:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:400 9.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.B .tile svg{width:22px;height:22px}
+.B .tile.on{color:var(--amber);box-shadow:inset 0 -3px 0 var(--amber)}
+.B .tile.lock{opacity:.4}
+.B .callout{background:var(--ink);color:var(--cream);padding:12px 14px;font:500 13px var(--f-ui);border-left:4px solid var(--amber);clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);animation:slide .5s cubic-bezier(.22,1,.36,1) both}
+.B .new{position:absolute;top:4px;left:4px;background:var(--ok);color:var(--ink);font:400 9px var(--f-num);padding:1px 4px}
+
+/* ================= STYLE C: STICKER (cut-out, hard shadows, tilts) ================= */
+.C .resource{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;background:#fff;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:8px;font:400 12px var(--f-num)}
+.C .resource:nth-child(odd){transform:rotate(-1.5deg)}.C .resource:nth-child(even){transform:rotate(1.2deg)}
+.C .resource .ic{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;color:#fff;border:2px solid var(--ink)}
+.C .resource.bad{background:var(--bad);color:#fff}
+.C .btn{border:2.5px solid var(--ink);border-radius:10px;padding:12px 24px;font:400 20px var(--f-display);cursor:pointer;background:var(--c,var(--amber));color:var(--ink);box-shadow:5px 5px 0 var(--ink);transform:rotate(-1.5deg);transition:transform .12s cubic-bezier(.34,1.56,.64,1),box-shadow .12s}
+.C .btn:hover{transform:rotate(0) translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.C .btn:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--ink)}
+.C .btn.go{--c:var(--ember);color:#fff}
+.C .btn.ghost{--c:#fff;font:700 14px var(--f-ui);transform:rotate(1deg)}
+.C .round{position:relative;width:46px;height:46px;border-radius:12px;border:2.5px solid var(--ink);background:#fff;box-shadow:3px 3px 0 var(--ink);display:grid;place-items:center;cursor:pointer;color:var(--ink)}
+.C .round:active{transform:translate(3px,3px);box-shadow:none}
+.C .dot{position:absolute;top:-8px;right:-8px;background:var(--bad);color:#fff;border:2px solid var(--ink);border-radius:50%;width:20px;height:20px;font:400 10px var(--f-num);display:grid;place-items:center}
+.C .win{width:min(420px,100%);position:relative;background:#fff;border:3px solid var(--ink);border-radius:14px;box-shadow:8px 8px 0 var(--ink);padding:30px 18px 18px;transform:rotate(.6deg)}
+.C .win::before{content:"";position:absolute;top:-12px;left:42%;width:90px;height:24px;background:rgba(242,165,65,.75);transform:rotate(-4deg);border:1px solid rgba(26,18,6,.2)}
+.C .ribbon{position:absolute;top:-20px;left:-14px;background:var(--teal);color:#fff;border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:6px 12px;font:400 16px var(--f-display);transform:rotate(-6deg)}
+.C .x{position:absolute;top:-16px;right:-16px;width:40px;height:40px;background:var(--bad);color:#fff;border-radius:50%;transform:rotate(8deg)}
+.C h3{margin:0 0 4px;font:400 30px var(--f-display)}
+.C .sub{color:var(--muted);font-size:14px;margin:0 0 12px}
+.C .stars{display:flex;gap:2px;margin-bottom:12px}.C .stars svg{width:24px;height:24px}.C .stars svg:nth-child(2){transform:translateY(-4px) rotate(8deg)}
+.C .stat{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:center;margin-bottom:9px;font-size:13px;font-weight:700}
+.C .bar{height:14px;border:2px solid var(--ink);border-radius:4px;background:#fff;overflow:hidden}
+.C .bar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--c) 0 8px,color-mix(in oklab,var(--c) 75%,#fff) 8px 14px);border-right:2px solid var(--ink)}
+.C .num{font:400 12px var(--f-num);min-width:58px;text-align:right}
+.C .dock{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;justify-self:center}
+.C .tile{position:relative;width:74px;height:70px;border:2.5px solid var(--ink);border-radius:12px;background:var(--c,#fff);box-shadow:4px 4px 0 var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:700 10.5px var(--f-ui);cursor:pointer;color:var(--ink)}
+.C .tile:nth-child(odd){transform:rotate(-2deg)}.C .tile:nth-child(even){transform:rotate(2deg)}
+.C .tile svg{width:24px;height:24px}
+.C .tile.on{--c:var(--amber)}
+.C .tile.lock{--c:#EDE7DB;color:var(--muted)}
+.C .callout{background:#FFF6D8;border:2.5px solid var(--ink);box-shadow:4px 4px 0 var(--ink);border-radius:10px;padding:12px 14px;font:700 13.5px var(--f-ui);transform:rotate(-2deg);animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
+.C .new{position:absolute;top:-12px;left:-12px;background:var(--crimson);color:#fff;border:2px solid var(--ink);border-radius:50%;width:30px;height:30px;font:400 8px var(--f-num);display:grid;place-items:center;transform:rotate(-14deg)}
+
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{opacity:1}}
+@keyframes slide{0%{transform:translateX(-20px);opacity:0}}
+.stage.replay .win{animation:winpop .55s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes winpop{0%{transform:scale(.85) translateY(20px);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.btn:focus-visible,.round:focus-visible,.tile:focus-visible,.pickbtn:focus-visible{outline:3px solid var(--ember);outline-offset:3px}
+.floating{position:sticky;bottom:12px;align-self:center;background:var(--ink);color:var(--cream);font:400 12px var(--f-mono);border-radius:999px;padding:10px 18px}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mass" viewBox="0 0 24 24"><path d="M7 9h10l2 11H5z M9 9a3 3 0 1 1 6 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 7v10M9.5 9.5h4a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3h4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 5 14h6l-1 8 8-12h-6z" fill="currentColor"/></symbol>
+  <symbol id="i-data" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5 6v12c0 1.7 3 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3 3 7 3s7-1.3 7-3" fill="none" stroke="currentColor" stroke-width="2.2"/></symbol>
+  <symbol id="i-comms" viewBox="0 0 24 24"><path d="M5 19a10 10 0 0 1 0-14M19 5a10 10 0 0 1 0 14M8.5 15.5a5 5 0 0 1 0-7M15.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="currentColor"/></symbol>
+  <symbol id="i-time" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 9v4l3 2M9 2h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-planet" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(-20 12 12)"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.5 3.5a5 5 0 0 0-5.8 6.6L3 15.8 8.2 21l5.7-5.7a5 5 0 0 0 6.6-5.8l-3 3-3.3-.9-.9-3.3z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 2c3 2 5 6 5 11l-2 4H9l-2-4c0-5 2-9 5-11z M9 17l-3 3 1-5M15 17l3 3-1-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="10" r="1.8" fill="currentColor"/></symbol>
+  <symbol id="i-console" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M7 12l3-3 3 2 4-4M8 20h8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" fill="var(--sf,#F2A541)" stroke="#1A1206" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="wrap">
+  <header class="intro">
+    <h1>Game feel</h1>
+    <p>Three ways to make Horizons feel like a game instead of a website. Only the interface changes: the buttons, windows, bars, badges and dock. Colours, fonts and 3D stay as they are. Press the buttons to feel them, use "Replay pop-in" to see the motion, then choose one.</p>
+  </header>
+  <div id="opts" style="display:flex;flex-direction:column;gap:48px"></div>
+  <div class="floating" id="picked">Style: none chosen yet</div>
+</div>
+
+<script>
+const OPTS=[
+ {k:'A',name:'Tactile',d:'Chunky toy buttons with a thick outline, a darker lip and a squash when pressed. Ribbon titles, round icon buttons, a big icon dock. The most playful; closest to the casual mobile games on the board.'},
+ {k:'B',name:'Console',d:'Mission control. Cut corners, segmented bars, dark header strips and corner brackets. Feels like spacecraft hardware and suits the NASA theme. The most grown-up of the three.'},
+ {k:'C',name:'Sticker',d:'Cut-out stickers: hard offset shadows, slight tilts, tape on the windows, striped bars. Hand-made and friendly, like a mission scrapbook. Pairs well with the pixel title font.'},
+];
+const metrics=[['mass','Mass','1,240 kg',.72,'ok','#2C5B65'],['coin','Budget','$318M',.55,'ok','#C27F22'],['bolt','Power','412 W',.34,'warn','#C2643A'],['data','Data','2.1 Gb',.64,'ok','#2C5B65'],['comms','Comms','X-band',.8,'ok','#2C5B65'],['time','Time','14 mo',.94,'bad','#A73B42']];
+const col={ok:'var(--ok)',warn:'var(--warn)',bad:'var(--bad)'};
+const ic=(n,c='')=>`<svg class="i" ${c}><use href="#i-${n}"/></svg>`;
+function resources(k){return metrics.map(m=>{
+  if(k==='B'){const on=Math.round(m[3]*8);return `<div class="resource ${m[4]==='bad'?'bad':''}"><span class="ic">${ic(m[0])}</span>${m[2]}<span class="seg">${Array.from({length:8},(_,i)=>`<i class="${i<on?'on':''}"></i>`).join('')}</span></div>`}
+  return `<div class="resource ${m[4]==='bad'?'bad':''}"><span class="ic" style="background:${m[5]}">${ic(m[0])}</span>${m[2]}${k==='A'?'<span class="plus">+</span>':''}</div>`}).join('')}
+function bars(k){return metrics.slice(0,3).concat([metrics[5]]).map(m=>{
+  const bar = k==='B' ? `<div class="bar">${Array.from({length:12},(_,i)=>`<b style="${i<Math.round(m[3]*12)?'background:'+col[m[4]]:''}"></b>`).join('')}</div>`
+    : `<div class="bar"><i style="width:${m[3]*100}%;--c:${col[m[4]]}"></i></div>`;
+  return `<div class="stat"><span>${m[1]}</span>${bar}<span class="num">${m[2]}</span></div>`}).join('')}
+const stars=(n)=>Array.from({length:3},(_,i)=>`<svg style="--sf:${i<n?'#F2A541':'#E4DED2'}"><use href="#i-star"/></svg>`).join('');
+function dock(){return [['planet','Missions','on'],['wrench','Workshop',''],['rocket','Launch pad','',true],['console','Control','lock'],['gear','Settings','']].map(t=>
+  `<button class="tile ${t[2]}" type="button">${t[3]?'<span class="new">NEW</span>':''}${ic(t[2]==='lock'?'lock':t[0])}${t[1]}</button>`).join('')}
+
+const host=document.getElementById('opts');
+OPTS.forEach(o=>{
+  const el=document.createElement('section'); el.className='opt'; el.id='opt-'+o.k;
+  el.innerHTML=`<div class="opt-head"><div><h2>${o.k} · ${o.name}</h2><p>${o.d}</p></div>
+    <div class="row"><button class="pickbtn" type="button" data-replay>Replay pop-in</button><button class="pickbtn" type="button" data-pick="${o.k}">Choose ${o.name}</button></div></div>
+  <div class="stage ${o.k}">
+    <canvas aria-hidden="true"></canvas><div class="planet" aria-hidden="true"></div>
+    <div class="top"><div class="row"><button class="round" type="button" aria-label="Back">${ic('back')}</button><div class="res">${resources(o.k)}</div></div>
+      <button class="round" type="button" aria-label="Settings">${ic('gear')}<span class="dot">2</span></button></div>
+    <div class="mid">
+      <div class="toast"><div class="callout">Heavier means less fuel. Keep the bars green!</div></div>
+      <div class="win">
+        <span class="ribbon">Mission brief</span>
+        <button class="round x" type="button" aria-label="Close">${ic('x')}</button>
+        <h3>Wildfire watch</h3>
+        <p class="sub">Earth · Spot new fires from orbit</p>
+        <div class="stars" aria-label="Difficulty 1 of 3">${stars(1)}</div>
+        ${bars(o.k)}
+        <div class="row" style="margin-top:14px;justify-content:space-between">
+          <button class="btn ghost" type="button">Back</button>
+          <button class="btn primary" type="button">Start mission</button>
+        </div>
+      </div>
+    </div>
+    <div class="dock">${dock()}</div>
+  </div>`;
+  host.appendChild(el);
+});
+
+let chosen=null; try{chosen=localStorage.getItem('hz-feel')}catch(e){}
+function render(){document.querySelectorAll('.opt').forEach(e=>e.classList.toggle('chosen',e.id==='opt-'+chosen));
+  const o=OPTS.find(x=>x.k===chosen);document.getElementById('picked').textContent=o?`Style: ${o.k} · ${o.name}`:'Style: none chosen yet';
+  try{localStorage.setItem('hz-feel',chosen||'')}catch(e){}}
+document.addEventListener('click',e=>{
+  const p=e.target.closest('[data-pick]'); if(p){chosen=p.dataset.pick;render();return}
+  const r=e.target.closest('[data-replay]'); if(r){const s=r.closest('.opt').querySelector('.stage');s.classList.remove('replay');void s.offsetWidth;s.classList.add('replay');
+    s.querySelectorAll('.callout').forEach(c=>{c.style.animation='none';void c.offsetWidth;c.style.animation=''});}
+});
+render();
+
+// starry corners
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fields=[...document.querySelectorAll('.stage canvas')].map((c,ci)=>{const r=c.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,1.5);c.width=r.width*d;c.height=r.height*d;const x=c.getContext('2d');x.scale(d,d);
+  let s=11+ci;const R=()=>(s=(s*16807)%2147483647)/2147483647;const st=[];for(let k=0;k<260;k++){const px=r.width*(1-Math.pow(R(),1.4)*.55),py=r.height*Math.pow(R(),1.5)*.7,dx=(r.width-px)/(r.width*.55),dy=py/(r.height*.7);if(dx*dx+dy*dy>.7)continue;st.push({x:px,y:py,s:R()<.06?1.7:R()*.9+.3,p:R()*6})}
+  return {x,st,w:r.width,h:r.height}});
+function draw(t){for(const f of fields){f.x.clearRect(0,0,f.w,f.h);for(const s of f.st){f.x.globalAlpha=reduce?.85:.4+.6*Math.abs(Math.sin(t/1300+s.p));f.x.fillStyle='#fff';f.x.beginPath();f.x.arc(s.x,s.y,s.s,0,7);f.x.fill()}}if(!reduce)requestAnimationFrame(draw)}
+requestAnimationFrame(draw);
+</script>
