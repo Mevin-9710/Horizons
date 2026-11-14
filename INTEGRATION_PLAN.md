@@ -57,4 +57,4 @@ Use HTML4's `plan()` (Hohmann transfer, patched conics) for each destination's T
 
 ## Progress log
 (The run appends one line per finished milestone: date/time IST, what was done, the commit hash.)
-- 04:25 IST 15 Nov: step 0 (tools/build-game.py), milestone 1 (launch sim, new `launch` screen) and milestone 2 (hangar cinematic, base dive hand-off, control starts at check-out) done. See cook/ROUNDS.md round 01.
+- 03:34 IST 15 Nov: step 0 (tools/build-game.py), milestone 1 (launch sim, new `launch` screen) and milestone 2 (hangar cinematic, base dive hand-off, control starts at check-out) done. See cook/ROUNDS.md round 01.
