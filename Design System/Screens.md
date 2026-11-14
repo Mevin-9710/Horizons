@@ -4,6 +4,7 @@
 |---|---|---|---|---|
 | 1 | Home | `home-screen-demo.html` | https://claude.ai/artifact/HTTTSy4zX7pkvTAkExMDJz | Draft. Needs the game-feel pass. |
 | 2 | Mission select | `mission-select-demo.html` | https://claude.ai/artifact/R9HaPmZ8Crbu4DCF3f9YSs | Draft. Needs the game-feel pass. |
+| 3 | Base and workshops | `base-workshop-demo.html` | https://claude.ai/artifact/4F9c4SRshinNrKqwwXXA13 | Draft |
 | – | Game feel (style options) | `game-feel-demo.html` | https://claude.ai/artifact/UQbCc3uns31YmFbA7oaPc9 | Pick A, B or C, then apply it to every screen |
 
 ## Open item for every screen
@@ -29,3 +30,18 @@ Applied to the home and mission select screens. The other two styles (Console, S
 - **Spec tiles and list bullets:** cream tiles with outlines and drops; bullets are outlined amber diamonds.
 - **Motion:** windows pop in with an overshoot `cubic-bezier(.34,1.56,.64,1)`, press squash is 80ms, and cards lift on hover. Everything is off under reduced motion.
 - **Unchanged:** 3D models, colour palette, fonts, layout.
+
+## Base and workshops: what the demo shows
+- **Isometric base** (orthographic three.js camera that follows the player). It is laid out like the Space Level Kit: a central plaza, bridges with arched supports, and four buildings on floating slabs. Columns fade into the cream page.
+- **3D style** = the Comet planet shader applied to every surface: palette colour bands, grain and soft light. Edge trim lines are **ember** (no cyan or green).
+- **Buildings:**
+  - **Rocket workshop** (west hangar): pick the rocket and orbit. The rocket sets the mass limit.
+  - **Spacecraft workshop** (east, with a teal dome): pick the bus, power, comms, instrument and engine.
+  - **Launch pad** (north): a pre-launch check of all six metrics, then Launch.
+  - **Mission control** (south tower): locked, with a lock badge, until launch.
+- **Astronaut** in the Comet style (cream suit, teal visor, rust backpack). Walk with WASD or the arrow keys, or the joystick on touch. Tap the floor or a dock tile to auto-walk there. Near a door, a glowing ring appears with a Tactile "Enter … [E]" button.
+- **HUD:** six Tactile glass capsules with mini bars: mass, budget, power, data, comms and time. Green is OK, amber is close, red is over. Values bump when they change.
+- **Workshop window:** a Tactile glass window with a ribbon title, category tabs (a red dot means not chosen yet) and option cards that list each part's effects. Every pick updates the HUD live.
+- **Tutorial callout** (3 steps, as in the gameplay doc): walk to the glowing workshop → pick an instrument ("Heavier means less fuel. Keep bars green!") → walk to the pad and launch. It can be skipped.
+- **Launch:** a "Liftoff!" banner, the rocket climbs off-screen, and the dock's Mission control tile unlocks with a NEW badge.
+- **Part numbers are placeholders** for the design. The real values come from the game data and evaluator.
