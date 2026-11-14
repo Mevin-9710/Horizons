@@ -175,4 +175,5 @@ This is a **game**, not a website. The landing screen must be **fast and respons
 - **Stones and flowers stay.** Put them along the **bottom, towards the left** (not in the corner): grey rounded stones, white daisies with amber centres, orange poppies, teal spikes and grass. They fade out toward the centre.
 - **Light shimmer: keep it.** The soft light shimmer/glimmer over the hero (Perplexity's three.js glimmer pass, plus light rays) must be in the real build. It is left out of the demo only.
 - **Fonts:** display = Game Paused (digits fall back to Silkscreen); UI = Geist; labels and HUD = Geist Mono (provisional).
-- **Demo:** `Design System/palette-and-fonts.html` (published as the "Horizons Home Screen" artifact).
+- **Demo:** `Design System/home-screen-demo.html` (published as the "Horizons Home Screen" artifact).
+- **Feedback on the demo (to apply in the build):** stones and flowers need about **25% more volume and height**, and should **rise higher into the hero** so they read as the ground the orb sits on, not a strip at the bottom edge. **Make the glass orb larger** too, so it connects with the planting (as in the Perplexity hero, where the ball rests on the hill).
