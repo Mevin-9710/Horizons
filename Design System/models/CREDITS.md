@@ -17,8 +17,7 @@ All `.glb` files here come from **NASA's 3D Resources**, at https://github.com/n
 | rocket-jupiter-c.glb | Explorer Jupiter-C Rocket | Small rocket |
 | rocket-atlas.glb | Atlas 9 (Faith 7) | Medium rocket |
 | rocket-saturn-v.glb | Saturn V | Heavy rocket |
-| gantry.glb | Gantry | Launch pad tower |
 
-**Processing:** the originals use Draco compression. They were decoded with `gltf-transform copy`, then welded. Landsat 8, the gantry, Atlas and the infrared camera were simplified, and textures were resized to 64 px because the game re-shades every model with the Comet shader.
+**Processing:** the originals use Draco compression. They were decoded with `gltf-transform copy`, then welded. Landsat 8, Atlas and the infrared camera were simplified, and textures were resized to 64 px because the game re-shades every model with the Comet shader.
 
 **No NASA part model exists for these, so they are procedural stand-ins:** visible camera, hyperspectral imager, all engines (cold gas, hydrazine, electric) and the orbit markers.

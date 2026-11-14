@@ -298,7 +298,7 @@ function label(text,x,y,z,w=3.2){const c=document.createElement('canvas');c.widt
 
 /* ================= NASA model loading ================= */
 const loader=new THREE.GLTFLoader(); const MODELS={};
-const MODEL_FILES=['kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-atlas','rocket-saturn-v','gantry'];
+const MODEL_FILES=['kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-atlas','rocket-saturn-v'];
 // Bake every mesh into one geometry (one draw call per model), drop NASA textures/logos, keep shape only.
 function bake(gltf){ gltf.scene.updateMatrixWorld(true); const arr=[]; const v=new THREE.Vector3();
   gltf.scene.traverse(o=>{ if(!o.isMesh||!o.geometry) return; const g=o.geometry, P=g.getAttribute('position'), I=g.index;
@@ -356,7 +356,7 @@ function buildBase(){
   box(.15,2,2.4,DARK,12.25,1,0,false); cyl(.45,.45,1.6,TEAL,17.6,.8,3.2);
   // launch pad with NASA gantry; rocket gets swapped to the chosen NASA rocket
   cyl(3.2,3.4,.4,DARK,0,.2,-16,40); cyl(2.6,2.6,.06,GLOWA,0,.43,-16,40); cyl(2.3,2.3,.08,STONE,0,.47,-16,40);
-  const gantry=fromModel('gantry',DARK,9,{upright:true}); gantry.position.set(3.4,.4,-16.6); gantry.rotation.y=-Math.PI/2; root.add(gantry);
+  box(.9,8,.9,DARK,2.4,4,-16); for(let i=1;i<4;i++) box(1.8,.18,.18,RUST,1.5,i*2,-16,false); // service tower
   padRocket=new THREE.Group(); padRocket.position.set(0,.5,-16); root.add(padRocket);
   flame=new THREE.Mesh(new THREE.ConeGeometry(.6,2.4,16),new THREE.MeshBasicMaterial({color:0xF2A541,transparent:true,opacity:0})); flame.rotation.x=Math.PI; flame.position.y=-1.1; padRocket.add(flame);
   // mission control tower
