@@ -182,14 +182,14 @@ header .right{display:flex;gap:10px;align-items:center}
 .ball.gl{background:transparent;box-shadow:0 70px 80px -46px rgba(26,18,6,.42)}
 .ball.gl::after,.ball.gl .rocket{display:none}
 .ball .aura{position:absolute;inset:-11%;border-radius:50%;z-index:-1;pointer-events:none;
-  background:conic-gradient(from 0deg,#7FB2FF,#9B7BFF,#FF86C0,#F2A541,#FFE1B0,#7FE3FF,#7FB2FF);
+  background:conic-gradient(from 0deg,#F2A541,#E07A44,#FFC27A,#C2643A,#F7B05B,#F2A541);
   -webkit-mask:radial-gradient(circle,transparent 50%,#000 56%,rgba(0,0,0,.5) 62%,transparent 71%);
           mask:radial-gradient(circle,transparent 50%,#000 56%,rgba(0,0,0,.5) 62%,transparent 71%);
   filter:blur(12px);opacity:.6;animation:aura 14s linear infinite}
 @keyframes aura{to{transform:rotate(1turn)}}
 .caustic{position:absolute;left:50%;top:calc(var(--bw)*.86);width:calc(var(--bw)*.86);height:calc(var(--bw)*.24);border-radius:50%;pointer-events:none;z-index:0;
-  background:radial-gradient(closest-side,rgba(255,255,255,.85),rgba(150,190,255,.55) 32%,rgba(255,140,200,.32) 58%,rgba(242,165,65,.14) 78%,transparent);
-  transform:translateX(-50%);filter:blur(9px);animation:caustic 7s ease-in-out infinite,hue 11s linear infinite}
+  background:radial-gradient(closest-side,rgba(255,236,205,.85),rgba(242,165,65,.5) 34%,rgba(224,122,68,.28) 62%,rgba(194,100,58,.1) 80%,transparent);
+  transform:translateX(-50%);filter:blur(9px);animation:caustic 7s ease-in-out infinite}
 @keyframes caustic{50%{transform:translateX(-50%) scale(.84);opacity:.72}}
 @keyframes hue{to{filter:blur(9px) hue-rotate(360deg)}}
 .hero .rk-pick{position:relative;z-index:1;margin-top:8px}
@@ -418,13 +418,13 @@ const FS_FRONT=ENV+`
 void main(){
   vec3 N=normalize(vN), V=normalize(vV); float nv=max(dot(N,V),0.), fr=pow(1.-nv,2.4);
   vec3 Rf=reflect(-V,N), refl=envAt(Rf); float l0=dot(refl,vec3(.3,.59,.11)); refl=max(mix(vec3(l0),refl,1.4),0.);
-  float th=nv*4.5+t*.3+vO.y*1.4+vO.x*.7; vec3 irid=.55+.45*cos(6.28318*(vec3(0.,.33,.67)+th));
+  float th=nv*4.5+t*.3+vO.y*1.4+vO.x*.7; vec3 irid=mix(vec3(1.,.5,.18),vec3(1.,.82,.5),.5+.5*cos(6.28318*th));
   vec3 L1=normalize(vec3(-.55,.62,.55)), L2=normalize(vec3(.78,.5,.38)), L3=normalize(vec3(.35,-.72,.6));
   float d1=max(dot(Rf,L1),0.), s1=pow(d1,220.)*1.8+pow(d1,24.)*.22;
   float s2=pow(max(dot(Rf,L2),0.),60.);
   float s3=pow(max(dot(Rf,L3),0.),36.);
   float b=fract((vO.x*.55+vO.y*.85)*.42-t*.085); float sweep=smoothstep(0.,.025,b)*smoothstep(.07,.025,b);
-  vec3 col=mix(refl*(.4+.6*fr),refl,1.-l0)+irid*fr*.5+vec3(1.)*s1+vec3(1.,.96,.9)*sweep*.55+irid*pulse*.8;
+  vec3 col=mix(refl*(.4+.6*fr),refl,1.-l0)+irid*fr*.5+vec3(1.)*s1+vec3(1.,.9,.75)*sweep*.55+vec3(1.,.55,.2)*pulse*.9;
   float lum=dot(refl,vec3(.3,.59,.11));
   float a=clamp(.07+fr*.92+s1+sweep*.3+pulse*.4+(1.-lum)*(.35+.6*fr),0.,1.);
   gl_FragColor=vec4(col,a);
@@ -433,9 +433,9 @@ void main(){
 const FS_BACK=ENV+`
 void main(){
   vec3 N=-normalize(vN), V=normalize(vV); float nv=abs(dot(N,V)), fr=pow(1.-nv,2.);
-  vec3 irid=.55+.45*cos(6.28318*(vec3(0.,.33,.67)+vO.y*1.2-t*.2));
+  vec3 irid=mix(vec3(1.,.5,.18),vec3(1.,.82,.5),.5+.5*cos(6.28318*(vO.y*1.2-t*.2)));
   float caustic=pow(max(-vO.y,0.),3.)*.55;
-  vec3 col=mix(vec3(.985,.975,.955),vec3(.9,.92,1.),smoothstep(-.2,1.,vO.y)*.35)+irid*.06+vec3(1.,.8,.6)*caustic+irid*pulse*.3;
+  vec3 col=mix(vec3(.985,.975,.955),vec3(.9,.92,1.),smoothstep(-.2,1.,vO.y)*.35)+irid*.06+vec3(1.,.8,.6)*caustic+vec3(1.,.55,.2)*pulse*.35;
   gl_FragColor=vec4(col,clamp(.16+fr*.22+caustic*.4,0.,1.));
 }`;
 // stardust swirling inside the glass
@@ -445,7 +445,7 @@ void main(){ float r=length(position.xz), a=atan(position.z,position.x)+t*seed.y
   vec4 mv=modelViewMatrix*vec4(p,1.); gl_Position=projectionMatrix*mv;
   float tw=.55+.45*sin(t*2.6+seed.x*9.);
   gl_PointSize=seed.z*pr*(1.+boost)*tw*(9./-mv.z)*10.;
-  float k=seed.w; vC= k<.2?vec3(.6,.8,1.): k<.4?vec3(.75,.6,1.): k<.6?vec3(1.,.6,.85): k<.8?vec3(1.,.75,.4): vec3(1.);
+  float k=seed.w; vC= k<.3?vec3(1.,.62,.25): k<.55?vec3(1.,.78,.45): k<.8?vec3(.95,.45,.2): vec3(1.,.95,.85);
   vA=tw*(.55+.45*boost); }`;
 const DUST_FS=`varying vec3 vC; varying float vA; void main(){ vec2 c=gl_PointCoord-.5; float d=length(c); float a=smoothstep(.5,0.,d); a*=a; gl_FragColor=vec4(vC*a*vA*1.4,a*vA*.6); }`;
 

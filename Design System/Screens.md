@@ -18,7 +18,7 @@ Every screen still reads more like a **website than a game**. A shared "game fee
 ## Home: what the demo shows (2026-11-14)
 - Same layout as before: cream page, glass ball, mission cards, rotating headline, Tactile Play and Tutorial buttons. The stones, grass and flowers are gone.
 - **Top-right night sky is a painted image** (`assets/home-sky.webp`, cropped to the sky and mirrored so its nebula sits in the corner). It melts into the cream through a pink, ember and amber dusk. Twinkling stars and **shooting-star showers** (steep streaks falling down-left, sometimes three at once) play over it. The team supplied the image; confirm its licence before submission.
-- **Glass ball, bigger (up to 480 px), drawn in WebGL:** it reflects the night sky and every passing shooting star (which also flashes a light on the rocket), with a fresnel rim, thin-film rainbow colours, one white highlight, a slow light sweep, stardust swirling inside, a rotating colour aura around it and a colour-shifting caustic light pool under it. The reflection shifts as the mouse moves. Switching rockets sends a rainbow flash through the glass. Reduce motion freezes all of it.
+- **Glass ball, bigger (up to 480 px), drawn in WebGL:** it reflects the night sky and every passing shooting star (which also flashes a light on the rocket), with a fresnel rim, one white highlight, a slow light sweep and stardust inside. **All colour effects are orange:** the warm film on the rim, the rotating glow around the ball, the light pool under it and the flash when you switch rockets. The reflection shifts as the mouse moves. Reduce motion freezes all of it.
 - **A real NASA rocket spins inside the glass ball.** ◀ ▶ (or the arrow keys) switch between Jupiter-C, Ares I, Saturn V, Space Shuttle and SLS. Drag the ball to spin it. The choice is remembered.
 - **Mission cards** show the mission name and difficulty stars, and open mission select for that mission.
 - **Settings** (gear, or S): sound effects, reduce motion, tutorial hints, graphics low/high. They are saved in the browser and passed to every screen (the base hides the tutorial callout, uses a lower pixel ratio on Low, and stops motion).
@@ -45,6 +45,14 @@ Applied to the home and mission select screens. The other two styles (Console, S
 - **Spec tiles and list bullets:** cream tiles with outlines and drops; bullets are outlined amber diamonds.
 - **Motion:** windows pop in with an overshoot `cubic-bezier(.34,1.56,.64,1)`, press squash is 80ms, and cards lift on hover. Everything is off under reduced motion.
 - **Unchanged:** 3D models, colour palette, fonts, layout.
+
+## Base on Earth (2026-11-14)
+- The base is no longer in space. It sits on a **block of Earth**, like a diorama: grass on top (Comet banding in greens), soil strata on the sides melting into the cream page. The floating decks, the support columns hanging into the void and the arched bridge lines are gone.
+- Decks are now **concrete pads and roads** (with lane dashes). Around them are low-poly **trees, pines, bushes and a pond**.
+- The page corner is a **daytime sky** (blue to peach, a soft sun) with **clouds drifting** through it instead of stars.
+- The player is a **ground engineer** (white hard hat, hi-vis amber vest with a reflective band, work trousers) instead of an astronaut.
+- Workshop halls have **daylight windows** instead of round star portholes.
+- **Mission select** uses the same painted night sky and shooting stars as the home screen.
 
 ## Base and workshops: what the demo shows
 - **Isometric base** (orthographic three.js camera that follows the player). It is laid out like the Space Level Kit: a central plaza, bridges with arched supports, and four buildings on floating slabs. Columns fade into the cream page.
