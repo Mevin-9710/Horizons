@@ -23,7 +23,7 @@ Every screen still reads more like a **website than a game**. A shared "game fee
 Applied to the home and mission select screens. The other two styles (Console, Sticker) stay in `game-feel-demo.html` for reference only.
 - **Buttons** (`.t-btn`): 3px ink outline, 16px radius, an inner darker lip (`inset 0 -5px 0`) and an outer `0 5px 0` ink drop. On press they move down 4px and the shadow collapses (the squash). Primary = amber with an amber-dark lip. Secondary = white with a `#E4DED2` lip.
 - **Round icon buttons** (`.t-round`): 46px circles with the same lip. Back, settings, and a red ✗ for close.
-- **Windows** (`.t-win`): white, 3px ink border, 22px radius, `0 7px 0` ink drop. An **ember ribbon title** (`.t-ribbon`) sits on or over the top edge. The ✗ close sits in the top-right corner.
+- **Windows** (`.t-win`): **glassmorphism** fill (`rgba(255,255,255,.42)` + `backdrop-filter: blur(18px) saturate(1.4)`), the same for cards, tiles, pills and secondary buttons; 3px ink border, 22px radius, `0 7px 0` ink drop. An **ember ribbon title** (`.t-ribbon`) sits on or over the top edge. The ✗ close sits in the top-right corner.
 - **Pills and status** (`.t-pill`): white, 2.5px outline, `0 3px 0` drop, Silkscreen text, blinking amber dot.
 - **Badges:** a green tilted `NEW` tag. Difficulty is shown as **stars** (amber filled, `#E4DED2` empty).
 - **Spec tiles and list bullets:** cream tiles with outlines and drops; bullets are outlined amber diamonds.

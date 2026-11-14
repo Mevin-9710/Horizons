@@ -91,6 +91,12 @@ header .right{display:flex;gap:10px;align-items:center}
 .ctas{gap:14px}
 .btn{padding:14px 34px 16px;font-size:24px}
 .status{background:#fff}
+
+/* Glassmorphism fill for all tactile cards/windows (2026-11-14): keep outlines + lips, replace solid white */
+.t-win,.card,.spec,.tag,.t-pill,.dots button,.A .win,.A .resource,.A .dock,.A .tile:not(.on):not(.lock),.A .btn.ghost,.t-btn.ghost,.t-round:not(.x){
+  background:rgba(255,255,255,.42)!important;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4)}
+.b-actions{background:rgba(251,247,238,.35)!important}
+.spec{background:rgba(255,255,255,.3)!important}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">

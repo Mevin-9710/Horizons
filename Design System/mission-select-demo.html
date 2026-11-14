@@ -122,6 +122,12 @@ canvas#gl{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:
 .b-actions .t-btn{flex:1}.b-actions .t-btn.ghost{flex:none}
 .brief.open{animation:tpop .55s cubic-bezier(.34,1.56,.64,1) both}
 @media (max-width:760px){.b-head h3{font-size:26px}.prompt.t-win{padding-top:28px}}
+
+/* Glassmorphism fill for all tactile cards/windows (2026-11-14): keep outlines + lips, replace solid white */
+.t-win,.card,.spec,.tag,.t-pill,.dots button,.A .win,.A .resource,.A .dock,.A .tile:not(.on):not(.lock),.A .btn.ghost,.t-btn.ghost,.t-round:not(.x){
+  background:rgba(255,255,255,.42)!important;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4)}
+.b-actions{background:rgba(251,247,238,.35)!important}
+.spec{background:rgba(255,255,255,.3)!important}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
