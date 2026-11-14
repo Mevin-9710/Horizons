@@ -16,7 +16,9 @@
 Every screen still reads more like a **website than a game**. A shared "game feel" layer will be designed later and applied to all screens.
 
 ## Home: what the demo shows (2026-11-14)
-- Same layout as before: cream page, starry top-right corner, glass ball, mission cards, rotating headline, Tactile Play and Tutorial buttons. The stones, grass and flowers are gone.
+- Same layout as before: cream page, glass ball, mission cards, rotating headline, Tactile Play and Tutorial buttons. The stones, grass and flowers are gone.
+- **Top-right night sky is a painted image** (`assets/home-sky.webp`, cropped to the sky and mirrored so its nebula sits in the corner). It melts into the cream through a pink, ember and amber dusk. Twinkling stars and **shooting-star showers** (steep streaks falling down-left, sometimes three at once) play over it. The team supplied the image; confirm its licence before submission.
+- **Glass ball, bigger (up to 480 px), drawn in WebGL:** it reflects the night sky and every passing shooting star (which also flashes a light on the rocket), with a fresnel rim, thin-film rainbow colours, one white highlight, a slow light sweep, stardust swirling inside, a rotating colour aura around it and a colour-shifting caustic light pool under it. The reflection shifts as the mouse moves. Switching rockets sends a rainbow flash through the glass. Reduce motion freezes all of it.
 - **A real NASA rocket spins inside the glass ball.** ◀ ▶ (or the arrow keys) switch between Jupiter-C, Ares I, Saturn V, Space Shuttle and SLS. Drag the ball to spin it. The choice is remembered.
 - **Mission cards** show the mission name and difficulty stars, and open mission select for that mission.
 - **Settings** (gear, or S): sound effects, reduce motion, tutorial hints, graphics low/high. They are saved in the browser and passed to every screen (the base hides the tutorial callout, uses a lower pixel ratio on Low, and stops motion).
