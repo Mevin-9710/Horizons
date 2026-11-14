@@ -5,6 +5,9 @@
   STEPS[3]=['Liftoff!','Walk to the mission control tower to fly your mission.'];
   document.querySelector('.hud .t-round').addEventListener('click',()=>hzGo('select'));
   dockEl.addEventListener('click',e=>{ const t=e.target.closest('.tile'); if(t&&t.dataset.z==='') hzGo('select'); },true);
+  // Launch: dive the camera into the pad, then hand over to the launch screen (hangar cinematic, count, ascent).
+  const design=()=>({rocket:opt('rocket').name,inst:opt('inst')?opt('inst').name:'camera',orbit:opt('orbit').name});
+  doLaunch=function(){ closeWin(); transition(new THREE.Vector3(0,0,-16),()=>hzGo('launch',{mission:M,pick:Object.assign({},pick),design:design(),skipCine:false})); };
   const _open=openWin; openWin=function(z){ if(z==='control'&&launched){ return hzGo('control',{mission:M,pick:Object.assign({},pick),design:{rocket:opt('rocket').name,inst:opt('inst')?opt('inst').name:'camera',orbit:opt('orbit').name}}); } return _open(z); };
 })();
 </script>

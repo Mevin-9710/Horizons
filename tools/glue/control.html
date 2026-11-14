@@ -1,4 +1,10 @@
 <script>
 document.querySelector('.tl .t-round').addEventListener('click',()=>hzGo('base',{mission:HZ.mission,pick:HZ.pick}));
 document.addEventListener('click',e=>{ const b=e.target.closest('.report .t-btn.primary'); if(b) hzGo('base',{mission:HZ.mission,pick:HZ.pick}); });
+</script><script>
+/* Hand-off from the launch screen: the player already flew the launch and reached orbit, so mission control starts at check-out. */
+if(window.HZ&&HZ.flight){ const F=HZ.flight;
+  PH[0].t=`You flew ${F.rocket} off the pad in ${F.time} s.`; PH[1].t=`Orbit reached: ${F.peri} x ${F.ap==null?'escape':F.ap} km. Flight score ${F.score}.`;
+  S.t=PH[2].s; S.fuel=Math.round(45+55*F.f2); S.dec+=Math.min(8,F.hits*2)-F.late*2; if(F.dmg) S.res-=6;
+  addLog(`Launch flown by you: orbit ${F.peri} x ${F.ap==null?'escape':F.ap} km, score ${F.score}`); renderUI(); }
 </script>

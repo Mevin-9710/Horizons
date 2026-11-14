@@ -17,6 +17,20 @@ def read(p):
     with open(p, encoding='utf-8') as f:
         return f.read()
 
+# The launch screen is assembled from launch-src.html + launch-src.js + tools/sim/ascent.cjs (shared with the headless test),
+# borrowing the display font from the base screen and the night-sky image from the home screen.
+import re
+def build_launch():
+    src = read(os.path.join(DS, 'launch-src.html'))
+    font = re.search(r"@font-face\{font-family:'Game Paused'.*?font-display:block\}", read(os.path.join(DS, 'base-workshop-demo.html')), re.S).group(0)
+    sky = re.search(r'url\((data:image/webp;base64,[A-Za-z0-9+/=]+)\)', read(os.path.join(DS, 'home-screen-demo.html'))).group(1)
+    out = (src.replace('{{FONT}}', font).replace('{{SKY}}', sky)
+              .replace('{{ASCENT}}', read(os.path.join(ROOT, 'tools', 'sim', 'ascent.cjs')))
+              .replace('{{LAUNCH_JS}}', read(os.path.join(DS, 'launch-src.js'))))
+    with open(os.path.join(DS, 'launch-demo.html'), 'w', encoding='utf-8') as f:
+        f.write(out)
+build_launch()
+
 d = {}
 for name, fn in SCREENS:
     p = os.path.join(DS, fn)

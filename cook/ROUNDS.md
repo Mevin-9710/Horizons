@@ -23,3 +23,29 @@ Made without asking, one line each.
 (none yet)
 
 ---
+
+## Round 01
+
+Time: 03:16 to 03:34 IST
+Focus: milestones 1 and 2 (launch sim + hangar cinematic), because they are first in the build order.
+
+Changes:
+- tools/build-game.py: bundles are rebuilt from the demo sources (+ tools/glue). tools/sim/ascent.cjs: HTML4 ascent physics, shared by the game and the headless test.
+- New launch screen (Design System/launch-src.html + launch-src.js -> launch-demo.html, shell key "launch"): Earth diorama pad, NASA rocket cut into stage 1 / stage 2 / fairing halves with clipping planes, pooled fire and smoke, soft plume, day sky -> painted night, shooting stars, chase camera, cue button (auto-fires after a grace), Max-Q hold-to-throttle, minimal HUD, telemetry window on T, voice + music + rumble, fail and orbit cards.
+- Hangar cinematic: 6 beats (payload, fairing, mating, rollout, erection, all stations go), skippable (Esc or button).
+- Base: Launch dives the camera into the pad and hands over. Mission control starts at Check-out with the flight result.
+
+Stills: cook/stills/r01/ (sheet-cine.jpg, sheet-fly.jpg, sheet-flow.jpg)
+
+Measured:
+- Headless ascent (node tools/sim/test-ascent.cjs): all 5 rockets reach orbit; ignition to deploy 28.9 to 39.4 s (perfect cues and all cues missed).
+- In game (Playwright, game time): hangar cinematic 24.5 s; Saturn V ascent 32.2 s, orbit 175 x 1242 km; SLS 29.7 s, 192 x 432 km. 5 of 5 cues.
+- Frame time under SwiftShader: capped at 50 ms (software GL, about 8 fps wall); 249 draw calls, 34k triangles. Real-GPU frame time: not measured.
+
+Not checked this round:
+- Fresh-context critics: not run yet (time spent on building; planned after milestone 3).
+- Phone layout of the launch screen, audio by ear.
+
+Own score (logged, never decides): design fit 7.5, spectacle 7.5, readability 8, pacing meets the measured targets.
+Top gaps (own): 1) trees and pad are sparse near the horizon, 2) no Earth limb in the chase view until late, 3) 249 draw calls (merge trees), 4) fairing half floats oddly in the first cinematic beat.
+Stop check: not done -> next: milestone 3 (transfer + mission control handoff).
