@@ -1,0 +1,445 @@
+{
+  "body": {
+    "bg": "rgb(250, 248, 245)",
+    "font": "pplxSans, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+    "color": "rgb(0, 0, 0)"
+  },
+  "h1": [
+    {
+      "tag": "H1",
+      "text": "Computer",
+      "font": "pplxSerif, Georgia, serif",
+      "size": "96px",
+      "weight": "300",
+      "color": "rgb(39, 26, 0)",
+      "ls": "normal",
+      "lh": "96px"
+    }
+  ],
+  "h2": [
+    {
+      "tag": "H2",
+      "text": "Computer unifies",
+      "font": "pplxSerif, Georgia, serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(250, 248, 245)",
+      "ls": "normal",
+      "lh": "53.76px"
+    },
+    {
+      "tag": "H2",
+      "text": "How it works",
+      "font": "pplxSerif, Georgia, serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(18, 21, 22)",
+      "ls": "normal",
+      "lh": "53.76px"
+    },
+    {
+      "tag": "H2",
+      "text": "What Computer does for you",
+      "font": "pplxSerif, Georgia, serif",
+      "size": "48px",
+      "weight": "400",
+      "color": "rgb(18, 21, 22)",
+      "ls": "normal",
+      "lh": "53.76px"
+    },
+    {
+      "tag": "H2",
+      "text": "Put Computer\nto work",
+      "font": "pplxSerif, Georgia, serif",
+      "size": "72px",
+      "weight": "300",
+      "color": "rgb(255, 255, 255)",
+      "ls": "normal",
+      "lh": "80.64px"
+    },
+    {
+      "tag": "H2",
+      "text": "Put Computerto work",
+      "font": "pplxSerif, Georgia, serif",
+      "size": "72px",
+      "weight": "300",
+      "color": "rgb(255, 255, 255)",
+      "ls": "normal",
+      "lh": "80.64px"
+    },
+    {
+      "tag": "H2",
+      "text": "Cookie Policy",
+      "font": "pplxSans, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "size": "16px",
+      "weight": "400",
+      "color": "rgb(0, 0, 0)",
+      "ls": "normal",
+      "lh": "24px"
+    }
+  ],
+  "p": [
+    {
+      "tag": "P",
+      "text": "Build an interactive web app displaying the Big Mac Index across countries and i",
+      "font": "pplxSans, -apple-system, BlinkMacSystemFont, sans-serif",
+      "size": "12px",
+      "weight": "400",
+      "color": "rgb(39, 26, 0)",
+      "ls": "normal",
+      "lh": "14.4px"
+    },
+    {
+      "tag": "P",
+      "text": "Analyze the ISM Manufacturing Index vs S&P 500 YoY returns since 2000 and create",
+      "font": "pplxSans, -apple-system, BlinkMacSystemFont, sans-serif",
+      "size": "12px",
+      "weight": "400",
+      "color": "rgb(39, 26, 0)",
+      "ls": "normal",
+      "lh": "14.4px"
+    },
+    {
+      "tag": "P",
+      "text": "Build a mobile web app for Huberman's strength protocol with exercise guides, lo",
+      "font": "pplxSans, -apple-system, BlinkMacSystemFont, sans-serif",
+      "size": "12px",
+      "weight": "400",
+      "color": "rgb(39, 26, 0)",
+      "ls": "normal",
+      "lh": "14.4px"
+    },
+    {
+      "tag": "P",
+      "text": "Create a GIF of Nvidia's stock price over the last 10 years.",
+      "font": "pplxSans, -apple-system, BlinkMacSystemFont, sans-serif",
+      "size": "12px",
+      "weight": "400",
+      "color": "rgb(39, 26, 0)",
+      "ls": "normal",
+      "lh": "14.4px"
+    },
+    {
+      "tag": "P",
+      "text": "Build an interactive US election web app (1789-2024) with state/county data, ani",
+      "font": "pplxSans, -apple-system, BlinkMacSystemFont, sans-serif",
+      "size": "12px",
+      "weight": "400",
+      "color": "rgb(39, 26, 0)",
+      "ls": "normal",
+      "lh": "14.4px"
+    },
+    {
+      "tag": "P",
+      "text": "Generate a report on the state of US politics using current Polymarket probabili",
+      "font": "pplxSans, -apple-system, BlinkMacSystemFont, sans-serif",
+      "size": "12px",
+      "weight": "400",
+      "color": "rgb(39, 26, 0)",
+      "ls": "normal",
+      "lh": "14.4px"
+    }
+  ],
+  "buttons": [
+    {
+      "text": "Products",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(219, 222, 227)",
+      "radius": "0px",
+      "pad": "6px 20px",
+      "border": "0px solid color(srgb 0.858824 0.870588 0.890196 / 0.14)",
+      "font": "14px"
+    },
+    {
+      "text": "Business",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(219, 222, 227)",
+      "radius": "0px",
+      "pad": "6px 20px",
+      "border": "0px solid color(srgb 0.858824 0.870588 0.890196 / 0.14)",
+      "font": "14px"
+    },
+    {
+      "text": "Customers",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(219, 222, 227)",
+      "radius": "0px",
+      "pad": "6px 20px",
+      "border": "0px solid color(srgb 0.858824 0.870588 0.890196 / 0.14)",
+      "font": "14px"
+    },
+    {
+      "text": "Resources",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(219, 222, 227)",
+      "radius": "0px",
+      "pad": "6px 20px",
+      "border": "0px solid color(srgb 0.858824 0.870588 0.890196 / 0.14)",
+      "font": "14px"
+    },
+    {
+      "text": "Pricing",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(219, 222, 227)",
+      "radius": "0px",
+      "pad": "6px 20px",
+      "border": "0px solid color(srgb 0.858824 0.870588 0.890196 / 0.14)",
+      "font": "14px"
+    },
+    {
+      "text": "Try Computer",
+      "bg": "rgb(219, 222, 227)",
+      "color": "rgb(16, 18, 22)",
+      "radius": "9999px",
+      "pad": "8px 16px",
+      "border": "0px solid color(srgb 0.858824 0.870588 0.890196 / 0.14)",
+      "font": "14px"
+    },
+    {
+      "text": "Try Computer",
+      "bg": "rgb(39, 37, 30)",
+      "color": "rgb(250, 248, 245)",
+      "radius": "40px",
+      "pad": "0px 20px",
+      "border": "0px none rgb(250, 248, 245)",
+      "font": "15px"
+    },
+    {
+      "text": "Background tasks and continuous monitori",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(39, 26, 0)",
+      "radius": "0px",
+      "pad": "0px",
+      "border": "0px solid color(srgb 0.0431373 0.156863 0.2 / 0.15)",
+      "font": "16px"
+    },
+    {
+      "text": "Explore gallery",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(39, 26, 0)",
+      "radius": "12px",
+      "pad": "0px",
+      "border": "0px solid color(srgb 0.0431373 0.156863 0.2 / 0.15)",
+      "font": "16px"
+    },
+    {
+      "text": "Parallel research and browser automation",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(39, 26, 0)",
+      "radius": "0px",
+      "pad": "0px",
+      "border": "0px solid color(srgb 0.0431373 0.156863 0.2 / 0.15)",
+      "font": "16px"
+    },
+    {
+      "text": "Start new task",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(39, 26, 0)",
+      "radius": "12px",
+      "pad": "0px",
+      "border": "0px solid color(srgb 0.0431373 0.156863 0.2 / 0.15)",
+      "font": "16px"
+    },
+    {
+      "text": "Personalize Computer",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(39, 26, 0)",
+      "radius": "0px",
+      "pad": "0px",
+      "border": "0px solid color(srgb 0.0431373 0.156863 0.2 / 0.15)",
+      "font": "16px"
+    }
+  ],
+  "canvases": [
+    {
+      "tag": "IMG",
+      "src": "data:image/svg+xml,%3c!--%20Air:%20Wordmark%20board%20dedc61ed-bfd8-40ab-9b1d-a1d5dee97e64,%20PPLX_Wordmark_B.svg%20(approved%202026%20kit).%20Same%20paths%20and%20fill;%20only%20the%20viewBox%20is%20cropped%20to%20the%20file's%20own%20clip%20rect%20so%20the%20bar%20sets%20the%20clear%20space.%20--%3e%3csvg%20width='480.615'%20height='97.3693'%20viewBox='97%2078%20480.615%2097.3693'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20clip-path='url(%23clip0_1709_25672)'%3e%3cpath%20d='M507.64%20157.772C497.197%20157.772%20490.907%20152.963%20490.907%20141.818V78H503.605V97.3565H530.187L547.394%20137.712L562.584%2097.3565H577.062L544.784%20175.369H530.424L540.63%20151.907L521.406%20108.501H503.605V139.941C503.605%20144.751%20505.741%20146.628%20510.725%20146.628H522.236V157.772H507.64Z'%20fill='%23121516'/%3e%3cpath%20d='M467.845%20157.772V97.3565H480.543V157.772H467.845ZM467.489%2091.139V78H480.899V91.139H467.489Z'%20fill='%23121516'/%3e%3cpath%20d='M404.356%20157.772L425.005%20126.215L405.899%2097.3566H421.089L433.549%20118.004L446.128%2097.3566H461.318L442.212%20126.215L462.861%20157.772H447.671L433.549%20134.779L419.546%20157.772H404.356Z'%20fill='%23121516'/%3e%3cpath%20d='M377.834%20159.532C359.915%20159.532%20348.285%20146.745%20348.285%20127.271C348.285%20108.501%20360.034%2095.5968%20377.122%2095.5968C394.329%2095.5968%20405.84%20107.445%20405.84%20125.16C405.84%20127.858%20405.722%20129.852%20405.366%20131.494H361.458C362.17%20142.874%20367.747%20148.974%20377.953%20148.974C385.31%20148.974%20390.176%20145.689%20391.956%20139.237H404.891C402.043%20151.907%20391.837%20159.532%20377.834%20159.532ZM361.458%20121.64H392.905C392.193%20111.317%20386.853%20106.155%20377.122%20106.155C367.984%20106.155%20362.288%20111.903%20361.458%20121.64Z'%20fill='%23121516'/%3e%3cpath%20d='M328.431%20157.772V78H341.128V157.772H328.431Z'%20fill='%23121516'/%3e%3cpath%20d='M263.88%20175.369V97.3565H276.578V103.457C280.375%2098.4123%20287.021%2095.5968%20294.853%2095.5968C311.111%2095.5968%20321.316%20107.915%20321.316%20127.506C321.316%20147.097%20311.111%20159.532%20294.853%20159.532C287.021%20159.532%20280.375%20156.717%20276.578%20151.672V175.369H263.88ZM292.123%20148.035C302.685%20148.035%20308.263%20140.997%20308.263%20127.506C308.263%20114.132%20302.685%20107.093%20292.123%20107.093C281.443%20107.093%20275.866%20114.132%20275.866%20127.506C275.866%20140.997%20281.443%20148.035%20292.123%20148.035Z'%20fill='%23121516'/%3e%3cpath%20d='M224.479%20157.772V97.3566H237.176V103.809C239.55%2099.7028%20244.178%2097.3566%20249.874%2097.3566H258.181V109.322H249.874C241.092%20109.322%20237.176%20113.546%20237.176%20122.931V157.772H224.479Z'%20fill='%23121516'/%3e%3cpath%20d='M188.82%20159.532C170.9%20159.532%20159.271%20146.745%20159.271%20127.271C159.271%20108.501%20171.019%2095.5968%20188.107%2095.5968C205.315%2095.5968%20216.825%20107.445%20216.825%20125.16C216.825%20127.858%20216.706%20129.852%20216.35%20131.494H172.443C173.155%20142.874%20178.733%20148.974%20188.938%20148.974C196.296%20148.974%20201.161%20145.689%20202.941%20139.237H215.876C213.028%20151.907%20202.823%20159.532%20188.82%20159.532ZM172.443%20121.64H203.891C203.179%20111.317%20197.838%20106.155%20188.107%20106.155C178.97%20106.155%20173.274%20111.903%20172.443%20121.64Z'%20fill='%23121516'/%3e%3cpath%20d='M97%20175.369V97.3565H109.698V103.457C113.495%2098.4123%20120.141%2095.5968%20127.973%2095.5968C144.231%2095.5968%20154.436%20107.915%20154.436%20127.506C154.436%20147.097%20144.231%20159.532%20127.973%20159.532C120.141%20159.532%20113.495%20156.717%20109.698%20151.672V175.369H97ZM125.244%20148.035C135.805%20148.035%20141.383%20140.997%20141.383%20127.506C141.383%20114.132%20135.805%20107.093%20125.244%20107.093C114.563%20107.093%20108.986%20114.132%20108.986%20127.506C108.986%20140.997%20114.563%20148.035%20125.244%20148.035Z'%20fill='%23121516'/%3e%3c/g%3e%3cdefs%3e%3cclipPath%20id='clip0_1709_25672'%3e%3crect%20width='480.615'%20height='97.3693'%20fill='white'%20transform='translate(97%2078)'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e",
+      "w": 89,
+      "h": 18,
+      "cls": "block h-[18px] w-auto invert"
+    },
+    {
+      "tag": "IMG",
+      "src": "https://pplx-res.cloudinary.com/image/upload/t_w1600/v1771725540/pplx-web/Computer/images/computer-hero-bg-fallback-2.webp",
+      "w": 1610,
+      "h": 906,
+      "cls": "computer-hero-bg-poster"
+    },
+    {
+      "tag": "VIDEO",
+      "src": "https://pplx-res.cloudinary.com/video/upload/v1771728928/pplx-web/Computer/videos/computer-hero-bg-2.webm",
+      "w": 1610,
+      "h": 906,
+      "cls": "hero-glimmer-video"
+    },
+    {
+      "tag": "CANVAS",
+      "w": 1610,
+      "h": 906,
+      "cls": ""
+    },
+    {
+      "tag": "VIDEO",
+      "src": "https://pplx-res.cloudinary.com/video/upload/v1773215515/pplx-web/Computer/videos/computer-unifies-bg.webm",
+      "w": 1440,
+      "h": 900,
+      "cls": "unifies-bg-img"
+    },
+    {
+      "tag": "CANVAS",
+      "w": 1440,
+      "h": 900,
+      "cls": "unifies-dreamcloud"
+    },
+    {
+      "tag": "CANVAS",
+      "w": 1440,
+      "h": 900,
+      "cls": ""
+    },
+    {
+      "tag": "CANVAS",
+      "w": 1440,
+      "h": 900,
+      "cls": ""
+    },
+    {
+      "tag": "IMG",
+      "src": "https://res.cloudinary.com/pplx/image/upload/t_w1600/pplx-web/Computer/images/step-bg-01.webp",
+      "w": 1360,
+      "h": 724,
+      "cls": "step-image-bg"
+    },
+    {
+      "tag": "VIDEO",
+      "src": "https://pplx-res.cloudinary.com/video/upload/pplx-web/Computer/videos/step-01.webm",
+      "w": 1040,
+      "h": 650,
+      "cls": "step-video-el"
+    },
+    {
+      "tag": "IMG",
+      "src": "https://res.cloudinary.com/pplx/image/upload/t_w1600/pplx-web/Computer/images/step-bg-02.webp",
+      "w": 1360,
+      "h": 724,
+      "cls": "step-image-bg"
+    },
+    {
+      "tag": "VIDEO",
+      "src": "https://pplx-res.cloudinary.com/video/upload/pplx-web/Computer/videos/step-02.webm",
+      "w": 1040,
+      "h": 650,
+      "cls": "step-video-el"
+    },
+    {
+      "tag": "IMG",
+      "src": "https://res.cloudinary.com/pplx/image/upload/t_w1600/pplx-web/Computer/images/step-bg-03.webp",
+      "w": 1360,
+      "h": 724,
+      "cls": "step-image-bg"
+    },
+    {
+      "tag": "VIDEO",
+      "src": "https://pplx-res.cloudinary.com/video/upload/v1772015102/pplx-web/Computer/videos/step-03.webm",
+      "w": 1040,
+      "h": 650,
+      "cls": "step-video-el"
+    },
+    {
+      "tag": "IMG",
+      "src": "https://pplx-res.cloudinary.com/image/upload/t_w1600/pplx-web/Computer/images/feature-task-monitoring.webp",
+      "w": 660,
+      "h": 371,
+      "cls": "feature-visual hover-card-img"
+    }
+  ],
+  "scripts": [
+    "https://r2cdn.perplexity.ai/js/count/0.1.0/loader.min.js",
+    "https://www.perplexity.ai/unifyintent.js",
+    "https://pplx-marketing-static.perplexity.ai/assets/index.html-Ck1vAjJl.js",
+    "https://tag.unifyintent.com/v1/A3gCbGqrKTjKGRFjZDjrdQ/script.js",
+    "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+  ],
+  "cssVars": {
+    "--pplx-marketing-header-height": "56px",
+    "--ease-out-quint": "cubic-bezier(.22, 1, .36, 1)",
+    "--composer-accent-bg-idle": "rgb(from var(--shiva-dark-400) r g b / .1)",
+    "--composer-bg-idle": "rgb(from var(--odin-dark-1000) r g b / .05)",
+    "--bg-inverse": "var(--odin-dark-1000)",
+    "--bg-soft": "rgb(from var(--odin-dark-1000) r g b / .06)",
+    "--bg-subtle": "rgb(from var(--odin-dark-1000) r g b / .03)",
+    "--bg-base": "var(--odin-dark-100)",
+    "--bg-raised": "var(--odin-dark-200)",
+    "--bg-backdrop": "rgb(from var(--odin-dark-100) r g b / .7)",
+    "--surface-base": "var(--odin-dark-100)",
+    "--surface-raised": "var(--odin-dark-200)",
+    "--surface-underlay": "var(--odin-dark-50)",
+    "--surface-inverse": "var(--odin-dark-1000)",
+    "--layer-recessed": "rgb(from var(--odin-dark-0) r g b / .25)",
+    "--layer-subtle": "rgb(from var(--odin-dark-1000) r g b / .06)",
+    "--layer-faint": "rgb(from var(--odin-dark-1000) r g b / .03)",
+    "--layer-backdrop": "rgb(from var(--odin-dark-100) r g b / .7)",
+    "--fg-primary": "var(--odin-dark-1000)",
+    "--fg-secondary": "rgb(from var(--odin-dark-1000) r g b / .65)",
+    "--fg-tertiary": "rgb(from var(--odin-dark-1000) r g b / .5)",
+    "--fg-disabled": "rgb(from var(--odin-dark-1000) r g b / .2)",
+    "--fg-inverse": "var(--odin-dark-100)",
+    "--border-heavy": "var(--odin-dark-1000)",
+    "--border-base": "rgb(from var(--odin-dark-1000) r g b / .14)",
+    "--border-medium": "var(--border-base)",
+    "--border-soft": "rgb(from var(--odin-dark-1000) r g b / .07)",
+    "--border-focus": "rgb(from var(--odin-dark-1000) r g b / .2)",
+    "--border-inverse": "var(--odin-dark-100)",
+    "--accent-layer-recessed": "rgb(from var(--shiva-dark-1000) r g b / .5)",
+    "--accent-bg-strong": "var(--shiva-dark-400)",
+    "--accent-bg-soft": "rgb(from var(--shiva-dark-400) r g b / .09)",
+    "--accent-bg-subtle": "rgb(from var(--shiva-dark-400) r g b / .055)",
+    "--accent-bg-selection": "rgb(from var(--shiva-dark-400) r g b / .09)",
+    "--accent-fg-primary": "var(--shiva-dark-400)",
+    "--accent-fg-secondary": "rgb(from var(--shiva-dark-400) r g b / .65)",
+    "--accent-border-strong": "var(--shiva-dark-400)",
+    "--accent-border-subtle": "rgb(from var(--shiva-dark-400) r g b / .055)",
+    "--accent-border-focus": "var(--shiva-dark-400)",
+    "--positive-bg-strong": "var(--garuda-dark-400)",
+    "--positive-bg-soft": "rgb(from var(--garuda-dark-400) r g b / .09)",
+    "--positive-bg-subtle": "rgb(from var(--garuda-dark-400) r g b / .055)",
+    "--positive-fg-primary": "var(--garuda-dark-400)",
+    "--positive-fg-secondary": "rgb(from var(--garuda-dark-400) r g b / .65)",
+    "--positive-border-strong": "var(--garuda-dark-400)",
+    "--positive-border-subtle": "rgb(from var(--garuda-dark-400) r g b / .055)",
+    "--negative-bg-strong": "var(--ifrit-dark-400)",
+    "--negative-bg-soft": "rgb(from var(--ifrit-dark-400) r g b / .09)",
+    "--negative-bg-subtle": "rgb(from var(--ifrit-dark-400) r g b / .055)",
+    "--negative-fg-primary": "var(--ifrit-dark-400)",
+    "--negative-fg-secondary": "rgb(from var(--ifrit-dark-400) r g b / .65)",
+    "--negative-border-strong": "var(--ifrit-dark-400)",
+    "--negative-border-subtle": "rgb(from var(--ifrit-dark-400) r g b / .055)",
+    "--warning-bg-strong": "var(--phoenix-dark-400)",
+    "--warning-bg-soft": "rgb(from var(--phoenix-dark-400) r g b / .09)",
+    "--warning-bg-subtle": "rgb(from var(--phoenix-dark-400) r g b / .055)",
+    "--warning-fg-primary": "var(--phoenix-dark-400)",
+    "--warning-fg-secondary": "rgb(from var(--phoenix-dark-400) r g b / .65)",
+    "--warning-border-strong": "var(--phoenix-dark-400)",
+    "--warning-border-subtle": "rgb(from var(--phoenix-dark-400) r g b / .055)",
+    "--link-accent-fg-idle": "var(--shiva-dark-400)",
+    "--link-accent-fg-hover": "var(--shiva-dark-500)",
+    "--link-accent-fg-active": "var(--shiva-dark-600)",
+    "--link-alert-fg-idle": "var(--phoenix-dark-400)",
+    "--link-alert-fg-hover": "var(--phoenix-dark-500)",
+    "--link-alert-fg-active": "var(--phoenix-dark-600)",
+    "--static-fg-light": "var(--odin-dark-1000)",
+    "--static-fg-dark": "var(--odin-light-2000)",
+    "--static-bg-light": "var(--odin-light-200)",
+    "--static-bg-dark": "var(--odin-dark-100)",
+    "--action-bg-on": "var(--shiva-dark-400)",
+    "--action-bg-off": "rgb(from var(--odin-dark-1000) r g b / .5)",
+    "--action-bg-disabled": "rgb(from var(--odin-dark-1000) r g b / .035)",
+    "--action-border-highlight": "var(--odin-dark-300)",
+    "--action-solid-neutral-bg-active": "rgb(from var(--odin-dark-1000) r g b / .5)",
+    "--action-solid-neutral-bg-hover": "rgb(from var(--odin-dark-1000) r g b / .65)",
+    "--action-solid-neutral-bg-idle": "var(--odin-dark-1000)",
+    "--action-solid-accent-bg-active": "var(--shiva-dark-600)",
+    "--action-solid-accent-bg-hover": "var(--shiva-dark-500)",
+    "--action-solid-accent-bg-idle": "var(--shiva-dark-400)"
+  }
+}
