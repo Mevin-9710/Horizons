@@ -128,6 +128,16 @@ canvas#gl{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:
   background:rgba(255,255,255,.42)!important;backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4)}
 .b-actions{background:rgba(251,247,238,.35)!important}
 .spec{background:rgba(255,255,255,.3)!important}
+
+/* OPAQUE UI (2026-11-14, replaces glassmorphism): solid cream-white fills, no backdrop blur */
+:root{--glass:#FFFDF8!important}
+*{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.t-win,.card,.spec,.tag,.t-pill,.dots button,.A .win,.A .resource,.A .dock,.A .tile:not(.on):not(.lock),.A .btn.ghost,.t-btn.ghost:not(.on),.t-round:not(.x),.metric:not(.bad),.tile:not(.on):not(.lock),.tab:not(.on),.opt:not(.on),.check li,.info,.panel,.g:not(.bad),.choice,.drawer div,.status,.chip,.prompt,.brief,.win,.dock,.cap,.stepper,.report,.B .win,.C .win,.C .resource,.C .tile:not(.on):not(.lock),.C .round,.B .btn.ghost,.C .btn.ghost{background:#FFFDF8!important}
+.spec,.check li,.drawer div,.opt:not(.on){background:#F6F1E6!important}
+.b-actions,.w-foot{background:#F6F1E6!important}
+.metric.bad,.g.bad{background:#F8D6D3!important}
+.opt.on{background:#F7D29C!important}
+.scrim{background:rgba(26,18,6,.45)!important}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
