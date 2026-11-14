@@ -57,12 +57,17 @@ Applied to the home and mission select screens. The other two styles (Console, S
 - **Colour rule (Mevin):** NASA **rockets and spacecraft parts use their original NASA colours**, lit by a soft hemisphere and sun light. **All markings are removed** (no "USA"/"UNITED STATES" lettering). Everything else, including the base, rooms, procedural stand-ins and the Landsat display, keeps the Comet palette shader.
 - Known issue: the NASA "Atlas 9 (Faith 7)" file is dominated by the Mercury capsule and reads as a wide cone. Swap it for a better medium rocket in the build phase.
 
-## Mission control: what the demo shows
-- **Full-screen console** on the cream page with the starry corner, styled with Tactile glass.
-- **Header:** a back button, the "Mission control" ribbon, a **status pill** (Nominal / Watch / Critical / Decision needed), a **T+ clock** and speed controls (Pause · 1× · 4×).
-- **Timeline:** seven phase chips (Launch, Cruise, Orbit insertion, Ops 1–4). The live phase fills in amber, completed phases turn green, and red dots mark the phases with events.
-- **Live view:** a Comet-style grainy Earth with the spacecraft on a dashed orbit and a trail. Amber dots mark the fires spotted, alongside a counter.
-- **Telemetry:** **battery, storage and propellant**. Each is its own single-series line chart in one teal (no legend needed; the title names it), with dashed warning and critical thresholds, a big value, a **labelled status pill** (OK / Watch / Critical, never colour alone) and a hover crosshair with a tooltip.
-- **Event log:** newest first, with icon chips: micrometeoroid (automatic), pointing glitch, solar flare and wildfire alert. **Decision events pause the clock** and offer two Tactile buttons. The choice feeds the Decisions and Resilience scores.
-- **Report** (when Ops 4 ends): a score ring that counts up out of 100, 1–3 stars, and the breakdown from the gameplay doc (**Performance 40, Efficiency 20, Decisions 20, Resilience 20**). It adds short notes, plus **Fly again** and **Redesign spacecraft**.
-- The simulation numbers here are a stand-in. The real game runs the existing seeded simulation and evaluator.
+## Mission control (v2, simplified after feedback)
+**What the official brief asks for** (NASA-SPACEAPP-2026/Space-Mission-Design-Game, `documentation/challenge.md`): simulate the mission and evaluate the result, with **understandable feedback that explains why** it succeeded or failed. The brief also suggests random events, a real-time dashboard, vehicle visualisations and a post-simulation report, and players can then **modify the design and re-run**. It does **not** ask for landing; our three missions are orbiters.
+
+**The game part:** the player is the **flight director**. They watch their design fly, and when a **random event** happens the flight **pauses for a decision** with visible consequences. The report then explains how the **design** and the **decisions** produced the score, and sends them back to redesign.
+
+**Screen, one focus at a time:**
+- **Big trajectory view (centre):** Comet-style Earth. The rocket launches from the surface and arcs up to orbit, an insertion burn follows, then the spacecraft circles on the dashed orbit. Fires spotted pop up as amber dots, and the night side is shaded (the battery drains there).
+- **Phase stepper (top):** Launch → Reach orbit → Check-out → Science 1–4.
+- **Three gauges only (top right):** Battery, Storage, Fuel, each with a label and an amber or red state.
+- **One caption (bottom left):** the phase name plus one sentence on *what is happening and why*, tied to the player's design (rocket, orbit, instrument). It also shows the fires spotted.
+- **Controls (bottom right):** log drawer (hidden by default), 1×/3×, and play/pause.
+- **Decision card (centre, pauses the flight):** an icon, a plain explanation and **two choice cards** with consequence tags (+/− fires, battery, resilience). Automatic events show as a toast instead.
+- **Report:** a score ring and stars, plus the **four categories, each with a one-line "why"**. Performance names the instrument, Efficiency the fuel, Decisions lists the choices made, and Resilience how safe they were. Then **Fly again** or **Redesign spacecraft**.
+- **Moon and Mars missions (build phase):** use the same screen with a transfer arc from Earth to the target, then an orbit-insertion burn at the target. Still no landing.
