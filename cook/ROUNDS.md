@@ -66,3 +66,21 @@ Measured (Playwright): Mars with SLS + hydrazine: transit 259 d, capture, 9.65 k
 Not checked: critics; other destinations in the browser (next round); phone layout.
 Own score: design fit 7.5, readability 7.5 (the wallpaper was too busy behind the orbit lines; dimmed to 42% for the transfer).
 Stop check: not done -> next: milestone 4 (planets and NASA mission models in select, base, control).
+
+## Round 03
+
+Time: to 03:44 IST
+Focus: milestone 4 (all planets, NASA missions and models).
+
+Changes:
+- Mission select: Mercury, Venus, Jupiter, Saturn, Uranus, Neptune and Pluto added (Uranus and Pluto are new bodies); every brief names the NASA mission it follows.
+- 8 NASA spacecraft models fetched and converted (all under 1 MB): MESSENGER, Magellan, LRO, MAVEN, Juno, Cassini, Voyager, New Horizons. Shown in the spacecraft workshop and as the craft in the transfer view.
+- Base: mission name for every destination; a 7th HUD gauge, delta-v (rocket + engine against the Hohmann need), red blocks the launch.
+- Mission control: units, texts, events and the planet's colours follow the mission.
+- Every screen now gets tools/sim/missions.js from the build.
+
+Stills: cook/stills/r02/sheet-planets.jpg
+Measured: select lists 10 missions on 9 bodies + Moon; base (Saturn, Jupiter-C + cold gas) shows 3.6/8.1 km/s in red.
+Not checked: Moon and flyby transfers in the browser (next), critics, phones.
+Decisions: New Horizons uses only the STL "body" part (NASA ships it as loose print parts). Flyby missions still show an orbit ring in mission control.
+Stop check: build order complete; now critics and polish until the cap.

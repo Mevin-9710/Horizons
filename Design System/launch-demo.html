@@ -408,6 +408,7 @@ function startTransfer(){
   const pts=[]; for(let k=0;k<=160;k++) pts.push(hel(k/160,new THREE.Vector3())); const pg=new THREE.BufferGeometry().setFromPoints(pts);
   sscene.add(new THREE.Line(pg,new THREE.LineBasicMaterial({color:0xF2A541,transparent:true,opacity:.28}))); tr.path=new THREE.Line(pg.clone(),new THREE.LineBasicMaterial({color:0xF2A541})); tr.path.geometry.setDrawRange(0,0); sscene.add(tr.path);
   tr.craft=new THREE.Group(); const cm=new THREE.Group(); pay.traverse(o=>{ if(o.isMesh) { const c=new THREE.Mesh(o.geometry,o.material); c.position.copy(o.position); cm.add(c); } }); cm.scale.setScalar(1.5/PS_); cm.position.y=-.75; tr.craft.add(cm);
+  if(MIS.model&&MIS.model!=='landsat-8') loadModel(MIS.model,2.6,false).then(ms=>{ cm.clear(); cm.scale.setScalar(1); cm.position.y=0; for(const m of ms) cm.add(new THREE.Mesh(m.geo,m.mat)); }).catch(()=>{});   // the real NASA spacecraft for this mission
   tr.plume=fm(0xF2893A,.35,2.6,.95); tr.plume.position.y=-.8; tr.plume.visible=false; tr.craft.add(tr.plume); sscene.add(tr.craft);
   dayEl.style.opacity=0; duskEl.style.opacity=0; nightEl.style.opacity=1; nightEl.style.filter='brightness(.42) saturate(.75)'; thrEl.style.display='none'; $('alt-l').textContent='MISSION DAY'; $('vel-l').textContent='DELTA-V LEFT'; $('bcam').style.display='none';
   if(telOn) toggleTel(); $('btel').style.display='none';

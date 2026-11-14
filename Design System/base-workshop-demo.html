@@ -323,7 +323,8 @@ function label(text,x,y,z,w=3.2){const c=document.createElement('canvas');c.widt
 
 /* ================= NASA model loading ================= */
 const loader=new THREE.GLTFLoader(); const MODELS={};
-const MODEL_FILES=['kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-ares-1','rocket-saturn-v','rocket-shuttle','rocket-sls','orion','capsule-mercury'];
+const SHOWM=(typeof HZ_MISSIONS!=='undefined'&&window.HZ&&HZ_MISSIONS[HZ.mission])||null, SHOW=SHOWM?SHOWM.model:'landsat-8', SHOWN=SHOWM&&SHOW!=='landsat-8'?SHOWM.nasa.toUpperCase():'LANDSAT 8';
+const MODEL_FILES=[...(SHOW!=='landsat-8'?[SHOW]:[]),'kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-ares-1','rocket-saturn-v','rocket-shuttle','rocket-sls','orion','capsule-mercury'];
 // Bake every mesh into one geometry (one draw call per model), drop NASA textures/logos, keep shape only.
 // Original NASA colours, minus markings: each texture is replaced by its dominant colour (this removes all
 // lettering such as "USA"/"UNITED STATES"); meshes are merged per material to keep draw calls low.
@@ -451,7 +452,7 @@ function buildCraftRoom(){
   cyl(2.6,2.8,.4,DARK,-10,.2,-3,40); cyl(2.3,2.3,.05,GLOWA,-10,.43,-3,40); label('BUILD BAY',-10,5.4,-3,4.2);
   buildBay=new THREE.Group(); buildBay.position.set(-10,.5,-3); root.add(buildBay); A.block.push([-12.8,-5.8,-7.2,-.2]);
   // NASA Landsat 8 on display (hall of fame)
-  pedestal(-11,7); const ls=fromModel('landsat-8',CREAM,3.2); ls.position.set(-11,.56,7); root.add(ls); label('LANDSAT 8',-11,4.6,7,3.6); A.block.push([-12.1,5.9,-9.9,8.1]);
+  pedestal(-11,7); const ls=fromModel(SHOW,SHOW==='landsat-8'?CREAM:null,3.2); ls.position.set(-11,.56,7); root.add(ls); label(SHOWN,-11,4.6,7,3.6); A.block.push([-12.1,5.9,-9.9,8.1]);
   A.spots.push({id:'exit',pos:new THREE.Vector3(-2,0,10.6),ring:ring(-2,10.6),label:'Exit to base',act:()=>exitRoom()});
   label('EXIT',-2,1.8,11.6,2.2);
   A.spawn=new THREE.Vector3(-2,0,9.4);

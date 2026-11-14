@@ -1,10 +1,13 @@
 <script>
-(function(){ const M=(window.HZ&&HZ.mission)||'earth'; const names={earth:'Wildfire watch',moon:'Lunar polar ice',mars:'Mars atmosphere'};
+(function(){ const M=(window.HZ&&HZ.mission)||'earth'; const names={}; for(const k in HZ_MISSIONS) names[k]=HZ_MISSIONS[k].name;
   const rb=document.querySelector('.mission .t-ribbon'); if(rb) rb.textContent=names[M]||names.earth;
   if(HZ&&HZ.pick){ Object.assign(pick,HZ.pick); renderHUD(); }
   STEPS[3]=['Liftoff!','Walk to the mission control tower to fly your mission.'];
   document.querySelector('.hud .t-round').addEventListener('click',()=>hzGo('select'));
   dockEl.addEventListener('click',e=>{ const t=e.target.closest('.tile'); if(t&&t.dataset.z==='') hzGo('select'); },true);
+  // Delta-v: can this rocket and engine reach the destination? (HTML4 mission design maths)
+  const PLAN=hzPlan(M); if(PLAN.total>0){ const _tot=totals; totals=function(){ const r=_tot(), cap=hzDvCap(pick);
+      r.M.push({k:'dv',icon:'rocket',label:'Delta-v',val:`${cap.toFixed(1)}/${PLAN.total.toFixed(1)} km/s`,r:PLAN.total/cap,hint:`Not enough delta-v to reach ${names[M]}. It needs ${PLAN.total.toFixed(1)} km/s. Pick a bigger rocket or a stronger engine.`}); return r; }; const st=document.createElement('style'); st.textContent='#res{flex-wrap:nowrap}#res .metric{padding-left:7px;padding-right:9px;gap:6px;font-size:11px}#res .metric .mb{width:26px}@media (max-width:1100px){#res .metric .mb{display:none}}'; document.head.appendChild(st); renderHUD(); }
   // Launch: dive the camera into the pad, then hand over to the launch screen (hangar cinematic, count, ascent).
   const design=()=>({rocket:opt('rocket').name,inst:opt('inst')?opt('inst').name:'camera',orbit:opt('orbit').name});
   doLaunch=function(){ closeWin(); transition(new THREE.Vector3(0,0,-16),()=>hzGo('launch',{mission:M,pick:Object.assign({},pick),design:design(),skipCine:false})); };

@@ -40,7 +40,8 @@ for name, fn in SCREENS:
     src = read(p)
     assert len(src) > 2000, 'suspiciously small source: ' + fn
     glue = os.path.join(ROOT, 'tools', 'glue', name + '.html')
-    d[name] = PRE + src + ('\n' + read(glue) if os.path.exists(glue) else '')
+    shared = '' if name in ('home', 'launch') else '<script>\n' + read(os.path.join(ROOT, 'tools', 'sim', 'missions.js')) + '</script>\n'
+    d[name] = PRE + shared + src + ('\n' + read(glue) if os.path.exists(glue) else '')
 
 for out in [os.path.join(ROOT, 'game', 'index.html'), os.path.join(DS, 'horizons-game.html')]:
     lines = read(out).split('\n')

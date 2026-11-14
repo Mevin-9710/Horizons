@@ -143,28 +143,32 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 const reduce=(matchMedia('(prefers-reduced-motion: reduce)').matches||!!(window.HZ&&HZ.settings&&HZ.settings.motion));
 /* ===== Design coming from the workshops (demo values) ===== */
 const DESIGN=Object.assign({mission:'Wildfire watch', inst:'Thermal IR imager', rocket:'Jupiter-C', orbit:'Sun-sync 550 km'}, (window.HZ&&HZ.design)||{});
+const MKEY=(window.HZ&&HZ.mission)||'earth';
+const MI=(typeof HZ_MISSIONS!=='undefined'&&HZ_MISSIONS[MKEY])||{name:'Wildfire watch',unit:'fires',verb:'spotted',planet:'earth',kind:'orbit',obj:''};
+const UNIT=MI.unit, ATEARTH=MKEY==='earth', PNAME=MKEY==='moon'?'the Moon':(typeof HZ_PL!=='undefined'&&HZ_PL[MI.planet]?HZ_PL[MI.planet].n:'Earth');
+DESIGN.mission=MI.name;
 /* ===== Phases: one focus each, with a plain-language "what and why" ===== */
 const PH=[
  {n:'Launch',          d:6,  t:`${DESIGN.rocket} lifts the spacecraft off Earth. The heavier the spacecraft, the more of the rocket's power it uses.`},
  {n:'Reach orbit',     d:5,  t:`The engine fires to settle into a ${DESIGN.orbit} orbit. This burn uses most of the fuel.`},
  {n:'Check-out',       d:4,  t:`Systems switch on one by one. Solar wings unfold and start charging the battery.`},
- {n:'Science 1',       d:8,  t:`The ${DESIGN.inst} scans for heat. Each orbit passes over new forests.`},
+ {n:'Science 1',       d:8,  t:ATEARTH?`The ${DESIGN.inst} scans for heat. Each orbit passes over new forests.`:`The ${DESIGN.inst} starts work at ${PNAME}. ${MI.obj}`},
  {n:'Science 2',       d:8,  t:`Data piles up on board. It is sent home when the craft flies over a ground station.`},
  {n:'Science 3',       d:8,  t:`On the night side there is no sunlight, so the battery drains. Watch the power gauge.`},
- {n:'Science 4',       d:8,  t:`Final stretch. Every fire spotted adds to your score.`}];
+ {n:'Science 4',       d:8,  t:ATEARTH?`Final stretch. Every fire spotted adds to your score.`:`Final stretch. Everything sent home adds to your score.`}];
 let acc=0; PH.forEach(p=>{p.s=acc; acc+=p.d;}); const TOTAL=acc;
 /* ===== Random events → decisions (the game part) ===== */
 const EVENTS=[
  {t:14, kind:'rock', c:'#D7D0C0', title:'Micrometeoroid!', text:'A grain of dust hit a solar wing. It now makes 10% less power.', auto:true, fx:{gen:-10,res:-2}},
  {t:22, kind:'aim', c:'#95B3B6', title:'Pointing glitch', text:'The star tracker got blinded by sunlight. The camera may be pointing slightly off.',
-   choices:[{b:'Reboot tracker',s:'Safe, but you miss one pass.',fx:{sci:-3,res:+6},tags:[['−3 fires','r'],['+ resilience','g']]},
-            {b:'Keep imaging',s:'More pictures, some may be blurry.',fx:{sci:+2,res:-6},tags:[['+2 fires','g'],['− resilience','r']]}]},
+   choices:[{b:'Reboot tracker',s:'Safe, but you miss one pass.',fx:{sci:-3,res:+6},tags:[[`−3 ${UNIT}`,'r'],['+ resilience','g']]},
+            {b:'Keep imaging',s:'More pictures, some may be blurry.',fx:{sci:+2,res:-6},tags:[[`+2 ${UNIT}`,'g'],['− resilience','r']]}]},
  {t:33, kind:'flare', c:'#F2A541', title:'Solar flare!', text:'A burst of radiation from the Sun arrives in 2 minutes. It can damage electronics.',
-   choices:[{b:'Safe mode',s:'Turn off the camera and wait it out.',fx:{sci:-5,res:+10,power:+8},tags:[['−5 fires','r'],['+ battery','g'],['+ resilience','g']]},
-            {b:'Ride it out',s:'Keep working and hope for the best.',fx:{sci:+4,res:-12,power:-15},tags:[['+4 fires','g'],['− battery','r'],['risky','r']]}]},
- {t:44, kind:'fire', c:'#E07A44', title:'Big wildfire found!', text:'Firefighters need to know fast. Sending the alert now costs power.',
-   choices:[{b:'Send alert now',s:'Crews get the news in minutes.',fx:{sci:+8,power:-12,dec:+8},tags:[['+8 fires','g'],['− battery','r'],['+ decisions','g']]},
-            {b:'Wait for next pass',s:'Saves power, news arrives hours later.',fx:{sci:+2,dec:-4},tags:[['+2 fires','g'],['− decisions','r']]}]}];
+   choices:[{b:'Safe mode',s:'Turn off the camera and wait it out.',fx:{sci:-5,res:+10,power:+8},tags:[[`−5 ${UNIT}`,'r'],['+ battery','g'],['+ resilience','g']]},
+            {b:'Ride it out',s:'Keep working and hope for the best.',fx:{sci:+4,res:-12,power:-15},tags:[[`+4 ${UNIT}`,'g'],['− battery','r'],['risky','r']]}]},
+ {t:44, kind:'fire', c:'#E07A44', title:ATEARTH?'Big wildfire found!':'Big discovery!', text:ATEARTH?'Firefighters need to know fast. Sending the alert now costs power.':'Scientists want this data fast. Sending it now costs power.',
+   choices:[{b:ATEARTH?'Send alert now':'Send data now',s:ATEARTH?'Crews get the news in minutes.':'The team gets it within hours.',fx:{sci:+8,power:-12,dec:+8},tags:[[`+8 ${UNIT}`,'g'],['− battery','r'],['+ decisions','g']]},
+            {b:'Wait for next pass',s:'Saves power, news arrives hours later.',fx:{sci:+2,dec:-4},tags:[[`+2 ${UNIT}`,'g'],['− decisions','r']]}]}];
 const S={t:0,speed:1,paused:false,power:100,data:0,fuel:100,gen:100,sci:0,res:10,dec:10,done:false,log:[]};
 /* ===== UI: stepper, gauges ===== */
 const stepEl=document.getElementById('stepper');
@@ -177,7 +181,7 @@ function renderUI(){ const ph=phaseAt(S.t);
   PH.forEach((p,i)=>{const e=document.getElementById('st'+i); e.className='st'+(S.t>=p.s+p.d||S.done?' done':i===ph?' now':'');});
   if(ph!==shownPhase){ shownPhase=ph; document.getElementById('capLabel').textContent=`Phase ${ph+1} of ${PH.length}`; document.getElementById('capTitle').textContent=PH[ph].n; document.getElementById('capText').textContent=PH[ph].t; addLog(PH[ph].n+' started'); }
   for(const g of G){ const v=S[g[0]], st=g[2](v), el=document.getElementById('g-'+g[0]); el.className='t-win g '+st; el.querySelector('em').textContent=Math.round(v)+'%'+(st==='bad'?' !':''); el.querySelector('i').style.width=v+'%'; }
-  document.getElementById('sci').innerHTML= ph>=3?`<svg style="width:16px;height:16px;color:#E07A44"><use href="#i-fire"/></svg>${Math.round(S.sci)} fires spotted so far`:'';
+  document.getElementById('sci').innerHTML= ph>=3?`<svg style="width:16px;height:16px;color:#E07A44"><use href="#i-fire"/></svg>${Math.round(S.sci)} ${UNIT} ${MI.verb} so far`:'';
 }
 /* ===== Toast, log, modal ===== */
 const toastEl=document.getElementById('toast');
@@ -207,7 +211,7 @@ function report(){
   const perf=Math.round(Math.min(40,S.sci/30*40)), eff=Math.round(Math.max(0,Math.min(20,S.fuel/100*10+(S.power>30?10:5)))), dec=Math.max(0,Math.min(20,Math.round(S.dec))), res=Math.max(0,Math.min(20,Math.round(S.res)));
   const total=perf+eff+dec+res, st=total>=80?3:total>=60?2:1;
   const rows=[
-    ['Performance',perf,40, `${Math.round(S.sci)} fires spotted. The ${DESIGN.inst} sees heat through smoke, so it finds more fires than a normal camera.`],
+    ['Performance',perf,40, ATEARTH?`${Math.round(S.sci)} fires spotted. The ${DESIGN.inst} sees heat through smoke, so it finds more fires than a normal camera.`:`${Math.round(S.sci)} ${UNIT} ${MI.verb} at ${PNAME}. A stronger instrument gets more science from every pass.`],
     ['Efficiency',eff,20, S.fuel<30?'Reaching orbit burned a lot of fuel. A lighter spacecraft would leave more in the tank.':`${Math.round(S.fuel)}% fuel left and the battery stayed healthy. Good sizing.`],
     ['Decisions',dec,20, EVENTS.filter(e=>e.picked).map(e=>`${e.title.replace('!','')}: ${e.picked}`).join(' · ')||'No decisions made.'],
     ['Resilience',res,20, res>=14?'Careful choices kept the spacecraft safe.':'Risky choices left the spacecraft exposed. Safe mode protects it during flares.']];
@@ -225,7 +229,8 @@ function init(){ const w=innerWidth,h=innerHeight,d=Math.min(devicePixelRatio||1
   const R=Math.min(w,h)*(w<820?.26:.24), cx=w*.5, cy=h*(w<820?.47:.55);
   // grainy banded Earth (Comet style)
   const e=document.createElement('canvas'); e.width=e.height=R*2; const g=e.getContext('2d'); g.save(); g.beginPath(); g.arc(R,R,R,0,7); g.clip(); g.fillStyle='#0B1F24'; g.fillRect(0,0,R*2,R*2); g.translate(R,R); g.rotate(-.5);
-  const bands=['#0B1F24','#2C5B65','#95B3B6','#2C5B65','#1C3E46','#95B3B6','#0B1F24'];
+  const PC=MKEY==='moon'?['#9C968C','#5E5A54','#F3EEE4','#2A2D33']:(typeof HZ_PL!=='undefined'&&HZ_PL[MI.planet]&&!ATEARTH?HZ_PL[MI.planet].cols:null);
+  const bands=PC?[PC[3],PC[0],PC[2],PC[0],PC[1],PC[2],PC[3]]:['#0B1F24','#2C5B65','#95B3B6','#2C5B65','#1C3E46','#95B3B6','#0B1F24'];
   for(let i=0;i<bands.length;i++){ g.fillStyle=bands[i]; g.beginPath(); const y0=-R+i*(2*R/bands.length); g.moveTo(-R*1.3,y0); for(let xx=-R*1.3;xx<=R*1.3;xx+=6) g.lineTo(xx,y0+Math.sin(xx/R*3+i)*R*.08); g.lineTo(R*1.3,R*1.3); g.lineTo(-R*1.3,R*1.3); g.fill(); }
   g.restore(); const id=g.getImageData(0,0,e.width,e.height); for(let i=0;i<id.data.length;i+=4) if(id.data[i+3]){ const n=(Math.random()-.5)*26; id.data[i]+=n; id.data[i+1]+=n; id.data[i+2]+=n; } g.putImageData(id,0,0);
   let s=9; const Rr=()=>(s=(s*16807)%2147483647)/2147483647; const stars=[]; for(let k=0;k<380;k++){const px=w*(1-Math.pow(Rr(),1.4)*.55),py=h*Math.pow(Rr(),1.5)*.7,dx=(w-px)/(w*.55),dy=py/(h*.7); if(dx*dx+dy*dy>.75) continue; stars.push([px,py,Rr()<.06?1.8:Rr()*.9+.3,Rr()*6]);}

@@ -59,3 +59,4 @@ Use HTML4's `plan()` (Hohmann transfer, patched conics) for each destination's T
 (The run appends one line per finished milestone: date/time IST, what was done, the commit hash.)
 - 03:34 IST 15 Nov: step 0 (tools/build-game.py), milestone 1 (launch sim, new `launch` screen) and milestone 2 (hangar cinematic, base dive hand-off, control starts at check-out) done. See cook/ROUNDS.md round 01.
 - 03:40 IST 15 Nov: milestone 3 (transfer: burn, cruise, course correction, insertion or flyby; mission control hand-off) done. See cook/ROUNDS.md round 02.
+- 03:44 IST 15 Nov: milestone 4 (10 missions on all planets + Moon, 8 NASA spacecraft models, delta-v gauge, mission-aware mission control) done. See cook/ROUNDS.md round 03.
