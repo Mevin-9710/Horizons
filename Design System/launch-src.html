@@ -75,6 +75,7 @@ canvas#fx{pointer-events:none}
 .stats div{background:var(--tile);border:2.5px solid var(--ink);border-radius:12px;box-shadow:0 3px 0 var(--ink);padding:7px 8px;font:400 11px var(--f-num)}
 .stats b{display:block;font:400 17px var(--f-display)}
 #skip{display:none}
+.lbl{display:none;transform:translate(-50%,-190%);pointer-events:none;font-size:10px;padding:3px 9px;z-index:2}
 #load{left:50%;top:50%;transform:translate(-50%,-50%)}
 .credit{left:max(12px,env(safe-area-inset-left,0px));top:calc(70px + env(safe-area-inset-top,0px));font:400 10px var(--f-num);color:var(--muted);max-width:240px;display:none}
 @media (max-width:760px){.tile{min-width:92px}.tile b{font-size:16px}#act{min-width:170px;font-size:19px;padding:12px 18px 14px}.read{bottom:calc(84px + env(safe-area-inset-bottom,0px))}.side{bottom:calc(84px + env(safe-area-inset-bottom,0px))}#tel{width:210px}}
@@ -95,7 +96,7 @@ canvas#fx{pointer-events:none}
     <div class="phase"><span class="t-ribbon" id="phase">Launch pad</span><div class="cap" id="cap"></div></div>
     <span class="t-pill" id="clock">T-00:05</span>
   </div>
-  <div class="ui read" id="read" style="display:none"><div class="tile"><span>ALTITUDE</span><b id="alt">0 km</b></div><div class="tile"><span>SPEED</span><b id="vel">0 m/s</b></div></div>
+  <div class="ui read" id="read" style="display:none"><div class="tile"><span id="alt-l">ALTITUDE</span><b id="alt">0 km</b></div><div class="tile"><span id="vel-l">SPEED</span><b id="vel">0 m/s</b></div></div>
   <div class="ui actbar"><button class="t-btn" type="button" id="thr">Hold: throttle down<kbd>S</kbd></button><button class="t-btn primary" type="button" id="act" disabled>Stand by</button><button class="t-btn" type="button" id="skip">Skip<kbd>Esc</kbd></button></div>
   <div class="ui side"><button class="t-round" type="button" id="bcam" aria-label="Change camera (C)"><svg><use href="#i-cam"/></svg></button><button class="t-round" type="button" id="btel" aria-label="Telemetry (T)" aria-pressed="false"><svg><use href="#i-tel"/></svg></button></div>
   <div class="ui t-win" id="tel"><span class="t-ribbon">Telemetry</span>
@@ -108,6 +109,7 @@ canvas#fx{pointer-events:none}
     <div class="row"><span>AUTOPILOT</span><b id="t-ap2">ON</b></div>
     <div class="row" style="color:var(--muted)"><span>Arrows fly by hand. G autopilot.</span></div>
   </div>
+  <span class="ui t-pill lbl" id="lbA"></span><span class="ui t-pill lbl" id="lbB"></span>
   <div class="ui toast" id="toast"></div>
   <div class="ui t-win" id="card"><span class="t-ribbon" id="card-t">Orbit</span><div id="card-b"></div></div>
   <span class="ui t-pill" id="load"><i></i>Loading rocket…</span>
@@ -119,6 +121,9 @@ canvas#fx{pointer-events:none}
 <script>
 /* ===== Ascent physics (tools/sim/ascent.cjs, inlined by tools/build-game.py) ===== */
 {{ASCENT}}
+</script>
+<script>
+{{MISSIONS}}
 </script>
 <script>
 {{LAUNCH_JS}}

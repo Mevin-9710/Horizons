@@ -143,9 +143,9 @@ function setPhase(t,c){ phaseEl.textContent=t; if(c){ capEl.textContent=c; capEl
 function toast(t,sub,voice){ toastEl.innerHTML=t+(sub?`<small>${sub}</small>`:''); toastEl.classList.remove('s'); void toastEl.offsetWidth; toastEl.classList.add('s'); if(voice!==false) say(voice||t); }
 let cue=null, cueT=0;
 const CUES={sep:['Separate stage',.9,'Stage separation'],ses:['Ignite stage 2',.9,'Second stage ignition'],fairing:['Jettison fairing',1.6,'Fairing separation'],seco:['Engine cutoff',.9,'S E C O'],deploy:['Deploy spacecraft',1.3,'Spacecraft deployed']};
-function setCue(c){ if(c===cue) return; cue=c; cueT=0; if(c){ actEl.innerHTML=CUES[c][0]+'<kbd>Space</kbd>'; actEl.disabled=false; actEl.classList.add('cue'); beep(980,.08); } else { actEl.textContent=mode==='fly'?'Autopilot flying':'Stand by'; actEl.disabled=true; actEl.classList.remove('cue'); } }
-function fireCue(byPlayer){ if(!cue||mode!=='fly') return; const c=cue; if(!act[c](S)) return; if(byPlayer){ hits++; react+=cueT; } else late++; onAction(c); setCue(null); }
-function press(){ audio(); if(mode==='cine'){ return; } if(mode==='fly') fireCue(true); else if(mode==='orbit'&&$('card').classList.contains('s')) next(); }
+function setCue(c){ if(c===cue) return; cue=c; cueT=0; actEl.style.display=''; if(c){ actEl.innerHTML=CUES[c][0]+'<kbd>Space</kbd>'; actEl.disabled=false; actEl.classList.add('cue'); beep(980,.08); } else { actEl.textContent=mode==='fly'?'Autopilot flying':mode==='ss'?'Coasting':'Stand by'; actEl.disabled=true; actEl.classList.remove('cue'); } }
+function fireCue(byPlayer){ if(!cue) return; const c=cue; if(mode==='ss'){ if(!TRA[c]) return; setCue(null); if(c==='tcm'&&!byPlayer) late++; TRA[c](byPlayer); return; } if(mode!=='fly'||!act[c](S)) return; if(byPlayer){ hits++; react+=cueT; } else late++; onAction(c); setCue(null); }
+function press(){ audio(); if(mode==='cine'){ return; } if(mode==='fly') fireCue(true); else if(mode==='ss'){ if(cue) fireCue(true); else if(tr&&tr.st==='done') next(); } else if(mode==='orbit'&&$('card').classList.contains('s')) next(); }
 actEl.addEventListener('click',press);
 const fmtT=t=>{ const s=Math.abs(Math.floor(t)); return (t<0?'T-':'T+')+String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); };
 
@@ -164,7 +164,71 @@ function explode(why){ rocket.localToWorld(t1.set(0,HT*.5,0)); for(let i=0;i<260
   setTimeout(()=>card('Vehicle lost',`<p>${why}</p><p>Keep the angle of attack low through Max-Q, and wait for 100 km before dropping the fairing.</p><div class="btns"><button class="t-btn primary" type="button" id="c-retry">Launch again</button><button class="t-btn" type="button" id="c-base">Back to base</button></div>`),1400); }
 function card(title,html){ $('card-t').textContent=title; $('card-b').innerHTML=html; $('card').classList.add('s'); const b=$('card-b').querySelector('button'); if(b) b.focus();
   const r=$('c-retry'), bb=$('c-base'), n=$('c-next'); if(r) r.onclick=()=>go('launch',{mission:HZ.mission,pick:HZ.pick,design:HZ.design,skipCine:true}); if(bb) bb.onclick=()=>go('base',{mission:HZ.mission,pick:HZ.pick}); if(n) n.onclick=next; }
-function next(){ go('control',{mission:HZ.mission,pick:HZ.pick,design:HZ.design,flight}); }
+const MKEY=HZ_MISSIONS[HZ.mission]?HZ.mission:'earth', MIS=HZ_MISSIONS[MKEY], PLAN=hzPlan(MKEY), DVCAP=hzDvCap(pick);
+function toControl(){ go('control',{mission:HZ.mission,pick:HZ.pick,design:HZ.design,flight}); }
+function next(){ if(MIS.kind==='orbit'||(tr&&tr.st==='done')) return toControl(); if(!tr) startTransfer(); }
+
+/* ---------- transfer: burn out of Earth orbit, cruise, course correction, insertion or flyby (HTML4's mission design phase) ---------- */
+let tr=null, sscene=null, scam=null;
+const MOON=MIS.kind==='moon', dsp=MOON?(r=>3.4*Math.sqrt(r)):(a=>22*Math.sqrt(a)), PHI=.6;
+const TGT=MOON?{n:'Moon',P:27.3/365.25,cols:['#D9D4CB','#9C968C','#F3EEE4','#5E5A54']}:HZ_PL[MIS.planet];
+function kep(M,e){ let E=M; for(let k=0;k<30;k++) E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E)); return E; }
+function hel(f,out){ const p=PLAN, E=kep((p.outer?0:Math.PI)+Math.PI*f,p.e), r=p.at*(1-p.e*Math.cos(E)), nu=2*Math.atan2(Math.sqrt(1+p.e)*Math.sin(E/2),Math.sqrt(1-p.e)*Math.cos(E/2)), ang=PHI+(p.outer?0:Math.PI)+nu, d=dsp(r); return out.set(Math.cos(ang)*d,0,Math.sin(ang)*d); }
+const fmtDays=d=>d>730?(d/365.25).toFixed(1)+' years':Math.round(d)+' days';
+function ring3(r,col,op){ const pts=[]; for(let k=0;k<=160;k++) pts.push(new THREE.Vector3(Math.cos(k/160*6.2832)*r,0,Math.sin(k/160*6.2832)*r)); return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:col,transparent:true,opacity:op})); }
+function startTransfer(){
+  $('card').classList.remove('s'); mode='ss'; sscene=new THREE.Scene(); scam=new THREE.PerspectiveCamera(46,innerWidth/innerHeight,.1,4000);
+  sscene.add(new THREE.HemisphereLight(0xFBFAF4,0x6E6457,1));
+  tr={st:'park',t:0,f:0,b:0,used:0,tcm:false,tcmMiss:false,outcome:null,bodies:[],tp:new THREE.Vector3(),cp:new THREE.Vector3(),mid:new THREE.Vector3(),camP:new THREE.Vector3(60,90,80),home:new THREE.Vector3()};
+  const ball=(r,cols,fq)=>{ const m=new THREE.Mesh(new THREE.SphereGeometry(r,40,28),mat(cols,[.4,1,.3],fq)); sscene.add(m); return m; };
+  if(MOON){ tr.home=null; ball(2.4,HZ_PL.earth.cols,.5); tr.tm=ball(.95,TGT.cols,1.1); sscene.add(ring3(dsp(PLAN.a),0xC2643A,.55)); tr.parkR=3.4; }
+  else { ball(5,['#F2A541','#F2C27A','#FFE0A0','#C2643A'],.35);
+    for(const k in HZ_PL){ const q=HZ_PL[k], isT=k===MIS.planet, isE=k==='earth', r=q.big?2.4:1.05, m=ball(r,q.cols,.9/r);
+      if(q.ring){ const rg=new THREE.Mesh(new THREE.RingGeometry(r*1.35,r*2.2,64),new THREE.MeshBasicMaterial({color:0xD8C89A,side:2,transparent:true,opacity:.7})); rg.rotation.x=Math.PI/2.3; m.add(rg); }
+      sscene.add(ring3(dsp(q.a),isT?0xC2643A:0xFBFAF4,isT?.7:.22)); tr.bodies.push({m,q,isT,isE,th:isE?PHI:isT?0:(q.a*7.3)%6.283}); if(isT) tr.tm=m; if(isE) tr.em=m; }
+    tr.parkR=1.9; }
+  const pts=[]; for(let k=0;k<=160;k++) pts.push(hel(k/160,new THREE.Vector3())); const pg=new THREE.BufferGeometry().setFromPoints(pts);
+  sscene.add(new THREE.Line(pg,new THREE.LineBasicMaterial({color:0xF2A541,transparent:true,opacity:.28}))); tr.path=new THREE.Line(pg.clone(),new THREE.LineBasicMaterial({color:0xF2A541})); tr.path.geometry.setDrawRange(0,0); sscene.add(tr.path);
+  tr.craft=new THREE.Group(); const cm=new THREE.Group(); pay.traverse(o=>{ if(o.isMesh) { const c=new THREE.Mesh(o.geometry,o.material); c.position.copy(o.position); cm.add(c); } }); cm.scale.setScalar(1.5/PS_); cm.position.y=-.75; tr.craft.add(cm);
+  tr.plume=fm(0xF2893A,.35,2.6,.95); tr.plume.position.y=-.8; tr.plume.visible=false; tr.craft.add(tr.plume); sscene.add(tr.craft);
+  dayEl.style.opacity=0; duskEl.style.opacity=0; nightEl.style.opacity=1; nightEl.style.filter='brightness(.42) saturate(.75)'; thrEl.style.display='none'; $('alt-l').textContent='MISSION DAY'; $('vel-l').textContent='DELTA-V LEFT'; $('bcam').style.display='none';
+  if(telOn) toggleTel(); $('btel').style.display='none';
+  if(DVCAP<PLAN.tpi){ tr.st='short'; setPhase('Parking orbit'); card('Not enough delta-v',`<p>Leaving Earth for ${TGT.n} needs a burn of ${PLAN.tpi.toFixed(1)} km/s. This rocket and engine can give ${DVCAP.toFixed(1)} km/s.</p><p>Pick a bigger rocket or a stronger engine in the workshops.</p><div class="btns"><button class="t-btn primary" type="button" id="c-base">Back to base</button></div>`); return; }
+  setPhase('Parking orbit',`Fire the transfer burn to leave Earth for ${TGT.n}. It needs ${PLAN.tpi.toFixed(1)} of your ${DVCAP.toFixed(1)} km/s.`); say('Parking orbit. Stand by for the transfer burn.'); setCue('tpi'); }
+const TRA={
+  tpi(){ tr.st='burn1'; tr.b=0; tr.plume.visible=true; toast('Transfer burn',`Leaving Earth orbit for ${TGT.n}.`,'Transfer burn'); },
+  tcm(by){ tr.tcm=true; if(by){ tr.used+=.02; toast('On course','Small correction burn. Arrival will be exact.','Course correction complete'); } else { tr.tcmMiss=true; } },
+  oi(){ tr.st='burn2'; tr.b=0; tr.plume.visible=true; const need=PLAN.oi*(tr.tcmMiss?1.15:1); tr.outcome=(DVCAP-tr.used>=need)?'orbit':'flyby'; if(tr.outcome==='orbit') tr.used+=need;
+    toast(tr.outcome==='orbit'?'Insertion burn':'Too fast',tr.outcome==='orbit'?`Braking into orbit around ${TGT.n}.`:'Not enough delta-v left to brake. This becomes a flyby.',tr.outcome==='orbit'?'Orbit insertion burn':'Unable to brake. Flyby.'); },
+  fly(){ tr.st='burn2'; tr.b=0; tr.outcome='flyby'; toast('Flyby',`Cameras on. Closest approach to ${TGT.n}.`,'Flyby science started'); } };
+Object.assign(CUES,{tpi:['Transfer burn',3.5],tcm:['Course correction',2.6],oi:['Orbit insertion',3.2],fly:['Begin flyby',3.2]});
+function transferFrame(dt,now){ const T=PLAN.T, CR=MOON?6:9;
+  if(tr.st==='burn1'){ tr.b+=dt; if(tr.b>1.6){ tr.st='cruise'; tr.used+=PLAN.tpi; tr.plume.visible=false; setPhase('Cruise to '+TGT.n,' '); } }
+  else if(tr.st==='cruise'){ tr.f=Math.min(1,tr.f+dt/CR); capEl.textContent=`Day ${Math.round(tr.f*T)} of ${Math.round(T)}`+(T>730?` (${(T/365.25).toFixed(1)} years)`:'');
+    if(!tr.tcm&&tr.f>.36&&tr.f<.64) setCue('tcm'); else if(cue==='tcm'){ if(!tr.tcm){ tr.tcm=true; tr.tcmMiss=true; late++; } setCue(null); }
+    if(tr.f>=1){ tr.st='arrive'; setPhase('Arrival at '+TGT.n,MIS.kind==='flyby'?'One chance. Start the flyby science.':`Brake into orbit. It needs ${(PLAN.oi*(tr.tcmMiss?1.15:1)).toFixed(1)} km/s.`); setCue(MIS.kind==='flyby'?'fly':'oi'); } }
+  else if(tr.st==='burn2'){ tr.b+=dt; if(tr.b>1.9){ tr.st='done'; tr.plume.visible=false; actEl.style.display='none'; const left=Math.max(0,DVCAP-tr.used); flight.transfer={dest:TGT.n,days:Math.round(T),outcome:tr.outcome,dvLeft:+left.toFixed(2),tcm:!tr.tcmMiss}; flight.score+=(tr.outcome==='orbit'||MIS.kind==='flyby'?400:0)+(tr.tcmMiss?0:150);
+      const ok=tr.outcome==='orbit'||MIS.kind==='flyby'; setPhase(ok?(tr.outcome==='orbit'?'In orbit around '+TGT.n:'Flyby of '+TGT.n):'Flyby only');
+      card(ok?'Arrived at '+TGT.n:'Flyby only',`<div class="stats"><div>TRANSIT<b>${fmtDays(T)}</b></div><div>DELTA-V LEFT<b>${left.toFixed(1)} km/s</b></div><div>COURSE CORRECTION<b>${tr.tcmMiss?'Missed':'Done'}</b></div><div>FLIGHT SCORE<b>${flight.score}</b></div></div><p>${tr.outcome==='orbit'?'Captured into orbit. Mission control takes over.':MIS.kind==='flyby'?'A clean flyby. Mission control takes over for the science pass.':'The spacecraft could not brake, so it only gets one fast pass. Expect less science.'}</p><div class="btns"><button class="t-btn primary" type="button" id="c-next">Mission control<kbd>Enter</kbd></button></div>`); } }
+  tr.t+=dt; const day=tr.f*T;
+  /* bodies */
+  if(MOON){ const a=PHI+Math.PI-2*Math.PI*(T-day)/27.3, d=dsp(PLAN.a); tr.tm.position.set(Math.cos(a)*d,0,Math.sin(a)*d); tr.home=t3.set(0,0,0); }
+  else for(const b of tr.bodies){ const a=b.isE?PHI+2*Math.PI*day/365.25:b.isT?PHI+Math.PI-2*Math.PI*(T-day)/(b.q.P*365.25):b.th+tr.t*.02/b.q.P, d=dsp(b.q.a); b.m.position.set(Math.cos(a)*d,0,Math.sin(a)*d); b.m.rotation.y+=dt*.2; }
+  const home=MOON?t3.set(0,0,0):tr.em.position, tm=tr.tm.position;
+  /* craft */
+  if(tr.st==='park'||tr.st==='burn1'||tr.st==='short'){ const a=tr.t*1.6; tr.cp.set(home.x+Math.cos(a)*tr.parkR,0,home.z+Math.sin(a)*tr.parkR); tr.craft.rotation.set(Math.PI/2,0,-a); }
+  else if(tr.st==='cruise'){ hel(tr.f,tr.cp); hel(Math.min(1,tr.f+.01),t1); tr.craft.lookAt(t1); tr.craft.rotateX(Math.PI/2); tr.path.geometry.setDrawRange(0,Math.ceil(tr.f*160)+1); }
+  else { const a=tr.t*1.3, rr=(MOON?1.9:(TGT.big?3.6:2))+(tr.outcome==='flyby'&&tr.st==='done'?(tr.b+=dt)*2.2:0); tr.cp.set(tm.x+Math.cos(a)*rr,0,tm.z+Math.sin(a)*rr); tr.craft.rotation.set(Math.PI/2,0,-a); }
+  tr.craft.position.copy(tr.cp); if(tr.plume.visible){ const k=1+Math.random()*.2; tr.plume.scale.set(k,k,k); }
+  /* camera: frame the craft and the target together, closing in as they meet */
+  tr.mid.copy(tr.cp).add(tm).multiplyScalar(.5); const far=tr.cp.distanceTo(tm), dist=clamp(far*1.05+15,MOON?16:20,300), k=1-Math.exp(-dt*2.2);
+  t1.set(.42,.72,.66).normalize().multiplyScalar(dist).add(tr.mid); tr.camP.lerp(t1,k); tr.tp.lerp(tr.mid,k); scam.position.copy(tr.camP); scam.lookAt(tr.tp);
+  /* labels + readouts */
+  const lab=(el,pos,txt)=>{ t2.copy(pos).project(scam); el.style.display=t2.z<1?'inline-flex':'none'; el.style.left=((t2.x*.5+.5)*FW)+'px'; el.style.top=((-t2.y*.5+.5)*FH)+'px'; el.textContent=txt; };
+  lab($('lbA'),MOON?t3.set(0,0,0):tr.em.position,'Earth'); lab($('lbB'),tm,TGT.n);
+  elAlt.textContent=tr.st==='park'||tr.st==='burn1'||tr.st==='short'?'0':String(Math.round(day)); elVel.textContent=Math.max(0,DVCAP-tr.used).toFixed(1)+' km/s'; elClock.textContent=MIS.nasa;
+  if(cue&&TRA[cue]){ cueT+=dt; if(cueT>=CUES[cue][1]) fireCue(false); }
+  drawFx(now,1); renderer.render(sscene,scam); }
 $('back').onclick=()=>go('base',{mission:HZ.mission,pick:HZ.pick});
 
 /* ---------- hangar cinematic (HTML4's hangar and pad operations, as one skippable auto cutscene) ---------- */
@@ -195,7 +259,7 @@ function toggleTel(){ telOn=!telOn; $('tel').classList.toggle('s',telOn); $('bte
 function nextCam(){ camMode=(camMode+1)%4; autoCam=false; }
 $('btel').onclick=toggleTel; $('bcam').onclick=nextCam;
 thrEl.onpointerdown=()=>{ thrHeld=true; thrEl.classList.add('down'); audio(); }; thrEl.onpointerup=thrEl.onpointerleave=()=>{ thrHeld=false; thrEl.classList.remove('down'); };
-canvas.addEventListener('pointerdown',()=>{ audio(); if(mode==='fly'&&cue) fireCue(true); });
+canvas.addEventListener('pointerdown',()=>{ audio(); if((mode==='fly'||mode==='ss')&&cue) fireCue(true); });
 
 /* ---------- shooting stars on the 2D layer once the sky is dark ---------- */
 const fx=$('fx'), fxc=fx.getContext('2d'); let FW=0, FH=0; const MET=[]; let nextMet=0;
@@ -205,12 +269,13 @@ function drawFx(now,night){ fxc.clearRect(0,0,FW,FH); if(night<.5||reduce) retur
 
 /* ---------- frame ---------- */
 function resize(){ const w=innerWidth,h=innerHeight; renderer.setSize(w,h,false); cam.aspect=w/h; cam.fov=w<h?66:52; cam.updateProjectionMatrix(); const d=Math.min(devicePixelRatio||1,1.5); fx.width=w*d; fx.height=h*d; fxc.setTransform(d,0,0,d,0,0); FW=w; FH=h; fire.o.material.uniforms.k.value=smoke.o.material.uniforms.k.value=h*.42*renderer.getPixelRatio(); }
-addEventListener('resize',resize); resize();
+addEventListener('resize',()=>{ resize(); if(scam){ scam.aspect=innerWidth/innerHeight; scam.updateProjectionMatrix(); } }); resize();
 function place(){ const h=vis(Math.max(0,S.alt)), r=R+h+.05, th=S.theta, a=th+S.pitch*RAD; P.set(Math.sin(th)*r,Math.cos(th)*r-R,0); rocket.position.copy(P); rocket.rotation.set(0,0,-a); dirv.set(Math.sin(a),Math.cos(a),0); }
 let last=performance.now(), running=true, shake=0, cdN=9, frames=0, ftSum=0, ftMax=0, tCine=0;
 document.addEventListener('visibilitychange',()=>{ running=!document.hidden; if(running){ last=performance.now(); requestAnimationFrame(frame); } });
 const elAlt=$('alt'), elVel=$('vel'), elClock=$('clock'), dayEl=$('day'), nightEl=$('night'), duskEl=$('dusk');
 function frame(now){ if(!running) return; const dt=Math.min((now-last)/1000,.05); last=now; frames++; ftSum+=dt; if(dt>ftMax) ftMax=dt;
+  if(mode==='ss'){ transferFrame(dt,now); requestAnimationFrame(frame); return; }
   if(mode==='cine'){ ct_+=dt; tCine+=dt; const D=CINE[cs][0]; if(ct_>=D){ if(cs<CINE.length-1){ cs++; ct_=0; setPhase(CINE[cs][1],CINE[cs][2]); say(CINE[cs][1]); } else endCine(); }
     if(mode==='cine'){ const e=sstep(0,1,ct_/CINE[cs][0]); cinePose(cs,e); elClock.textContent='Pre-launch'; } }
   if(mode==='count'){ tc+=dt; elClock.textContent=fmtT(tc); const n=Math.ceil(-tc); if(n!==cdN&&n>=1&&n<=5){ cdN=n; beep(n<=2?1200:800); say(String(n)); }
@@ -274,5 +339,5 @@ function frame(now){ if(!running) return; const dt=Math.min((now-last)/1000,.05)
   updateClips(); renderer.render(scene,cam); requestAnimationFrame(frame); }
 
 /* ---------- start ---------- */
-window.LX={S,get mode(){return mode},get flight(){return flight},get cue(){return cue},press,skip:()=>{ if(mode==='cine') endCine(); },stats:()=>({tCine,tReal,frames,avg:ftSum/Math.max(1,frames),max:ftMax,calls:renderer.info.render.calls,tris:renderer.info.render.triangles}),resetStats:()=>{frames=0;ftSum=0;ftMax=0}};
+window.LX={S,get tr(){return tr},get mode(){return mode},get flight(){return flight},get cue(){return cue},press,skip:()=>{ if(mode==='cine') endCine(); },stats:()=>({tCine,tReal,frames,avg:ftSum/Math.max(1,frames),max:ftMax,calls:renderer.info.render.calls,tris:renderer.info.render.triangles}),resetStats:()=>{frames=0;ftSum=0;ftMax=0}};
 ready.then(()=>{ $('load').style.display='none'; if(HZ.skipCine) { cinePose(5,1); startCount(); camP.set(-19,4.5,29); camT.set(0,HT*.5,0); } else startCine(); requestAnimationFrame(t=>{ last=t; frame(t); }); });

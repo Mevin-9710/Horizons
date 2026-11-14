@@ -26,6 +26,7 @@ def build_launch():
     sky = re.search(r'url\((data:image/webp;base64,[A-Za-z0-9+/=]+)\)', read(os.path.join(DS, 'home-screen-demo.html'))).group(1)
     out = (src.replace('{{FONT}}', font).replace('{{SKY}}', sky)
               .replace('{{ASCENT}}', read(os.path.join(ROOT, 'tools', 'sim', 'ascent.cjs')))
+              .replace('{{MISSIONS}}', read(os.path.join(ROOT, 'tools', 'sim', 'missions.js')))
               .replace('{{LAUNCH_JS}}', read(os.path.join(DS, 'launch-src.js'))))
     with open(os.path.join(DS, 'launch-demo.html'), 'w', encoding='utf-8') as f:
         f.write(out)

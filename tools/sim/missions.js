@@ -1,0 +1,36 @@
+/* Shared mission data and transfer maths (inlined into the launch screen and the hand-off glue by tools/build-game.py).
+   Planet constants and plan() come from The Horizon Explorers v4: Hohmann transfer with patched conics.
+   Each destination uses a real NASA mission whose spacecraft model is in NASA 3D Resources. */
+const HZ_PL={
+  mercury:{n:'Mercury',a:.387,P:.241,R:2440,mu:22032,cols:['#B5B0A8','#8E8982','#D2CDC4','#4A4640']},
+  venus:  {n:'Venus',  a:.723,P:.615,R:6052,mu:324859,cols:['#E6C27A','#C9A55C','#F3DDA8','#7A5E2E']},
+  earth:  {n:'Earth',  a:1,   P:1,   R:6371,mu:398600,cols:['#2C5B65','#1C3E46','#95B3B6','#0B1F24']},
+  mars:   {n:'Mars',   a:1.524,P:1.881,R:3390,mu:42828,cols:['#C2643A','#A73B42','#E07A44','#4A1A14']},
+  jupiter:{n:'Jupiter',a:5.203,P:11.86,R:69911,mu:1.267e8,cols:['#C9A55C','#8A7A4A','#F2C27A','#4A3F22'],big:1},
+  saturn: {n:'Saturn', a:9.537,P:29.46,R:58232,mu:3.793e7,cols:['#E8D9B8','#C9B58A','#F3EEE4','#7A6A48'],big:1,ring:1},
+  uranus: {n:'Uranus', a:19.19,P:84,   R:25362,mu:5.794e6,cols:['#95C9CF','#6FA9B2','#C4E4E6','#33606A'],big:1},
+  neptune:{n:'Neptune',a:30.07,P:164.8,R:24622,mu:6.837e6,cols:['#2C4F8A','#1C3566','#6F8FCF','#0B1838'],big:1},
+  pluto:  {n:'Pluto',  a:39.48,P:248,  R:1188,mu:869.6,cols:['#CBB59A','#A8937A','#E6D6C0','#5E4E3C']}};
+// kind: 'orbit' (Earth orbit only), 'moon', 'orbiter' (transfer + insertion), 'flyby' (transfer, no insertion)
+const HZ_MISSIONS={
+  earth:  {planet:'earth',  name:'Wildfire watch',  nasa:'Landsat',        kind:'orbit',  diff:1,unit:'fires',        verb:'spotted',  model:'landsat-8', obj:'Spot new wildfires within hours, from orbit, so crews on the ground can act before they spread.'},
+  moon:   {planet:'moon',   name:'Lunar polar ice', nasa:'LRO',            kind:'moon',   diff:2,unit:'ice maps',     verb:'made',     model:'lro',       obj:'Map water ice hiding in craters at the lunar poles that never see sunlight.'},
+  mars:   {planet:'mars',   name:'Mars atmosphere', nasa:'MAVEN',          kind:'orbiter',diff:3,unit:'air samples',  verb:'taken',    model:'maven',     obj:'Measure how Mars is losing its air to space, and how fast.'},
+  mercury:{planet:'mercury',name:'Mercury mapper',  nasa:'MESSENGER',      kind:'orbiter',diff:3,unit:'surface maps', verb:'made',     model:'messenger', obj:'Map all of Mercury and look for ice in polar craters that never see the Sun.'},
+  venus:  {planet:'venus',  name:'Venus radar',     nasa:'Magellan',       kind:'orbiter',diff:2,unit:'radar swaths', verb:'mapped',   model:'magellan',  obj:'Map the surface of Venus with radar, straight through its thick clouds.'},
+  jupiter:{planet:'jupiter',name:'Inside Jupiter',  nasa:'Juno',           kind:'orbiter',diff:3,unit:'gravity passes',verb:'flown',   model:'juno',      obj:'Measure the gravity and magnetic field of Jupiter to see what lies under the clouds.'},
+  saturn: {planet:'saturn', name:'Rings and Titan', nasa:'Cassini-Huygens',kind:'orbiter',diff:3,unit:'ring scans',   verb:'made',     model:'cassini',   obj:'Study Saturn, its rings and its moon Titan from orbit.'},
+  uranus: {planet:'uranus', name:'Ice giant flyby', nasa:'Voyager 2',      kind:'flyby',  diff:2,unit:'flyby images', verb:'taken',    model:'voyager',   obj:'Fly past Uranus, the ice giant that rolls on its side, and photograph its moons.'},
+  neptune:{planet:'neptune',name:'Edge of the planets',nasa:'Voyager 2',   kind:'flyby',  diff:3,unit:'flyby images', verb:'taken',    model:'voyager',   obj:'Fly past Neptune and its moon Triton at the edge of the planets.'},
+  pluto:  {planet:'pluto',  name:'Pluto flyby',     nasa:'New Horizons',   kind:'flyby',  diff:3,unit:'flyby images', verb:'taken',    model:'new-horizons',obj:'Cross the whole solar system for one fast pass over the icy heart of Pluto.'}};
+// Hohmann transfer from Earth to a planet (km/s, days). HTML4 plan().
+function hzPlan(key){ const M=HZ_MISSIONS[key]||HZ_MISSIONS.earth;
+  if(M.kind==='orbit') return {tpi:0,oi:0,T:0,total:0};
+  if(M.kind==='moon') return {tpi:3.13,oi:.82,T:3.5,total:3.95,a:58,e:(58-1)/(58+1),at:(1+58)/2,outer:true};
+  const p=HZ_PL[M.planet],a=p.a,at=(1+a)/2,T=.5*Math.pow(at,1.5)*365.25,vE=29.78,vd=vE*Math.sqrt(2-1/at),vi1=Math.abs(vd-vE),r=6571,mu=398600;
+  const tpi=Math.sqrt(vi1*vi1+2*mu/r)-Math.sqrt(mu/r),va=vE*Math.sqrt(2/a-1/at),vi2=Math.abs(va-vE/Math.sqrt(a)),rp=p.R*1.5,x=2*p.mu/rp;
+  const oi=M.kind==='flyby'?0:Math.sqrt(vi2*vi2+x)-Math.sqrt(x*50/51);
+  return {tpi,oi,T,total:tpi+oi,a,at,e:Math.abs(a-1)/(a+1),outer:a>1,vi2}; }
+// Delta-v the stack can give after reaching orbit: what is left in the upper stage plus the spacecraft engine.
+const HZ_STAGE_DV={r1:3.2,r2:4.6,r3:9.5,r4:7.2,r5:12.5}, HZ_ENGINE_DV={e1:.4,e2:1.6,e3:3.6};
+function hzDvCap(pick){ return (HZ_STAGE_DV[pick&&pick.rocket]||3.2)+(HZ_ENGINE_DV[pick&&pick.engine]||.4); }

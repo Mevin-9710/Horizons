@@ -49,3 +49,20 @@ Not checked this round:
 Own score (logged, never decides): design fit 7.5, spectacle 7.5, readability 8, pacing meets the measured targets.
 Top gaps (own): 1) trees and pad are sparse near the horizon, 2) no Earth limb in the chase view until late, 3) 249 draw calls (merge trees), 4) fairing half floats oddly in the first cinematic beat.
 Stop check: not done -> next: milestone 3 (transfer + mission control handoff).
+
+## Round 02
+
+Time: 03:34 to 03:40 IST
+Focus: milestone 3 (transfer + mission control hand-off).
+
+Changes:
+- tools/sim/missions.js: planets, 10 missions (NASA mission per destination), HTML4 plan() Hohmann maths, delta-v capability from rocket + engine.
+- Launch screen transfer view: parking orbit -> transfer burn cue -> cruise (9 s, day counter) -> course correction cue -> insertion or flyby -> result card -> mission control. Not enough delta-v: no departure (back to base) or flyby only.
+- Mission control receives the flight and transfer result and starts at Check-out.
+
+Stills: cook/stills/r02/sheet-transfer.jpg
+
+Measured (Playwright): Mars with SLS + hydrazine: transit 259 d, capture, 9.65 km/s left. Headless plan(): Moon 3.95, Mars 4.43, Venus 4.01, Jupiter 7.11, Saturn 8.07, Mercury 12.34 km/s; flybys 7.98 to 8.36.
+Not checked: critics; other destinations in the browser (next round); phone layout.
+Own score: design fit 7.5, readability 7.5 (the wallpaper was too busy behind the orbit lines; dimmed to 42% for the transfer).
+Stop check: not done -> next: milestone 4 (planets and NASA mission models in select, base, control).
