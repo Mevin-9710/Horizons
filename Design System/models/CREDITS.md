@@ -4,7 +4,7 @@ All `.glb` files here come from **NASA's 3D Resources**, at https://github.com/n
 
 **Rules we follow:**
 - Credit NASA in-game: "3D models courtesy of NASA".
-- No NASA insignia or logotype. Textures are dropped at load, so only the shape is used.
+- **NASA rockets and parts keep their original NASA colours.** Every texture is flattened at load to its dominant colour, which removes all markings and lettering (no "USA" / "UNITED STATES" text, no NASA insignia or logotype). Only Landsat 8 (a display piece) uses the Horizons palette shader.
 - Show no NASA endorsement: "Horizons is not affiliated with or endorsed by NASA."
 
 | File | NASA source (folder in `3D Models/`) | Used as |
@@ -18,6 +18,6 @@ All `.glb` files here come from **NASA's 3D Resources**, at https://github.com/n
 | rocket-atlas.glb | Atlas 9 (Faith 7) | Medium rocket |
 | rocket-saturn-v.glb | Saturn V | Heavy rocket |
 
-**Processing:** the originals use Draco compression. They were decoded with `gltf-transform copy`, then welded. Landsat 8, Atlas and the infrared camera were simplified, and textures were resized to 64 px because the game re-shades every model with the Comet shader.
+**Processing:** the originals use Draco compression. They were decoded with `gltf-transform copy`, then welded. Landsat 8, Atlas and the infrared camera were simplified, and textures were resized to 32 px because the game only reads each texture's dominant colour.
 
 **No NASA part model exists for these, so they are procedural stand-ins:** visible camera, hyperspectral imager, all engines (cold gas, hydrazine, electric) and the orbit markers.
