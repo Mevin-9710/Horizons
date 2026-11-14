@@ -74,18 +74,72 @@ canvas#gl{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:
   .obj{font-size:13.5px}
 }
 @media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+
+/* ===== Game feel: TACTILE (chosen 2026-11-14). Chunky outlines, darker lip, squash on press. Palette/fonts unchanged. ===== */
+:root{--amber-d:#C27F22;--ember-d:#8E4322;--bad:#E5484D;--bad-d:#A3262A;--lip:#E4DED2;--ok:#4CC38A}
+.t-btn{position:relative;border:3px solid var(--ink);border-radius:16px;padding:11px 24px 13px;font:400 20px var(--f-display);letter-spacing:.03em;cursor:pointer;color:var(--ink);
+  background:var(--c,#fff);box-shadow:inset 0 -5px 0 var(--cd,var(--lip)),inset 0 3px 0 rgba(255,255,255,.4),0 5px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.t-btn:hover{filter:brightness(1.04)}
+.t-btn:active{transform:translateY(4px);box-shadow:inset 0 -2px 0 var(--cd,var(--lip)),inset 0 3px 0 rgba(255,255,255,.4),0 1px 0 var(--ink)}
+.t-btn.primary{--c:var(--amber);--cd:var(--amber-d);text-shadow:0 2px 0 rgba(255,255,255,.4)}
+.t-btn.ghost{font:700 15px var(--f-ui);letter-spacing:0}
+.t-round{position:relative;width:46px;height:46px;flex:none;border-radius:50%;border:3px solid var(--ink);background:var(--c,#fff);color:var(--cc,var(--ink));box-shadow:inset 0 -4px 0 var(--cd,var(--lip)),0 4px 0 var(--ink);display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .08s,box-shadow .08s}
+.t-round:active{transform:translateY(3px);box-shadow:inset 0 -2px 0 var(--cd,var(--lip)),0 1px 0 var(--ink)}
+.t-round svg{width:20px;height:20px}
+.t-round.x{--c:var(--bad);--cd:var(--bad-d);--cc:#fff;width:40px;height:40px}
+.t-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:#fff;border:2.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);font:400 11px 'Silkscreen',monospace;color:var(--ink);letter-spacing:.04em;text-transform:none}
+.t-pill i{width:8px;height:8px;border-radius:50%;background:var(--amber);border:1.5px solid var(--ink);animation:tblink 1.2s steps(2) infinite}
+@keyframes tblink{50%{opacity:.25}}
+.t-win{background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:0 7px 0 var(--ink)}
+.t-ribbon{position:relative;display:inline-block;align-self:center;background:var(--ember);color:#fff;border:3px solid var(--ink);border-radius:12px;padding:6px 20px 8px;font:400 18px var(--f-display);white-space:nowrap;box-shadow:inset 0 -4px 0 var(--ember-d),0 4px 0 var(--ink);text-shadow:0 2px 0 rgba(26,18,6,.3)}
+.t-new{position:absolute;top:-11px;left:-10px;background:var(--ok);color:#fff;border:2px solid var(--ink);border-radius:6px;font:400 10px 'Silkscreen',monospace;padding:2px 6px;transform:rotate(-10deg)}
+.t-stars{display:flex;gap:4px}.t-stars svg{width:24px;height:24px}
+.t-btn:focus-visible,.t-round:focus-visible{outline:3px solid var(--ember);outline-offset:3px}
+@keyframes tpop{0%{transform:scale(.85) translateY(16px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.t-pill i{animation:none}}
+
+.top .left{display:flex;align-items:center;gap:12px}
+.panel.t-win{backdrop-filter:none;-webkit-backdrop-filter:none}
+.prompt.t-win{padding:30px 16px 16px;overflow:visible;animation:tpop .5s cubic-bezier(.34,1.56,.64,1) both}
+.prompt .t-ribbon{position:absolute;top:-20px;left:16px;font-size:15px;padding:5px 14px 7px}
+.prompt h2{font-size:24px}
+.dots{gap:10px}
+.dots button{border:2.5px solid var(--ink);border-radius:12px;background:#fff;box-shadow:inset 0 -3px 0 var(--lip),0 3px 0 var(--ink);font:700 13px var(--f-ui);padding:7px 12px 9px 9px;transition:transform .08s,box-shadow .08s}
+.dots button:active{transform:translateY(3px);box-shadow:inset 0 -1px 0 var(--lip),0 0 0 var(--ink)}
+.dots button i{border:2px solid var(--ink);width:12px;height:12px}
+.tag{background:#fff;border:2.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);border-radius:10px;font:700 12px var(--f-ui);padding:6px 10px;backdrop-filter:none}
+.brief.t-win{border-radius:22px}
+.b-head{align-items:center;text-align:center;padding-top:4px}
+.b-head h3{font-size:30px}
+.b-body{padding:18px 18px 14px}
+.brief .t-round.x{position:absolute;top:10px;right:10px;z-index:2}
+.obj{text-align:center;font-weight:500}
+.spec{background:#FBF7EE;border:2.5px solid var(--ink);border-radius:12px;box-shadow:0 3px 0 var(--ink)}
+.spec span{font:400 12px 'Silkscreen',monospace}
+.list li::before{width:9px;height:9px;border:2px solid var(--ink);background:var(--amber);border-radius:2px;margin-top:5px}
+.list li{font-weight:600}
+.b-actions{border-top:3px solid var(--ink);background:#FBF7EE;gap:10px;padding:14px 18px 18px}
+.b-actions .t-btn{flex:1}.b-actions .t-btn.ghost{flex:none}
+.brief.open{animation:tpop .55s cubic-bezier(.34,1.56,.64,1) both}
+@media (max-width:760px){.b-head h3{font-size:26px}.prompt.t-win{padding-top:28px}}
 </style>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" fill="var(--sf,#F2A541)" stroke="#1A1206" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+</svg>
 <div id="app">
   <div class="night"></div><canvas id="sky" aria-hidden="true"></canvas><canvas id="gl"></canvas>
   
   <div class="ui top">
-    <div style="display:flex;align-items:baseline;gap:14px"><span class="logo">Horizons</span><span class="step">Step 2 · Mission select</span></div>
-    <button class="chip" type="button" id="home">Back to home</button>
+    <div class="left"><button class="t-round" type="button" id="home" aria-label="Back to home"><svg><use href="#i-back"/></svg></button><span class="logo">Horizons</span><span class="step">Step 2 · Mission select</span></div>
+    <button class="t-round" type="button" aria-label="Settings"><svg><use href="#i-gear"/></svg></button>
   </div>
 
-  <div class="ui panel prompt" id="prompt">
-    <span class="label"><span class="pulse"></span>Mission control</span>
+  <div class="ui panel t-win prompt" id="prompt">
+    <span class="t-ribbon">Mission control</span>
     <h2>Choose your destination</h2>
     <p>Click a glowing planet to see its mission. Drag to look around.</p>
     <div class="dots" id="quick"></div>
@@ -93,7 +147,7 @@ canvas#gl{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:
 
   <div class="tag" id="tag"></div>
 
-  <aside class="ui panel brief" id="brief" aria-live="polite"></aside>
+  <aside class="ui panel t-win brief" id="brief" aria-live="polite"></aside>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -248,19 +302,19 @@ canvas.addEventListener('pointerleave',()=>{tagEl.style.opacity=0});
 function select(id){
   selected=id; const b=byId(id); tagEl.style.opacity=0; promptEl.classList.add('hide');
   if(b.mission){ const m=MISSIONS[id];
-    briefEl.innerHTML = `<div class="b-body"><div class="b-head"><span class="label">Mission brief · ${m.planet}</span><h3>${m.name}</h3>
-      <div class="diff" aria-label="Difficulty ${m.diff} of 3"><span class="label" style="margin-right:6px">Difficulty</span>${[1,2,3].map(i=>`<i class="${i<=m.diff?'on':''}"></i>`).join('')}</div></div>
+    briefEl.innerHTML = `<button class="t-round x" type="button" id="close" aria-label="Close"><svg><use href="#i-x"/></svg></button><div class="b-body"><div class="b-head"><span class="t-ribbon">Mission brief</span><h3>${m.name}</h3><span class="label">${m.planet}</span>
+      <div class="t-stars" aria-label="Difficulty ${m.diff} of 3">${[1,2,3].map(i=>`<svg style="--sf:${i<=m.diff?'#F2A541':'#E4DED2'}"><use href="#i-star"/></svg>`).join('')}</div></div>
       <p class="obj">${m.obj}</p>
       <div class="specs">${m.specs.map(s=>`<div class="spec"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('')}</div>
       <div style="display:flex;flex-direction:column;gap:8px"><span class="label">Your goals</span><ul class="list">${m.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div></div>
-      <div class="b-actions"><button class="btn ghost" type="button" id="back">Back</button><button class="btn" type="button" id="start">Start mission</button></div>`;
+      <div class="b-actions"><button class="t-btn ghost" type="button" id="back">Back</button><button class="t-btn primary" type="button" id="start">Start mission</button></div>`;
   } else {
-    briefEl.innerHTML = `<div class="b-body"><div class="b-head"><span class="label">Planet</span><h3>${b.name}</h3></div>
+    briefEl.innerHTML = `<button class="t-round x" type="button" id="close" aria-label="Close"><svg><use href="#i-x"/></svg></button><div class="b-body"><div class="b-head"><span class="t-ribbon">Planet</span><h3>${b.name}</h3></div>
       <p class="locked">No mission here yet. Try Earth, the Moon or Mars.</p></div>
-      <div class="b-actions"><button class="btn ghost" type="button" id="back">Back to system</button></div>`;
+      <div class="b-actions"><button class="t-btn ghost" type="button" id="back" style="flex:1">Back to system</button></div>`;
   }
   briefEl.classList.add('open');
-  document.getElementById('back').onclick = deselect;
+  document.getElementById('back').onclick = deselect; document.getElementById('close').onclick = deselect;
   const s=document.getElementById('start'); if(s) s.onclick=()=>{ s.textContent='Loading base…'; };
 }
 function deselect(){ selected=null; briefEl.classList.remove('open'); promptEl.classList.remove('hide'); }

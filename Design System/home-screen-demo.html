@@ -57,16 +57,56 @@ footer{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;
 .meta{font-family:'Silkscreen',monospace;font-size:11px;color:var(--muted)}
 @media (max-width:900px){main{grid-template-columns:1fr}.cards{flex-direction:row;overflow-x:auto;order:3}.card{min-width:190px}.ball{width:min(260px,62vw);order:1}.copy{order:2}}
 @media (prefers-reduced-motion:reduce){.ball,.status i{animation:none}h1 .word span{transition:none}}
+
+/* ===== Game feel: TACTILE (chosen 2026-11-14). Chunky outlines, darker lip, squash on press. Palette/fonts unchanged. ===== */
+:root{--amber-d:#C27F22;--ember-d:#8E4322;--bad:#E5484D;--bad-d:#A3262A;--lip:#E4DED2;--ok:#4CC38A}
+.t-btn{position:relative;border:3px solid var(--ink);border-radius:16px;padding:11px 24px 13px;font:400 20px var(--f-display);letter-spacing:.03em;cursor:pointer;color:var(--ink);
+  background:var(--c,#fff);box-shadow:inset 0 -5px 0 var(--cd,var(--lip)),inset 0 3px 0 rgba(255,255,255,.4),0 5px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.t-btn:hover{filter:brightness(1.04)}
+.t-btn:active{transform:translateY(4px);box-shadow:inset 0 -2px 0 var(--cd,var(--lip)),inset 0 3px 0 rgba(255,255,255,.4),0 1px 0 var(--ink)}
+.t-btn.primary{--c:var(--amber);--cd:var(--amber-d);text-shadow:0 2px 0 rgba(255,255,255,.4)}
+.t-btn.ghost{font:700 15px var(--f-ui);letter-spacing:0}
+.t-round{position:relative;width:46px;height:46px;flex:none;border-radius:50%;border:3px solid var(--ink);background:var(--c,#fff);color:var(--cc,var(--ink));box-shadow:inset 0 -4px 0 var(--cd,var(--lip)),0 4px 0 var(--ink);display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .08s,box-shadow .08s}
+.t-round:active{transform:translateY(3px);box-shadow:inset 0 -2px 0 var(--cd,var(--lip)),0 1px 0 var(--ink)}
+.t-round svg{width:20px;height:20px}
+.t-round.x{--c:var(--bad);--cd:var(--bad-d);--cc:#fff;width:40px;height:40px}
+.t-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:#fff;border:2.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);font:400 11px 'Silkscreen',monospace;color:var(--ink);letter-spacing:.04em;text-transform:none}
+.t-pill i{width:8px;height:8px;border-radius:50%;background:var(--amber);border:1.5px solid var(--ink);animation:tblink 1.2s steps(2) infinite}
+@keyframes tblink{50%{opacity:.25}}
+.t-win{background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:0 7px 0 var(--ink)}
+.t-ribbon{position:relative;display:inline-block;align-self:center;background:var(--ember);color:#fff;border:3px solid var(--ink);border-radius:12px;padding:6px 20px 8px;font:400 18px var(--f-display);white-space:nowrap;box-shadow:inset 0 -4px 0 var(--ember-d),0 4px 0 var(--ink);text-shadow:0 2px 0 rgba(26,18,6,.3)}
+.t-new{position:absolute;top:-11px;left:-10px;background:var(--ok);color:#fff;border:2px solid var(--ink);border-radius:6px;font:400 10px 'Silkscreen',monospace;padding:2px 6px;transform:rotate(-10deg)}
+.t-stars{display:flex;gap:4px}.t-stars svg{width:24px;height:24px}
+.t-btn:focus-visible,.t-round:focus-visible{outline:3px solid var(--ember);outline-offset:3px}
+@keyframes tpop{0%{transform:scale(.85) translateY(16px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.t-pill i{animation:none}}
+
+header .right{display:flex;gap:10px;align-items:center}
+.card{background:#fff;border:3px solid var(--ink);border-radius:18px;box-shadow:0 6px 0 var(--ink);backdrop-filter:none;position:relative;transition:transform .15s cubic-bezier(.34,1.56,.64,1),box-shadow .15s}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 0 var(--ink)}
+.card:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
+.card .n{width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--cream);display:grid;place-items:center;font-size:11px}
+.card p{font-weight:600}
+.card .tag{font:400 11px 'Silkscreen',monospace;background:var(--amber);border:2px solid var(--ink);border-radius:8px;padding:2px 8px;color:var(--ink)}
+.ctas{gap:14px}
+.btn{padding:14px 34px 16px;font-size:24px}
+.status{background:#fff}
 </style>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" fill="var(--sf,#F2A541)" stroke="#1A1206" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+</svg>
 <div class="screen">
   <div class="night"></div>
   <canvas id="sky" aria-hidden="true"></canvas>
   <canvas id="ground" aria-hidden="true"></canvas>
-  <header class="layer"><span class="logo">Horizons</span><span class="chip">Plotting trajectory…</span></header>
+  <header class="layer"><span class="logo">Horizons</span><div class="right"><span class="chip">Plotting trajectory…</span><button class="t-round" type="button" aria-label="Settings"><svg><use href="#i-gear"/></svg></button></div></header>
   <main class="layer">
     <div class="cards">
-      <div class="card" tabindex="0"><span class="n">01</span><p>Watch wildfires on Earth from orbit.</p><span class="tag">/earth</span></div>
+      <div class="card" tabindex="0"><span class="t-new">NEW</span><span class="n">01</span><p>Watch wildfires on Earth from orbit.</p><span class="tag">/earth</span></div>
       <div class="card" tabindex="0"><span class="n">02</span><p>Map water ice hiding at the lunar poles.</p><span class="tag">/moon</span></div>
       <div class="card" tabindex="0"><span class="n">03</span><p>Sample the thin air of Mars.</p><span class="tag">/mars</span></div>
     </div>
@@ -74,10 +114,10 @@ footer{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;
     <div class="copy">
       <h1>Horizons<span class="word" id="word"><span class="on">Launches</span><span>Designs</span><span>Orbits</span><span>Explores</span><span>Observes</span></span></h1>
       <p class="sub">Design a spacecraft, launch it, and see if your trade-offs hold up. Solo or with up to 4 players.</p>
-      <div class="ctas"><button class="btn" type="button">Play</button><button class="btn ghost" type="button">Tutorial · 30 s</button></div>
+      <div class="ctas"><button class="t-btn primary btn" type="button">Play</button><button class="t-btn ghost" type="button">Tutorial · 30 s</button></div>
     </div>
   </main>
-  <footer class="layer"><span class="status"><i></i>Loading solar system…</span><span class="meta">NASA Space Apps 2026</span></footer>
+  <footer class="layer"><span class="t-pill"><i></i>Loading solar system…</span><span class="meta">NASA Space Apps 2026</span></footer>
 </div>
 
 <script>

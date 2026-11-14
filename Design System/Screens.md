@@ -18,3 +18,14 @@ Every screen still reads more like a **website than a game**. A shared "game fee
 - **Floating prompt** (bottom left): "Choose your destination", with quick-pick chips.
 - **On select:** orbits slow down, the **camera pans to the planet**, and a **mission brief** opens. On desktop it is a card docked on the right; on phones the planet is framed in the top half and the brief is a bottom sheet. The brief has a scrolling body and a fixed action bar (Back · Start mission). It shows the difficulty, objective, orbit, duration, budget, mass limit, goals, **Start mission** and **Back to system**. Esc goes back. Other planets show "No mission here yet".
 - **Performance:** one WebGL context, pixel ratio capped at 1.5, rendering paused when the tab is hidden, a single buffer for the stars, and invisible hit spheres that make planets easy to click.
+
+## Game feel: TACTILE (chosen 2026-11-14)
+Applied to the home and mission select screens. The other two styles (Console, Sticker) stay in `game-feel-demo.html` for reference only.
+- **Buttons** (`.t-btn`): 3px ink outline, 16px radius, an inner darker lip (`inset 0 -5px 0`) and an outer `0 5px 0` ink drop. On press they move down 4px and the shadow collapses (the squash). Primary = amber with an amber-dark lip. Secondary = white with a `#E4DED2` lip.
+- **Round icon buttons** (`.t-round`): 46px circles with the same lip. Back, settings, and a red ✗ for close.
+- **Windows** (`.t-win`): white, 3px ink border, 22px radius, `0 7px 0` ink drop. An **ember ribbon title** (`.t-ribbon`) sits on or over the top edge. The ✗ close sits in the top-right corner.
+- **Pills and status** (`.t-pill`): white, 2.5px outline, `0 3px 0` drop, Silkscreen text, blinking amber dot.
+- **Badges:** a green tilted `NEW` tag. Difficulty is shown as **stars** (amber filled, `#E4DED2` empty).
+- **Spec tiles and list bullets:** cream tiles with outlines and drops; bullets are outlined amber diamonds.
+- **Motion:** windows pop in with an overshoot `cubic-bezier(.34,1.56,.64,1)`, press squash is 80ms, and cards lift on hover. Everything is off under reduced motion.
+- **Unchanged:** 3D models, colour palette, fonts, layout.
