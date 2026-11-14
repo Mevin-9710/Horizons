@@ -1,0 +1,245 @@
+<title>Horizons Palette Picker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400&family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Instrument+Serif&family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&family=Geist:wght@400;500;600&family=Sora:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Geist+Mono:wght@400;600&family=IBM+Plex+Mono:wght@400;600&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: one dark page; each palette is a full-width "screen" showing a mini landing + planet row + HUD, then a font section. Single-look (space) by choice. */
+:root{
+  color-scheme: dark;
+  --page:#05070F; --panel:#0C1122; --line:rgba(190,205,255,.12); --text:#E6EAF4; --muted:#8C95AD;
+  --ok:#4CC38A; --warn:#F2B33D; --bad:#E5484D;
+  --f-ui:"Inter",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace; --f-serif:"Newsreader",Georgia,serif;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--text);font-family:var(--f-ui);line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+header h1{font-family:var(--f-serif);font-weight:300;font-size:clamp(40px,7vw,76px);line-height:1;margin:0 0 12px;text-wrap:balance}
+header p{color:var(--muted);max-width:62ch;margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h2{font-family:var(--f-serif);font-weight:400;font-size:32px;margin:0}
+.section-head{display:flex;flex-direction:column;gap:6px}
+
+/* palette card */
+.pal{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+.pal.chosen{outline:2px solid var(--a);outline-offset:3px}
+@media (max-width:860px){.pal{grid-template-columns:1fr}}
+.scene{position:relative;min-height:380px;overflow:hidden;background:
+  radial-gradient(120% 90% at 100% 0%, var(--sky2) 0%, transparent 55%),
+  radial-gradient(90% 70% at 0% 100%, var(--sky3) 0%, transparent 60%), var(--bg);
+  color:var(--ink);padding:22px;display:flex;flex-direction:column;justify-content:space-between}
+.scene canvas.stars{position:absolute;inset:0;width:100%;height:100%}
+.scene > *:not(canvas){position:relative}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:var(--f-serif);font-size:20px;letter-spacing:.01em}
+.chip{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:5px 8px;border-radius:4px;background:var(--glass);border:1px solid var(--glassline);backdrop-filter:blur(14px)}
+.hero{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.glass{width:120px;height:120px;border-radius:50%;flex:none;background:
+  radial-gradient(circle at 32% 28%, rgba(255,255,255,.85) 0 4%, rgba(255,255,255,.18) 9%, transparent 22%),
+  radial-gradient(circle at 70% 78%, color-mix(in oklab,var(--a) 50%,transparent) 0, transparent 45%),
+  radial-gradient(circle at 50% 50%, rgba(255,255,255,.04) 55%, rgba(255,255,255,.35) 71%, rgba(255,255,255,.05) 72%);
+  box-shadow: inset -8px -14px 30px rgba(0,0,0,.35), inset 6px 8px 24px rgba(255,255,255,.12), 0 30px 50px -20px rgba(0,0,0,.6)}
+.headline{font-family:var(--f-serif);font-weight:300;font-size:clamp(36px,5vw,56px);line-height:1}
+.headline em{font-style:normal;color:var(--a)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{font-family:var(--f-ui);font-weight:500;font-size:14px;border:0;border-radius:999px;padding:10px 20px;background:var(--btn);color:var(--btntext);cursor:pointer}
+.btn.ghost{background:var(--glass);color:var(--ink);border:1px solid var(--glassline)}
+.planets{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.planet{border-radius:50%;filter:url(#grain);box-shadow:0 14px 30px -12px rgba(0,0,0,.7)}
+.hud{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+@media (max-width:560px){.hud{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.metric{background:var(--glass);border:1px solid var(--glassline);border-radius:6px;padding:6px 8px;backdrop-filter:blur(14px)}
+.metric b{display:block;font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:400;opacity:.75}
+.metric span{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums}
+.bar{height:3px;border-radius:2px;background:rgba(255,255,255,.12);margin-top:4px;overflow:hidden}
+.bar i{display:block;height:100%}
+
+.info{padding:22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.info h3{font-family:var(--f-serif);font-weight:400;font-size:26px;margin:0}
+.info p{color:var(--muted);margin:0;font-size:14px}
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.sw div{border:1px solid var(--line);border-radius:8px;overflow:hidden;font-family:var(--f-mono);font-size:10.5px}
+.sw div i{display:block;height:42px}
+.sw div span{display:block;padding:5px 7px;color:var(--muted)}
+.sw div span b{display:block;color:var(--text);font-weight:600;font-family:var(--f-ui);font-size:11.5px;letter-spacing:0}
+.pick{align-self:flex-start;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--text);border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer}
+.pick:hover,.pick:focus-visible{border-color:var(--a);outline:none}
+.pal.chosen .pick{background:var(--a);color:#05070F;border-color:var(--a)}
+.status{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.status span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--c)}
+
+/* fonts */
+.fonts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:860px){.fonts{grid-template-columns:1fr}}
+.fcard{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.fcard.chosen{outline:2px solid #7AA2FF;outline-offset:3px}
+.fcard .t{font-size:52px;line-height:1;font-weight:300}
+.fcard .ui{font-size:15px}
+.fcard .hudrow{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;font-variant-numeric:tabular-nums}
+.fcard .hudrow b{font-weight:400;opacity:.6;font-size:10px;letter-spacing:.14em;text-transform:uppercase;display:block}
+.fcard .tag{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.fcard .btns{display:flex;gap:8px;flex-wrap:wrap}
+.fcard .btns span{border-radius:999px;padding:8px 16px;background:#E6EAF4;color:#05070F;font-size:13px;font-weight:500}
+.fcard .btns span.g{background:transparent;color:var(--text);border:1px solid var(--line)}
+.picked{position:sticky;bottom:12px;align-self:center;background:#E6EAF4;color:#05070F;font-family:var(--f-mono);font-size:12px;border-radius:999px;padding:10px 18px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+@media (prefers-reduced-motion:reduce){.planet{animation:none!important}}
+.floaty{animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-6px)}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch" result="n"/>
+    <feColorMatrix in="n" type="saturate" values="0" result="g"/>
+    <feComponentTransfer in="g" result="g2"><feFuncA type="table" tableValues="0 .35"/></feComponentTransfer>
+    <feComposite in="g2" in2="SourceGraphic" operator="in" result="gm"/>
+    <feBlend in="SourceGraphic" in2="gm" mode="overlay"/>
+  </filter>
+</svg>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Horizons · Design phase · Step 1</div>
+    <h1>Pick a palette and a type pairing</h1>
+    <p>Each palette below is drawn from the two Perplexity references: the glass ball under a blue night sky (Computer) and the grainy banded planets with teal accents (Comet). Every option is shown on a mini landing screen with the planet row and the six-metric HUD. Tap “Choose” on one palette and one font pairing, then tell me which you picked.</p>
+  </header>
+
+  <section class="section-head">
+    <div class="eyebrow">Colour palettes</div>
+    <h2>Four directions</h2>
+  </section>
+  <div id="palettes" style="display:flex;flex-direction:column;gap:28px"></div>
+
+  <section class="section-head">
+    <div class="eyebrow">Shared status colours (every palette)</div>
+    <div class="status">
+      <span style="--c:var(--ok)">OK #4CC38A</span>
+      <span style="--c:var(--warn)">Warning #F2B33D</span>
+      <span style="--c:var(--bad)">Launch blocked #E5484D</span>
+    </div>
+    <p style="color:var(--muted);margin:0;max-width:62ch;font-size:14px">The HUD keeps these fixed so “red means blocked” reads the same whichever palette we choose.</p>
+  </section>
+
+  <section class="section-head">
+    <div class="eyebrow">Type pairings · display / interface / HUD numbers</div>
+    <h2>Fonts for a game</h2>
+    <p style="color:var(--muted);margin:0;max-width:62ch;font-size:14px">The references both use a light serif for big titles, a clean sans for interface text and a mono for labels. In a game the HUD numbers matter most: they must stay readable while they change, so every mono here has fixed-width digits.</p>
+  </section>
+  <div class="fonts" id="fonts"></div>
+
+  <div class="picked" id="picked">Palette: none yet · Fonts: none yet</div>
+</div>
+
+<script>
+const P = [
+  { id:"A", name:"Comet Teal", note:"Closest to Comet. Deep navy space, teal as the main accent, rust and crimson planets. Calm and premium.",
+    bg:"#070B1A", sky2:"#1B2E5E", sky3:"#0E2A30", ink:"#E8ECF5", a:"#2BB3BF", btn:"#21808D", btntext:"#F4FBFB",
+    glass:"rgba(20,32,56,.45)", glassline:"rgba(170,210,230,.16)",
+    sw:[["Space","#070B1A"],["Night sky","#1B2E5E"],["Ink","#E8ECF5"],["Teal","#2BB3BF"],["Deep teal","#14343B"],["Rust","#C2643A"],["Crimson","#A73B42"]],
+    planets:[["#0B1F24","#1C3E46","#2C5B65","#95B3B6"],["#792B37","#A73B42","#D08A6A","#2C1A1E"],["#2A2D33","#8D9196","#E3E5E6","#111"]] },
+  { id:"B", name:"Midnight Glass", note:"Leans into the blue night sky from the Computer hero. Star-blue accent, cream highlights. Cool and dreamy.",
+    bg:"#0A1030", sky2:"#2A4590", sky3:"#141E52", ink:"#EEF1FA", a:"#7AA2FF", btn:"#EEF1FA", btntext:"#0A1030",
+    glass:"rgba(30,45,100,.40)", glassline:"rgba(180,200,255,.18)",
+    sw:[["Deep navy","#0A1030"],["Mid blue","#1E3370"],["Sky glow","#2A4590"],["Star blue","#7AA2FF"],["Cream","#FBFAF4"],["Coral","#E07A5F"],["Ink","#EEF1FA"]],
+    planets:[["#1E3370","#3F63B8","#9EC0F0","#0A1030"],["#7A2E2A","#C25B44","#F0B28A","#2A1410"],["#3A3E4A","#9AA0AE","#F4F2EA","#14161C"]] },
+  { id:"C", name:"Warm Nebula", note:"Built from the Comet starfield: near-black with warm amber sparks and teal and crimson planets. Most cinematic and high-contrast.",
+    bg:"#08070F", sky2:"#2A1E3A", sky3:"#3A1D10", ink:"#F3EEE6", a:"#F2A541", btn:"#F2A541", btntext:"#1A1206",
+    glass:"rgba(40,30,40,.45)", glassline:"rgba(255,220,180,.14)",
+    sw:[["Void","#08070F"],["Nebula","#2A1E3A"],["Amber","#F2A541"],["Ember","#C2643A"],["Teal","#2C5B65"],["Crimson","#A73B42"],["Ink","#F3EEE6"]],
+    planets:[["#2C5B65","#4D8C8F","#E6B36A","#0B1F24"],["#A73B42","#E07A44","#F2C27A","#2A0E14"],["#6B5A3A","#C9A55C","#2E3B4A","#151008"]] },
+  { id:"D", name:"Lunar Cream", note:"Light cream panels from both sites floating over dark space. Ink is teal-black. Feels like a paper mission dossier on a starry desk.",
+    bg:"#0B1222", sky2:"#22365F", sky3:"#0E2A30", ink:"#FBFAF4", a:"#299DA9", btn:"#FBFAF4", btntext:"#091717",
+    glass:"rgba(251,250,244,.12)", glassline:"rgba(251,250,244,.28)",
+    sw:[["Space","#0B1222"],["Night sky","#22365F"],["Cream panel","#FBFAF4"],["Ink","#091717"],["Teal","#299DA9"],["Olive gold","#C9A23A"],["Rust","#B5552F"]],
+    planets:[["#FBFAF4","#D7D0C0","#9B7751","#312624"],["#43645B","#C9A23A","#2E4A6B","#151A12"],["#14343B","#299DA9","#E8D9B8","#091717"]] },
+];
+
+const metrics=[["Mass","1,240 kg",.72,"ok"],["Budget","$318M",.55,"ok"],["Power","412 W",.38,"warn"],["Data","2.1 Gb",.64,"ok"],["Comms","X-band",.81,"ok"],["Time","14 mo",.92,"bad"]];
+const col={ok:"var(--ok)",warn:"var(--warn)",bad:"var(--bad)"};
+
+function planetBg(c,ang){ // angled bands + terminator, like the Comet spheres
+  return `radial-gradient(circle at 30% 28%, transparent 40%, ${c[3]}cc 92%),
+    linear-gradient(${ang}deg, ${c[0]} 0 30%, ${c[1]} 30% 52%, ${c[2]} 58% 70%, ${c[1]} 78%, ${c[3]} 100%)`;
+}
+
+const host=document.getElementById('palettes');
+P.forEach((p,i)=>{
+  const el=document.createElement('article'); el.className='pal'; el.id='pal-'+p.id;
+  for(const k of ['bg','sky2','sky3','ink','a','btn','btntext','glass','glassline']) el.style.setProperty('--'+k,p[k]);
+  const sizes=[64,40,52];
+  el.innerHTML=`
+   <div class="scene">
+     <canvas class="stars" aria-hidden="true"></canvas>
+     <div class="topbar"><span class="logo">Horizons</span><span class="chip">Loading solar system…</span></div>
+     <div class="hero"><div class="glass floaty" aria-hidden="true"></div>
+       <div style="display:flex;flex-direction:column;gap:14px"><div class="headline">Horizons<br><em>Launches</em></div>
+       <div class="row"><button class="btn" type="button">Play</button><button class="btn ghost" type="button">Tutorial</button></div></div>
+       <div class="planets" style="margin-left:auto">${p.planets.map((c,j)=>`<div class="planet" title="${['Earth','Mars','Moon'][j]}" style="width:${sizes[j]}px;height:${sizes[j]}px;background:${planetBg(c,[115,140,100][j])}"></div>`).join('')}</div>
+     </div>
+     <div class="hud">${metrics.map(m=>`<div class="metric"><b>${m[0]}</b><span>${m[1]}</span><div class="bar"><i style="width:${m[2]*100}%;background:${col[m[3]]}"></i></div></div>`).join('')}</div>
+   </div>
+   <div class="info">
+     <div class="eyebrow">Option ${p.id}</div>
+     <h3>${p.name}</h3>
+     <p>${p.note}</p>
+     <div class="sw">${p.sw.map(s=>`<div><i style="background:${s[1]}"></i><span><b>${s[0]}</b>${s[1]}</span></div>`).join('')}</div>
+     <button class="pick" type="button" id="pick-pal-${p.id}">Choose ${p.name}</button>
+   </div>`;
+  host.appendChild(el);
+});
+
+const F=[
+  {id:"1",name:"Newsreader + Inter + JetBrains Mono",serif:"Newsreader",ui:"Inter",mono:"JetBrains Mono",note:"Closest to both references. Elegant title, very readable interface, sturdy HUD digits."},
+  {id:"2",name:"Instrument Serif + Geist + Geist Mono",serif:"Instrument Serif",ui:"Geist",mono:"Geist Mono",note:"Condensed serif like the Comet headline. Geist is crisp and modern; feels most like a polished game UI."},
+  {id:"3",name:"Fraunces + Space Grotesk + Space Mono",serif:"Fraunces",ui:"Space Grotesk",mono:"Space Mono",note:"Warmer and more playful. Space Grotesk and Space Mono give a retro mission-control flavour."},
+  {id:"4",name:"Cormorant + Sora + IBM Plex Mono",serif:"Cormorant Garamond",ui:"Sora",mono:"IBM Plex Mono",note:"Most cinematic title. Sora is rounded and friendly for younger players; Plex Mono reads like a NASA console."},
+];
+const fh=document.getElementById('fonts');
+F.forEach(f=>{
+  const el=document.createElement('article'); el.className='fcard'; el.id='font-'+f.id;
+  el.innerHTML=`<div class="eyebrow">Pairing ${f.id}</div>
+   <div class="t" style="font-family:'${f.serif}',Georgia,serif">Horizons</div>
+   <div class="ui" style="font-family:'${f.ui}',system-ui,sans-serif">Pick an instrument. Heavier means less fuel. Keep bars green.</div>
+   <div class="hudrow" style="font-family:'${f.mono}',ui-monospace,monospace">
+     <div><b>Mass</b>1,240 kg</div><div><b>Budget</b>$318.0M</div><div><b>Power</b>412 W</div><div><b>T+</b>00:14:07</div></div>
+   <div class="btns" style="font-family:'${f.ui}',system-ui,sans-serif"><span>Launch</span><span class="g">Mission control</span></div>
+   <div class="tag">${f.name}</div>
+   <p style="margin:0;color:var(--muted);font-size:14px">${f.note}</p>
+   <button class="pick" type="button" id="pick-font-${f.id}">Choose pairing ${f.id}</button>`;
+  fh.appendChild(el);
+});
+
+let chosen={pal:null,font:null};
+function render(){
+  document.querySelectorAll('.pal').forEach(e=>e.classList.toggle('chosen',e.id==='pal-'+chosen.pal));
+  document.querySelectorAll('.fcard').forEach(e=>e.classList.toggle('chosen',e.id==='font-'+chosen.font));
+  const p=P.find(x=>x.id===chosen.pal), f=F.find(x=>x.id===chosen.font);
+  document.getElementById('picked').textContent=`Palette: ${p?p.id+' · '+p.name:'none yet'} · Fonts: ${f?'pairing '+f.id:'none yet'}`;
+  try{localStorage.setItem('hz-pick',JSON.stringify(chosen))}catch(e){}
+}
+try{const s=JSON.parse(localStorage.getItem('hz-pick')||'null'); if(s) chosen=s;}catch(e){}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.pick'); if(!b) return;
+  if(b.id.startsWith('pick-pal-')) chosen.pal=b.id.slice(9); else chosen.font=b.id.slice(10);
+  render();
+});
+render();
+
+// starfield: one canvas per scene, drawn once plus gentle twinkle
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fields=[...document.querySelectorAll('canvas.stars')].map(c=>{
+  const r=c.getBoundingClientRect(), d=Math.min(devicePixelRatio||1,1.5);
+  c.width=r.width*d; c.height=r.height*d; const x=c.getContext('2d'); x.scale(d,d);
+  const stars=Array.from({length:Math.round(r.width*r.height/1400)},()=>{
+    const fx=Math.random(), fy=Math.random(); // denser toward top-right sky
+    const keep=Math.random() < .35 + .65*(fx*(1-fy));
+    return keep?{x:fx*r.width,y:fy*r.height,s:Math.random()<.08?1.6:Math.random()*.9+.3,p:Math.random()*6}:null}).filter(Boolean);
+  return {x,stars,w:r.width,h:r.height};
+});
+function draw(t){
+  for(const f of fields){ f.x.clearRect(0,0,f.w,f.h);
+    for(const s of f.stars){ const a=.45+.55*Math.abs(Math.sin(t/1400+s.p));
+      f.x.globalAlpha=reduce?.8:a; f.x.fillStyle='#fff'; f.x.beginPath(); f.x.arc(s.x,s.y,s.s,0,7); f.x.fill(); } }
+  if(!reduce) requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+</script>
