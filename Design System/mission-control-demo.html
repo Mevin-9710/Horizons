@@ -142,7 +142,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 <script>
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* ===== Design coming from the workshops (demo values) ===== */
-const DESIGN={mission:'Wildfire watch', inst:'Thermal IR imager', rocket:'Jupiter-C', orbit:'Sun-sync 550 km', massOK:true};
+const DESIGN=Object.assign({mission:'Wildfire watch', inst:'Thermal IR imager', rocket:'Jupiter-C', orbit:'Sun-sync 550 km'}, (window.HZ&&HZ.design)||{});
 /* ===== Phases: one focus each, with a plain-language "what and why" ===== */
 const PH=[
  {n:'Launch',          d:6,  t:`${DESIGN.rocket} lifts the spacecraft off Earth. The heavier the spacecraft, the more of the rocket's power it uses.`},
@@ -232,37 +232,38 @@ function init(){ const w=innerWidth,h=innerHeight,d=Math.min(devicePixelRatio||1
   const fires=Array.from({length:30},()=>{const a=Rr()*6.28, r=Math.sqrt(Rr())*R*.85; return [Math.cos(a)*r,Math.sin(a)*r*.9];});
   C={x,w,h,R,cx,cy,earth:e,stars,fires,trail:[]}; }
 addEventListener('resize',init); init();
-function shipPos(){ const {R,cx,cy}=C, t=S.t, orbR=R*1.55, tilt=.32;
-  const orbit=a=>[cx+Math.cos(a)*orbR, cy+Math.sin(a)*orbR*tilt*1.2, Math.sin(a)];
-  if(t<PH[1].s){ // launch: from the surface at the top, curving out to orbit height
-    const k=t/PH[1].s, ease=k*k*(3-2*k); const sx=cx+R*.15, sy=cy-R*.99; const [ox,oy]=orbit(-1.25);
-    const mx=cx+R*.95, my=cy-R*1.45; const u=1-ease; return [u*u*sx+2*u*ease*mx+ease*ease*ox, u*u*sy+2*u*ease*my+ease*ease*oy, -1, 'rocket']; }
-  const a=-1.25+(t-PH[1].s)*.9; const [px,py,z]=orbit(a); return [px,py,z, t<PH[2].s?'burn':'sat']; }
+// Orbit geometry: a tilted circle seen from above-front. angle a → screen point; z>0 = near side (in front of Earth).
+function orbitPt(a){ const {R,cx,cy}=C, rx=R*1.7, ry=R*.62; return [cx+Math.cos(a)*rx, cy+Math.sin(a)*ry, Math.sin(a)]; }
+function shipPos(){ const {R,cx,cy}=C, t=S.t;
+  if(t<PH[1].s){ const k=t/PH[1].s, e=k*k*(3-2*k); const sx=cx+R*.12, sy=cy-R*.99; const [ox,oy]=orbitPt(-Math.PI*.5-.9);
+    const mx=cx+R*.2, my=cy-R*1.9; const u=1-e; return [u*u*sx+2*u*e*mx+e*e*ox, u*u*sy+2*u*e*my+e*e*oy, -1, 'rocket']; }
+  const a=-Math.PI*.5-.9+(t-PH[1].s)*.9; const [px,py,z]=orbitPt(a); return [px,py,z, t<PH[2].s?'burn':'sat']; }
+function orbitHalf(front){ const x=C.x; x.save(); x.strokeStyle=front?'rgba(26,18,6,.38)':'rgba(26,18,6,.22)'; x.setLineDash([6,7]); x.lineWidth=1.8; x.beginPath();
+  for(let i=0;i<=64;i++){ const a=front?i/64*Math.PI:Math.PI+i/64*Math.PI; const [px,py]=orbitPt(a); i?x.lineTo(px,py):x.moveTo(px,py); } x.stroke(); x.restore(); }
+function trailPart(front){ const x=C.x, T=C.trail; x.strokeStyle='rgba(194,100,58,.6)'; x.lineWidth=2.5; x.lineCap='round';
+  for(let i=1;i<T.length;i++){ const p=T[i-1], q=T[i]; if((q[2]>=0)!==front) continue; x.globalAlpha=i/T.length; x.beginPath(); x.moveTo(p[0],p[1]); x.lineTo(q[0],q[1]); x.stroke(); } x.globalAlpha=1; }
+let lastMode='';
 function draw(now){ const {x,w,h,R,cx,cy,earth,stars,fires}=C; x.clearRect(0,0,w,h);
   for(const s of stars){ x.globalAlpha=reduce?.85:.4+.6*Math.abs(Math.sin(now/1300+s[3])); x.fillStyle='#fff'; x.beginPath(); x.arc(s[0],s[1],s[2],0,7); x.fill(); } x.globalAlpha=1;
-  const ph=phaseAt(S.t), orbR=R*1.55, tilt=.32;
-  // planned orbit (dashed) once launch begins
-  x.save(); x.strokeStyle='rgba(26,18,6,.28)'; x.setLineDash([6,7]); x.lineWidth=1.6; x.beginPath(); x.ellipse(cx,cy,orbR,orbR*tilt*1.2,0,0,7); x.stroke(); x.restore();
-  const [px,py,z,mode]=shipPos();
-  C.trail.push([px,py]); if(C.trail.length>(mode==='rocket'?120:50)) C.trail.shift();
-  const drawShip=()=>{ x.strokeStyle='rgba(194,100,58,.55)'; x.lineWidth=2.5; x.beginPath(); C.trail.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])); x.stroke();
-    if(mode==='rocket'){ // simple rocket + flame pointing along travel
-      const [qx,qy]=C.trail[Math.max(0,C.trail.length-4)]; const ang=Math.atan2(py-qy,px-qx);
+  const ph=phaseAt(S.t); const [px,py,z,mode]=shipPos();
+  if(mode!==lastMode&&lastMode==='rocket') C.trail=[]; lastMode=mode;            // no kink between launch arc and orbit
+  C.trail.push([px,py,mode==='rocket'?-1:z]); if(C.trail.length>(mode==='rocket'?140:36)) C.trail.shift();
+  const ship=()=>{ if(mode==='rocket'){ const T=C.trail, q=T[Math.max(0,T.length-4)]; const ang=Math.atan2(py-q[1],px-q[0]);
       x.save(); x.translate(px,py); x.rotate(ang); x.fillStyle='#F2A541'; x.beginPath(); x.moveTo(-10,0); x.lineTo(-24-Math.random()*8,-4); x.lineTo(-24-Math.random()*8,4); x.fill();
-      x.fillStyle='#FBFAF4'; x.strokeStyle='#1A1206'; x.lineWidth=2.5; x.beginPath(); x.moveTo(14,0); x.lineTo(4,-5); x.lineTo(-10,-5); x.lineTo(-10,5); x.lineTo(4,5); x.closePath(); x.fill(); x.stroke(); x.restore(); }
-    else { if(mode==='burn'){ x.fillStyle='#F2A541'; x.beginPath(); x.arc(px-14,py+2,5+Math.random()*3,0,7); x.fill(); }
-      x.fillStyle='#2C5B65'; x.strokeStyle='#1A1206'; x.lineWidth=2; x.fillRect(px-20,py-3,12,6); x.strokeRect(px-20,py-3,12,6); x.fillRect(px+8,py-3,12,6); x.strokeRect(px+8,py-3,12,6);
-      x.fillStyle='#FBFAF4'; x.lineWidth=2.5; x.beginPath(); x.rect(px-7,py-7,14,14); x.fill(); x.stroke();
-      if(ph>=3&&!S.paused&&!reduce){ x.strokeStyle='rgba(242,165,65,.5)'; x.lineWidth=2; x.beginPath(); x.moveTo(px,py+8); x.lineTo(cx+(px-cx)*.55,cy+(py-cy)*.4+R*.1); x.stroke(); } } };
-  if(z<0) drawShip();
+      x.fillStyle='#FBFAF4'; x.strokeStyle='#1A1206'; x.lineWidth=2.5; x.beginPath(); x.moveTo(14,0); x.lineTo(4,-5); x.lineTo(-10,-5); x.lineTo(-10,5); x.lineTo(4,5); x.closePath(); x.fill(); x.stroke(); x.restore(); return; }
+    const sc=.8+.25*z; x.save(); x.translate(px,py); x.scale(sc,sc);
+    if(mode==='burn'){ x.fillStyle='#F2A541'; x.beginPath(); x.arc(-14,2,5+Math.random()*3,0,7); x.fill(); }
+    x.fillStyle='#2C5B65'; x.strokeStyle='#1A1206'; x.lineWidth=2; x.fillRect(-20,-3,12,6); x.strokeRect(-20,-3,12,6); x.fillRect(8,-3,12,6); x.strokeRect(8,-3,12,6);
+    x.fillStyle='#FBFAF4'; x.lineWidth=2.5; x.beginPath(); x.rect(-7,-7,14,14); x.fill(); x.stroke(); x.restore(); };
+  // far side: orbit + trail + ship behind Earth
+  orbitHalf(false); trailPart(false); if(z<0) ship();
   x.save(); x.shadowColor='rgba(26,18,6,.25)'; x.shadowBlur=40; x.shadowOffsetY=20; x.drawImage(earth,cx-R,cy-R); x.restore();
-  // night side shading
   const sh=x.createLinearGradient(cx-R,cy,cx+R,cy); sh.addColorStop(.45,'rgba(8,7,15,0)'); sh.addColorStop(1,'rgba(8,7,15,.55)'); x.fillStyle=sh; x.beginPath(); x.arc(cx,cy,R,0,7); x.fill();
-  // fires spotted
   const n=Math.min(fires.length,Math.round(S.sci)); for(let i=0;i<n;i++){ const [fx,fy]=fires[i]; x.fillStyle='#F2A541'; x.strokeStyle='#1A1206'; x.lineWidth=1.8; x.beginPath(); x.arc(cx+fx,cy+fy,4.5,0,7); x.fill(); x.stroke(); }
-  if(z>=0) drawShip();
-  // launch site marker
-  if(ph===0){ x.fillStyle='#C2643A'; x.strokeStyle='#1A1206'; x.lineWidth=2; x.beginPath(); x.arc(cx+R*.15,cy-R*.99,6,0,7); x.fill(); x.stroke(); }
+  if(ph===0){ x.fillStyle='#C2643A'; x.strokeStyle='#1A1206'; x.lineWidth=2; x.beginPath(); x.arc(cx+R*.12,cy-R*.99,6,0,7); x.fill(); x.stroke(); }
+  // near side
+  orbitHalf(true); trailPart(true); if(z>=0) ship();
+  if(mode==='rocket') trailPart(false);
 }
 /* ===== Loop ===== */
 let last=performance.now(), running=true;

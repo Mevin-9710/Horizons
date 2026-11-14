@@ -1,5 +1,9 @@
 # Screens (design phase)
 
+> **Playable combined demo:** `horizons-game.html`, https://claude.ai/artifact/BhiwVCSSi8AXYWuaMBGU6x
+> One full-screen frame loads each screen in turn (`postMessage` hand-offs and a cream iris wipe). The selected mission, the parts picked and the design names carry through.
+> The flow: Home → Mission select → Base & workshops → Launch → Mission control tower → Mission control → Report → Redesign (back to base with the picks kept).
+
 | # | Screen | Demo file | Artifact | Status |
 |---|---|---|---|---|
 | 1 | Home | `home-screen-demo.html` | https://claude.ai/artifact/HTTTSy4zX7pkvTAkExMDJz | Draft. Needs the game-feel pass. |
