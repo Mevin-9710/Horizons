@@ -45,3 +45,11 @@ Applied to the home and mission select screens. The other two styles (Console, S
 - **Tutorial callout** (3 steps, as in the gameplay doc): walk to the glowing workshop → pick an instrument ("Heavier means less fuel. Keep bars green!") → walk to the pad and launch. It can be skipped.
 - **Launch:** a "Liftoff!" banner, the rocket climbs off-screen, and the dock's Mission control tile unlocks with a NEW badge.
 - **Part numbers are placeholders** for the design. The real values come from the game data and evaluator.
+
+## Walk-in workshops (update)
+- Entering a workshop door does a **camera push-in to the door, then a cream iris wipe**, and the screen swaps to the workshop interior. Leaving reverses it.
+- **Spacecraft workshop:** a large isometric hall (32×24) with back walls, round star windows and a floor grid. **Five rows of pedestals** (Bus, Power, Comms, Instrument, Engine), each holding 3 **NASA models**: the Satellite Kit bodies, wings and radios, plus the Infrared Camera. A **Build bay** turntable shows the craft assembled from the current picks. A NASA **Landsat 8** stands on display. There is an Exit pad.
+- **Rocket workshop:** a hall with the **NASA Jupiter-C, Atlas and Saturn V** on pads (each pick sets the mass limit), and two orbit kiosks.
+- **Picking:** walk up to a pedestal (or tap it to auto-walk). An info card shows the part, whether its model is NASA or a stand-in, and its effects, with a **Pick [E]** button. The HUD and build bay update live.
+- **Launch pad:** the chosen NASA rocket stands next to the NASA gantry and launches from it.
+- **Models:** see `Design System/models/CREDITS.md`. In the artifact the models ship as base64 `.txt` files because the host serves no `.glb` type. A real build should serve the `.glb` files directly.
