@@ -15,8 +15,6 @@
 |---|---|
 | `01-hero.png` | Hero section with the cookie banner dismissed. **The main reference.** |
 | `01b-hero-later-frame.png` | The same hero a few seconds later, showing the rotating word and the glimmer. |
-| `00-fullpage.png` | Full scrolling page (the cookie banner is visible). |
-| `02-scroll.png` … `11-scroll.png` | Screenshots taken one viewport apart down the page (the cookie banner is visible on some). |
 | `reference-hero-poster.webp` | Their still poster frame of the hero video (glass ball on a flowery hill). Reference only. |
 | `page.html` | Raw rendered DOM of the page. |
 | `hero-extracted.css` | Every CSS rule that touches the hero, query cards, buttons and keyframes, pulled from the live stylesheets. |
@@ -134,11 +132,9 @@ Layout inside the card: a mono number at the top left (`03`), body text in the m
 
 ---
 
-## 6. Rest of the page (for later screens)
+## 6. Scope
 
-- **"Computer unifies"** (`03-scroll.png`): a full-bleed dark meadow video at 60% opacity. A white 3D **ribbon of mono text** spirals through the scene (a three.js canvas, `unifies-dreamcloud`), with the serif title in the centre. → **Horizons idea:** a ribbon of mission phases ("Launch · Cruise · Orbit insertion · Ops 1–4") wrapping around a planet.
-- **"How it works"** (`06-scroll.png`): numbered steps (`02`, `03` in mono) with a serif title and a grey subtitle. A large app screenshot sits in a dark rounded panel over a blurred meadow photo, and it blurs in as you scroll. → **Horizons idea:** the tutorial / mission-briefing layout.
-- **Closing call-to-action:** a 72px light serif headline "Put Computer to work", in white over an image.
+Only the **hero** (`01-hero.png`, `01b-hero-later-frame.png`) is in scope. This is the **game's landing / home screen**. The rest of the page (the "Computer unifies" text ribbon and the "How it works" steps) is **out of scope** and should not be used.
 
 ---
 
@@ -161,6 +157,13 @@ Layout inside the card: a mono number at the top left (`03`), body text in the m
    - **Status chip:** the same mono uppercase chip, reading `PLOTTING TRAJECTORY...` / `LOADING SOLAR SYSTEM...`.
    - **Call-to-action:** the pill button becomes **"Play"** (or "Launch"). Light pill on the dark background, or a soft blue glow.
    - **Accents:** one cool accent such as `#7AA2FF` (star blue). Keep the HUD status colours (green OK / amber / red blocked) separate from the brand palette.
+
+### Performance requirement (hard rule)
+This is a **game**, not a website. The landing screen must be **fast and responsive**: 60 fps, an instant first paint, and no jank on mid-range laptops or phones.
+- Use whichever glass-ball approach (video texture or live 3D) measures faster on a mid-range device. Both are allowed.
+- Show a static poster frame immediately, then upgrade to the video or 3D version once it has loaded.
+- Use one WebGL context at most, cap the device pixel ratio at about 1.5, pause rendering when the tab is hidden, and keep `backdrop-filter` blur to a few small elements.
+- Draw the stars as a single `Points` buffer or a single canvas, never thousands of DOM nodes.
 
 ### Implementation notes for the build phase
 - Simplest route to a convincing result: **pre-render a looping 16:9 video** of the glass sphere on a lunar surface under a starry sky (Blender), then play it as a texture in three.js with a subtle refraction/shimmer shader, the way Perplexity does. Add a **live star layer** (a canvas or three.js `Points`) on top for twinkle and parallax.
