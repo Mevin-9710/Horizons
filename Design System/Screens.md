@@ -3,7 +3,7 @@
 | # | Screen | Demo file | Artifact | Status |
 |---|---|---|---|---|
 | 1 | Home | `home-screen-demo.html` | https://claude.ai/artifact/HTTTSy4zX7pkvTAkExMDJz | Draft. Needs the game-feel pass. |
-| 2 | Mission select | `mission-select-demo.html` | https://claude.ai/artifact/AnqTXmDGXHPZobmVvZT2Ag | Draft. Needs the game-feel pass. |
+| 2 | Mission select | `mission-select-demo.html` | https://claude.ai/artifact/R9HaPmZ8Crbu4DCF3f9YSs | Draft. Needs the game-feel pass. |
 
 ## Open item for every screen
 Every screen still reads more like a **website than a game**. A shared "game feel" layer will be designed later and applied to all screens.
