@@ -231,7 +231,30 @@ const MISSIONS = {
   mars:{ name:'Mars atmosphere', planet:'Mars', diff:3, obj:'Measure how Mars is losing its air to space, and how fast.',
     specs:[['Orbit','Elliptical 150–6,000 km'],['Duration','24 months'],['Budget','$450M'],['Mass limit','900 kg']],
     tasks:['Fly a mass spectrometer and magnetometer','Budget fuel for orbit insertion','Plan for 20-minute comms delay'] },
+  mercury:{ name:'Mercury mapper', planet:'Mercury', diff:3, obj:'Map all of Mercury and look for ice in polar craters that never see the Sun.',
+    specs:[['Type','Orbiter'],['Transit','105 days'],['Delta-v','12.3 km/s'],['Mass limit','500 kg']],
+    tasks:['Bring the biggest rocket: braking near the Sun is costly','Shade the craft from heat','Map the whole surface'] },
+  venus:{ name:'Venus radar', planet:'Venus', diff:2, obj:'Map the surface of Venus with radar, straight through its thick clouds.',
+    specs:[['Type','Orbiter'],['Transit','146 days'],['Delta-v','4.0 km/s'],['Mass limit','900 kg']],
+    tasks:['Carry a radar, cameras cannot see the ground','Budget fuel for orbit insertion','Send the big radar data home'] },
+  jupiter:{ name:'Inside Jupiter', planet:'Jupiter', diff:3, obj:'Measure the gravity and magnetic field of Jupiter to see what lies under the clouds.',
+    specs:[['Type','Orbiter'],['Transit','2.7 years'],['Delta-v','7.1 km/s'],['Mass limit','1,600 kg']],
+    tasks:['Fit big solar wings: sunlight is weak out here','Survive the radiation belts','Keep fuel for the insertion burn'] },
+  saturn:{ name:'Rings and Titan', planet:'Saturn', diff:3, obj:'Study Saturn, its rings and its moon Titan from orbit.',
+    specs:[['Type','Orbiter'],['Transit','6.0 years'],['Delta-v','8.1 km/s'],['Mass limit','2,500 kg']],
+    tasks:['Choose a heavy-lift rocket','Plan for a 6-year cruise','Use a big dish for the long link home'] },
+  uranus:{ name:'Ice giant flyby', planet:'Uranus', diff:2, obj:'Fly past Uranus, the ice giant that rolls on its side, and photograph its moons.',
+    specs:[['Type','Flyby'],['Transit','16 years'],['Delta-v','8.0 km/s'],['Mass limit','800 kg']],
+    tasks:['One pass only: no braking burn','Point the cameras before closest approach','Store images, send them later'] },
+  neptune:{ name:'Edge of the planets', planet:'Neptune', diff:3, obj:'Fly past Neptune and its moon Triton at the edge of the planets.',
+    specs:[['Type','Flyby'],['Transit','31 years'],['Delta-v','8.3 km/s'],['Mass limit','800 kg']],
+    tasks:['One pass only: no braking burn','Survive decades of cruise','Send data across 4 light-hours'] },
+  pluto:{ name:'Pluto flyby', planet:'Pluto', diff:3, obj:'Cross the whole solar system for one fast pass over the icy heart of Pluto.',
+    specs:[['Type','Flyby'],['Transit','46 years (direct)'],['Delta-v','8.4 km/s'],['Mass limit','480 kg']],
+    tasks:['Keep the spacecraft light and fast','One pass only: no braking burn','Use nuclear power, the Sun is too far'] },
 };
+// each mission follows a real NASA mission; its spacecraft model is on display in the spacecraft workshop
+const NASA_OF={earth:'Landsat',moon:'Lunar Reconnaissance Orbiter',mars:'MAVEN',mercury:'MESSENGER',venus:'Magellan',jupiter:'Juno',saturn:'Cassini-Huygens',uranus:'Voyager 2',neptune:'Voyager 2',pluto:'New Horizons'};
 
 // ---------- Bodies (Comet palette, not realistic colours) ----------
 const bodies = [];
@@ -244,13 +267,15 @@ const halo = new THREE.Sprite(new THREE.SpriteMaterial({map:haloTex, transparent
 halo.scale.set(40,40,1); scene.add(halo);
 
 const DEF = [
-  {id:'mercury', name:'Mercury', r:0.9,  a:11, e:.9, speed:1.6,  cols:['#2A2D33','#5E5A54','#9C968C','#111'], axis:[1,.3,0], f:2.5, orbit:'#9C968C'},
-  {id:'venus',   name:'Venus',   r:1.4,  a:16, e:.92,speed:1.15, cols:['#F0D6B8','#E9B98F','#C98A62','#3A1D10'], axis:[.2,1,.4], f:2.0, orbit:'#C98A62'},
+  {id:'mercury', name:'Mercury', r:0.9,  a:11, e:.9, speed:1.6,  cols:['#2A2D33','#5E5A54','#9C968C','#111'], axis:[1,.3,0], f:2.5, orbit:'#9C968C', mission:true},
+  {id:'venus',   name:'Venus',   r:1.4,  a:16, e:.92,speed:1.15, cols:['#F0D6B8','#E9B98F','#C98A62','#3A1D10'], axis:[.2,1,.4], f:2.0, orbit:'#C98A62', mission:true},
   {id:'earth',   name:'Earth',   r:1.7,  a:22, e:.9, speed:.9,   cols:['#0B1F24','#2C5B65','#95B3B6','#081214'], axis:[.6,1,.2], f:3.2, orbit:'#2C5B65', mission:true},
   {id:'mars',    name:'Mars',    r:1.25, a:30, e:.88,speed:.68,  cols:['#792B37','#A73B42','#D08A6A','#2A0E14'], axis:[1,.5,.3], f:2.6, orbit:'#A73B42', mission:true},
-  {id:'jupiter', name:'Jupiter', r:3.6,  a:42, e:.9, speed:.38,  cols:['#6B5A3A','#C9A55C','#2E3B4A','#151008'], axis:[0,1,0], f:5.5, orbit:'#9B7751'},
-  {id:'saturn',  name:'Saturn',  r:3.0,  a:54, e:.9, speed:.27,  cols:['#D7D0C0','#9B7751','#E8D9B8','#312624'], axis:[0,1,.1], f:4.5, orbit:'#9B7751', ring:true},
-  {id:'neptune', name:'Neptune', r:2.1,  a:65, e:.9, speed:.18,  cols:['#0F1916','#43645B','#2BB3BF','#091717'], axis:[.4,1,0], f:3.0, orbit:'#43645B'},
+  {id:'jupiter', name:'Jupiter', r:3.6,  a:42, e:.9, speed:.38,  cols:['#6B5A3A','#C9A55C','#2E3B4A','#151008'], axis:[0,1,0], f:5.5, orbit:'#9B7751', mission:true},
+  {id:'saturn',  name:'Saturn',  r:3.0,  a:54, e:.9, speed:.27,  cols:['#D7D0C0','#9B7751','#E8D9B8','#312624'], axis:[0,1,.1], f:4.5, orbit:'#9B7751', ring:true, mission:true},
+  {id:'uranus',  name:'Uranus',  r:2.2,  a:64, e:.9, speed:.21,  cols:['#33606A','#6FA9B2','#C4E4E6','#0F2428'], axis:[1,.2,0], f:2.4, orbit:'#6FA9B2', mission:true},
+  {id:'neptune', name:'Neptune', r:2.1,  a:74, e:.9, speed:.16,  cols:['#0F1916','#43645B','#2BB3BF','#091717'], axis:[.4,1,0], f:3.0, orbit:'#43645B', mission:true},
+  {id:'pluto',   name:'Pluto',   r:.8,   a:83, e:.86,speed:.12,  cols:['#5E4E3C','#A8937A','#E6D6C0','#2A2018'], axis:[.6,1,.3], f:2.2, orbit:'#A8937A', mission:true},
 ];
 const hitTargets = [];
 for (const d of DEF){
@@ -335,7 +360,7 @@ canvas.addEventListener('pointerleave',()=>{tagEl.style.opacity=0});
 function select(id){
   selected=id; const b=byId(id); tagEl.style.opacity=0; promptEl.classList.add('hide');
   if(b.mission){ const m=MISSIONS[id];
-    briefEl.innerHTML = `<button class="t-round x" type="button" id="close" aria-label="Close"><svg><use href="#i-x"/></svg></button><div class="b-body"><div class="b-head"><span class="t-ribbon">Mission brief</span><h3>${m.name}</h3><span class="label">${m.planet}</span>
+    briefEl.innerHTML = `<button class="t-round x" type="button" id="close" aria-label="Close"><svg><use href="#i-x"/></svg></button><div class="b-body"><div class="b-head"><span class="t-ribbon">Mission brief</span><h3>${m.name}</h3><span class="label">${m.planet} · follows NASA ${NASA_OF[id]||''}</span>
       <div class="t-stars" aria-label="Difficulty ${m.diff} of 3">${[1,2,3].map(i=>`<svg style="--sf:${i<=m.diff?'#F2A541':'#E4DED2'}"><use href="#i-star"/></svg>`).join('')}</div></div>
       <p class="obj">${m.obj}</p>
       <div class="specs">${m.specs.map(s=>`<div class="spec"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('')}</div>

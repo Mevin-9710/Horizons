@@ -37,3 +37,16 @@ node convert.mjs "Space Launch System (SLS) Block 1.stl" rocket-sls.glb 40000 sl
 node convert.mjs "Orion Capsule (no fbc).stl" orion.glb 20000 yup
 ```
 NASA's Shuttle (A) and the STL files have no colours of their own. The colours above are plain NASA-style colours (orange tank and core stage, white boosters), with no markings.
+
+**Added 2026-11-15: one NASA spacecraft per destination** (the mission's display piece in the spacecraft workshop, and the craft in the transfer view). Converted with `tools/model-convert`, simplified hard, textures dropped (flat NASA colours):
+
+| File | NASA source (`3D Models/` unless noted) | Mission in game |
+|---|---|---|
+| messenger.glb | MESSENGER | Mercury mapper |
+| magellan.glb | Magellan | Venus radar |
+| lro.glb | Lunar Reconnaissance Orbiter (B) | Lunar polar ice |
+| maven.glb | MAVEN (B) | Mars atmosphere |
+| juno.glb | Juno (A) | Inside Jupiter |
+| cassini.glb | Cassini-Huygens (A) | Rings and Titan |
+| voyager.glb | Voyager Probe (A) | Ice giant flyby (Uranus), Edge of the planets (Neptune) |
+| new-horizons.glb | `3D Printing/` New Horizons, body part (**STL**) | Pluto flyby |

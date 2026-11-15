@@ -1,0 +1,8 @@
+{"sites":[
+{"name":"CAPE CANAVERAL LC-39A","lat":28.5},
+{"name":"VANDENBERG SLC-4E","lat":34.6},
+{"name":"KOUROU ELA-3","lat":5.2},
+{"name":"SRIHARIKOTA SDSC","lat":13.7},
+{"name":"BAIKONUR SITE 31","lat":45.9},
+{"name":"WALLOPS PAD 0A","lat":37.9}],
+"launch_pad_model":"NASA Mobile Launcher (pad only)"}

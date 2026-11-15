@@ -91,6 +91,23 @@ svg.i{width:18px;height:18px;flex:none}
 .opt:hover{transform:translateY(-2px)}
 .opt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .opt.on{background:rgba(242,165,65,.55)}
+.win.wide{width:min(780px,calc(100% - 24px));max-height:calc(100% - 120px)}
+.dz{display:grid;grid-template-columns:190px 1fr;gap:12px;min-height:0}
+.dz-tabs{display:flex;flex-direction:column;gap:7px}
+.dz-tab{position:relative;text-align:left;border:2.5px solid var(--ink);border-radius:12px;background:#FFFDF8;box-shadow:0 3px 0 var(--ink);padding:6px 10px 7px;cursor:pointer;font:600 13px var(--f-ui);color:var(--ink)}
+.dz-tab small{display:block;font:500 11px var(--f-ui);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dz-tab.on{background:#F7D29C!important}
+.dz-tab i{position:absolute;top:6px;right:8px;font:400 10px var(--f-num);font-style:normal;background:var(--bad);color:#fff;border:2px solid var(--ink);border-radius:6px;padding:0 4px}
+.dz-tab i.ok{background:var(--ok)}
+.dz-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:9px;align-content:start}
+.dz-opts .opt{grid-template-columns:auto 1fr}
+.dz-opts .opt .nt{grid-column:2;font:500 11.5px var(--f-ui);color:var(--muted)}
+.dz-opts .fx span.good{background:rgba(76,195,138,.3)}
+.dz-tip{grid-column:1/-1;margin:0;font-size:12.5px;color:var(--muted)}
+.dz-goals{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.dz-goals span{font:600 12px var(--f-ui);border:2px solid var(--ink);border-radius:999px;padding:3px 10px;background:#F8D6D3}
+.dz-goals span.ok{background:rgba(76,195,138,.35)}
+@media (max-width:760px){.dz{grid-template-columns:minmax(0,1fr)}.dz-tabs{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;min-width:0;padding:2px 2px 8px;flex:none;min-height:62px}.dz-tab{flex:none;min-width:118px}.dz-opts{grid-template-columns:minmax(0,1fr)}.win.wide{top:calc(70px + env(safe-area-inset-top,0px));bottom:calc(98px + env(safe-area-inset-bottom,0px));max-height:none}.win.wide .w-head p{display:none}}
 .opt .dot{grid-row:span 2;width:22px;height:22px;border-radius:50%;border:2.5px solid var(--ink);background:#fff;display:grid;place-items:center}
 .opt.on .dot::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--ink)}
 .opt .nm{font:700 14.5px var(--f-ui)}
@@ -205,54 +222,69 @@ const PARTS = {
     {id:'r3',name:'Saturn V',      src:'NASA', model:'rocket-saturn-v',  h:12, cost:90,  time:3, cap:2000},
     {id:'r4',name:'Space Shuttle', src:'NASA', model:'rocket-shuttle',   h:9,  cost:110, time:4, cap:2600},
     {id:'r5',name:'SLS',           src:'NASA', model:'rocket-sls',       h:12, cost:140, time:4, cap:4000}]},
-  orbit:{label:'Orbit', where:'rocket', opts:[
-    {id:'o1',name:'Sun-sync 550 km', proc:'orbit', link:1, note:'Same light every pass'},
-    {id:'o2',name:'Low 400 km', proc:'orbit', cost:-3, link:.8, note:'Cheaper, fewer ground passes'}]},
-  bus:{label:'Bus', where:'craft', opts:[
-    {id:'b1',name:'Microsat bus', src:'NASA Satellite Kit', model:'kit-body-2', mass:90,  cost:20, time:6, pw:60, store:40},
-    {id:'b2',name:'Smallsat bus', src:'NASA Satellite Kit', model:'kit-body-3', mass:180, cost:35, time:8, pw:80, store:120},
-    {id:'b3',name:'Large bus',    src:'NASA Satellite Kit', model:'kit-body-1', mass:320, cost:55, time:10, pw:110, store:300}]},
+  orbit:{label:'Orbit', where:'rocket', opts:hzOrbitsFor((window.HZ&&HZ.mission)||'earth').map(o=>Object.assign({proc:'orbit'},o))},
+  bus:{label:'Structure', where:'craft', opts:[
+    {id:'b1',name:'Microsat frame', src:'NASA Satellite Kit', model:'kit-body-2', mass:90,  cost:20, time:6, pw:60, note:'Light, room for little'},
+    {id:'b2',name:'Smallsat frame', src:'NASA Satellite Kit', model:'kit-body-3', mass:180, cost:35, time:8, pw:80, note:'The all-rounder'},
+    {id:'b3',name:'Large frame',    src:'NASA Satellite Kit', model:'kit-body-1', mass:320, cost:55, time:10, pw:110, note:'Room for big instruments'}]},
   power:{label:'Power', where:'craft', opts:[
-    {id:'p1',name:'Solar 250 W',   src:'NASA Satellite Kit', model:'kit-wings-1', mass:20, cost:6,  time:2, gen:250},
-    {id:'p2',name:'Solar 450 W',   src:'NASA Satellite Kit', model:'kit-wings-2', mass:42, cost:14, time:3, gen:450},
-    {id:'p3',name:'Solar 800 W',   src:'NASA Satellite Kit', model:'kit-wings-3', mass:75, cost:26, time:4, gen:800}]},
+    {id:'p1',name:'Solar wings S', src:'NASA Satellite Kit', model:'kit-wings-1', mass:20, cost:6,  time:2, gen:400},
+    {id:'p2',name:'Solar wings M', src:'NASA Satellite Kit', model:'kit-wings-2', mass:42, cost:14, time:3, gen:900},
+    {id:'p3',name:'Solar wings L', src:'NASA Satellite Kit', model:'kit-wings-3', mass:95, cost:30, time:4, gen:2400, note:'Juno-size wings: enough even at Jupiter'},
+    {id:'p4',name:'Nuclear RTG',   proc:'rtg', mass:57, cost:70, time:6, gen:450, note:'Same power anywhere, even far from the Sun'}]},
+  batt:{label:'Battery', where:'craft', opts:[
+    {id:'bt1',name:'Battery S', proc:'batt1', mass:8,  cost:2,  time:1, wh:400,  note:'Short eclipses only'},
+    {id:'bt2',name:'Battery M', proc:'batt2', mass:18, cost:5,  time:2, wh:1000, note:'Rides through most eclipses'},
+    {id:'bt3',name:'Battery L', proc:'batt3', mass:40, cost:10, time:3, wh:2500, note:'Long nights and safe mode'}]},
   comms:{label:'Comms', where:'craft', opts:[
-    {id:'c1',name:'S-band radio', src:'NASA Satellite Kit', model:'kit-radio-1', mass:6,  cost:3,  time:2, down:20},
-    {id:'c2',name:'X-band radio', src:'NASA Satellite Kit', model:'kit-radio-2', mass:12, cost:9,  time:3, down:60, pw:30},
-    {id:'c3',name:'Laser link',   src:'NASA Satellite Kit', model:'kit-radio-3', mass:18, cost:24, time:5, down:200, pw:70}]},
-  inst:{label:'Instrument', where:'craft', opts:[
-    {id:'i1',name:'Visible camera',       proc:'scope',  mass:18, cost:10, time:3, pw:30,  data:12, sci:40},
-    {id:'i2',name:'Thermal IR imager',    src:'NASA', model:'infrared-camera', mass:38, cost:32, time:5, pw:110, data:35, sci:90},
-    {id:'i3',name:'Hyperspectral imager', proc:'scope2', mass:70, cost:58, time:8, pw:190, data:95, sci:100}]},
+    {id:'c1',name:'Dish S', src:'NASA Satellite Kit', model:'kit-radio-1', mass:6,  cost:3,  time:2, down:20},
+    {id:'c2',name:'Dish M', src:'NASA Satellite Kit', model:'kit-radio-2', mass:12, cost:9,  time:3, down:60, pw:30},
+    {id:'c3',name:'Dish L', src:'NASA Satellite Kit', model:'kit-radio-3', mass:26, cost:16, time:4, down:140, pw:50},
+    {id:'c4',name:'Laser link', proc:'laser', mass:18, cost:30, time:5, down:400, pw:70, note:'Very fast, needs precise pointing'}]},
+  store:{label:'Data storage', where:'craft', opts:[
+    {id:'s1',name:'Storage 40 Gb',  proc:'store1', mass:2, cost:1, time:1, store:40},
+    {id:'s2',name:'Storage 120 Gb', proc:'store2', mass:4, cost:3, time:1, store:120},
+    {id:'s3',name:'Storage 300 Gb', proc:'store3', mass:8, cost:7, time:2, store:300}]},
+  inst:{label:'Instrument 1', where:'craft', opts:HZ_INST},
+  inst2:{label:'Instrument 2', where:'craft', opts:HZ_INST, optional:true, slot:true},
+  inst3:{label:'Instrument 3', where:'craft', opts:HZ_INST, optional:true, slot:true},
   engine:{label:'Engine', where:'craft', opts:[
-    {id:'e1',name:'Cold gas',  proc:'nozzle-s', mass:10, cost:2,  time:1},
-    {id:'e2',name:'Hydrazine', proc:'nozzle-m', mass:28, cost:7,  time:2, pw:10},
-    {id:'e3',name:'Electric',  proc:'ion',      mass:22, cost:16, time:4, pw:160}]},
+    {id:'e1',name:'Cold gas',  proc:'nozzle-s', mass:10, cost:2,  time:1, note:'Simple and safe, little push'},
+    {id:'e2',name:'Hydrazine', proc:'nozzle-m', mass:28, cost:7,  time:2, pw:10, note:'The standard spacecraft engine'},
+    {id:'e3',name:'Electric',  proc:'ion',      mass:22, cost:16, time:4, pw:160, note:'Very efficient, needs lots of power'}]},
+  tank:{label:'Fuel tank', where:'craft', opts:[
+    {id:'t1',name:'Tank S', proc:'tank1', mass:20,  cost:2, time:1, note:'Enough for small moves'},
+    {id:'t2',name:'Tank M', proc:'tank2', mass:60,  cost:5, time:2, note:'Enough to brake at Mars or Venus'},
+    {id:'t3',name:'Tank L', proc:'tank3', mass:140, cost:9, time:3, note:'For the outer planets'}]},
 };
-const pick = {rocket:'r1', orbit:'o1', bus:'b1', power:'p1', comms:'c2', inst:null, engine:'e1'};
-const LIMIT = {budget:180, time:12};
+const pick = {rocket:'r1', orbit:'o1', bus:'b1', power:'p1', batt:'bt1', comms:'c2', store:'s1', inst:null, inst2:null, inst3:null, engine:'e1', tank:'t1'};
+const INST_SLOTS=['inst','inst2','inst3'], CRAFT_CATS=['bus','power','batt','comms','store','inst','engine','tank'];
+const mountedInst=()=>INST_SLOTS.map(c=>pick[c]).filter(Boolean);
+function isMounted(s){ return s.cat==='inst'?mountedInst().includes(s.id):pick[s.cat]===s.id; }
+const SUNK=hzSunK((window.HZ&&HZ.mission)||'earth'), DESTN=((window.HZ&&HZ_MISSIONS[HZ.mission])?(HZ.mission==='moon'?'the Moon':HZ_PL[HZ_MISSIONS[HZ.mission].planet].n):'Earth');
+const LIMIT = Object.assign({budget:180, time:12}, (window.HZ&&HZ_LIMITS[HZ.mission])||{}); LIMIT.budget=Math.round(LIMIT.budget*hzDiff().budget); if(hzSandbox()){ LIMIT.budget=99999; LIMIT.time=999; }
 const optOf=(cat,id)=>PARTS[cat].opts.find(o=>o.id===id);
 const opt=(cat)=>optOf(cat,pick[cat]);
 function totals(){
   let mass=0,cost=0,time=0,pw=0,gen=0,data=0,down=0,store=0,cap=300,link=1;
-  for(const c in PARTS){const o=opt(c); if(!o) continue; mass+=o.mass||0; cost+=o.cost||0; time=Math.max(time,o.time||0); pw+=o.pw||0; gen+=o.gen||0; data+=o.data||0; down+=o.down||0; store+=o.store||0; if(o.cap) cap=o.cap; if(o.link) link=o.link;}
+  for(const c in PARTS){const o=opt(c); if(!o) continue; mass+=o.mass||0; cost+=o.cost||0; time=Math.max(time,o.time||0); pw+=o.pw||0; gen+=(o.gen||0)*(c==='power'&&o.proc!=='rtg'?SUNK:1); data+=o.data||0; down+=o.down||0; store+=o.store||0; if(o.cap) cap=o.cap; if(o.link) link=o.link;}
   down*=link;
   return {M:[
-    {k:'mass',icon:'mass',label:'Mass',val:`${mass} kg`,r:mass/cap,hint:`Too heavy for ${opt('rocket').name} (${cap} kg). Pick a bigger rocket or lighter parts.`},
-    {k:'budget',icon:'coin',label:'Budget',val:`$${cost}M`,r:cost/LIMIT.budget,hint:`Over the $${LIMIT.budget}M budget. Swap a part for a cheaper one.`},
-    {k:'power',icon:'bolt',label:'Power',val:`${pw}/${gen} W`,r:gen?pw/gen:2,hint:`Parts draw more power than the panels make. Fit bigger solar wings.`},
-    {k:'data',icon:'data',label:'Data',val:`${data}/${store} Gb`,r:store?data/store:0,hint:`The instrument fills storage too fast. Use a bigger bus.`},
-    {k:'comms',icon:'comms',label:'Comms',val:`${Math.round(down)} Gb/d`,r:data?data/Math.max(down,1):0,hint:`The radio can't send all the data home. Pick a faster radio.`},
-    {k:'time',icon:'time',label:'Time',val:`${time} mo`,r:time/LIMIT.time,hint:`Building takes longer than the ${LIMIT.time}-month deadline.`}]};
+    {k:'mass',icon:'mass',label:'Mass',val:`${mass}/${cap} kg`,r:mass/cap,hint:`Too heavy for ${opt('rocket').name} (${cap} kg). Pick a bigger rocket or lighter parts.`},
+    {k:'budget',icon:'coin',label:'Budget',val:`$${cost}/${LIMIT.budget}M`,r:cost/LIMIT.budget,hint:`Over the $${LIMIT.budget}M budget. Swap a part for a cheaper one.`},
+    {k:'power',icon:'bolt',label:'Power',val:`${pw}/${Math.round(gen)} W`,r:gen?pw/gen:2,hint:SUNK<.9?`At ${DESTN} sunlight is ${Math.round(SUNK*100)}% of Earth's, so the wings make less. Fit bigger wings or the RTG.`:`Parts draw more power than the panels make. Fit bigger solar wings.`},
+    {k:'data',icon:'data',label:'Data',val:`${data}/${store} Gb`,r:store?data/store:0,hint:`The instruments fill storage too fast. Fit bigger data storage.`},
+    {k:'comms',icon:'comms',label:'Comms',val:`${data}/${Math.round(down)} Gb/d`,r:data?data/Math.max(down,1):0,hint:`The dish can't send all the data home. Fit a bigger dish or the laser.`},
+    {k:'time',icon:'time',label:'Time',val:`${time}/${LIMIT.time} mo`,r:time/LIMIT.time,hint:`Building takes longer than the ${LIMIT.time}-month deadline.`}]};
 }
-function fx(o){const a=[]; if(o.mass) a.push(['+'+o.mass+' kg','up']); if(o.cost) a.push([(o.cost>0?'+$':'-$')+Math.abs(o.cost)+'M',o.cost>0?'up':'good']); if(o.pw) a.push(['+'+o.pw+' W use','up']); if(o.gen) a.push([o.gen+' W','good']); if(o.data) a.push([o.data+' Gb/d','']); if(o.down) a.push([o.down+' Gb/d link','good']); if(o.cap) a.push(['lifts '+o.cap+' kg','good']); if(o.store) a.push([o.store+' Gb store','good']); if(o.time) a.push([o.time+' mo','']); if(o.note) a.push([o.note,'']); return a.map(x=>`<span class="${x[1]}">${x[0]}</span>`).join('')}
+function fx(o){const a=[]; if(o.ecl!=null&&o.proc==='orbit'){ a.push([Math.round(o.ecl*100)+'% in shadow',o.ecl>.3?'up':'good']); a.push([(o.link>1?'more':o.link<1?'fewer':'normal')+' ground passes',o.link>=1?'good':'up']); a.push(['science x'+o.sci,o.sci>=1?'good':'up']); if(o.oiK&&o.oiK!==1) a.push(['insertion fuel x'+o.oiK,o.oiK<1?'good':'up']); } if(o.wh) a.push([o.wh+' Wh stored','good']); if(o.id&&HZ_TANK_DV[o.id]) a.push(['x'+HZ_TANK_DV[o.id]+' engine delta-v','good']); if(o.id&&HZ_ENGINE_K[o.id]) a.push([(HZ_ENGINE_K[o.id]*2).toFixed(1)+' km/s with tank M','good']); if(o.mass) a.push(['+'+o.mass+' kg','up']); if(o.cost) a.push([(o.cost>0?'+$':'-$')+Math.abs(o.cost)+'M',o.cost>0?'up':'good']); if(o.pw) a.push(['+'+o.pw+' W use','up']); if(o.gen) a.push([o.gen+' W','good']); if(o.data) a.push([o.data+' Gb/d','']); if(o.down) a.push([o.down+' Gb/d link','good']); if(o.cap) a.push(['lifts '+o.cap+' kg','good']); if(o.store) a.push([o.store+' Gb store','good']); if(o.time) a.push([o.time+' mo','']); if(o.note) a.push([o.note,'']); return a.map(x=>`<span class="${x[1]}">${x[0]}</span>`).join('')}
 
 /* ================= HUD / callout / dock ================= */
 const ic=(n)=>`<svg class="i"><use href="#i-${n}"/></svg>`;
 const resEl=document.getElementById('res'); let lastVals={};
 function renderHUD(){const {M}=totals(); resEl.innerHTML=M.map(m=>{const st=m.r>1?'bad':m.r>.85?'warn':''; return `<div class="metric ${st} ${lastVals[m.k]&&lastVals[m.k]!==m.val?'bump':''}" title="${m.label}"><span class="ic">${ic(m.icon)}</span>${m.val}<span class="mb"><i style="width:${Math.min(m.r,1)*100}%"></i></span></div>`}).join(''); M.forEach(m=>lastVals[m.k]=m.val);}
 const calloutEl=document.getElementById('callout'); let step=0;
-const STEPS=[['Step 1/3','Walk into the glowing spacecraft workshop.'],['Step 2/3','Find the Instrument row and pick one. Heavier means less fuel. Keep bars green!'],['Step 3/3','Head out to the launch pad and launch.'],['Done','Now design your own. Try other parts and beat your score.']];
+const STEPS=[['Step 1/3','Walk into the glowing spacecraft workshop.'],['Step 2/3','Pick an instrument from the Instruments station, carry it to the build stand and mount it. Check the goals board. Keep bars green!'],['Step 3/3','Head out to the launch pad and launch.'],['Done','Now design your own. Try other parts and beat your score.']];
 function setStep(n){step=n;const s=STEPS[n];calloutEl.style.animation='none';void calloutEl.offsetWidth;calloutEl.style.animation='';calloutEl.innerHTML=`<b>${s[0]}</b><span>${s[1]}</span><button class="skip" type="button" id="skip">Skip</button>`;document.getElementById('skip').onclick=()=>{calloutEl.style.display='none'};}
 const dockEl=document.getElementById('dock'); let launched=false;
 function renderDock(){const T=[['planet','Missions',''],['wrench','Rocket','rocket'],['sat','Spacecraft','craft'],['rocket','Launch pad','pad'],['console','Control',launched?'control':'lock']];
@@ -323,14 +355,18 @@ function label(text,x,y,z,w=3.2){const c=document.createElement('canvas');c.widt
 
 /* ================= NASA model loading ================= */
 const loader=new THREE.GLTFLoader(); const MODELS={};
-const MODEL_FILES=['kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-ares-1','rocket-saturn-v','rocket-shuttle','rocket-sls','orion','capsule-mercury'];
+const SHOWM=(typeof HZ_MISSIONS!=='undefined'&&window.HZ&&HZ_MISSIONS[HZ.mission])||null, SHOW=SHOWM?SHOWM.model:'landsat-8', SHOWN=SHOWM&&SHOW!=='landsat-8'?SHOWM.nasa.toUpperCase():'LANDSAT 8';
+const MODEL_FILES=[...(SHOW!=='landsat-8'?[SHOW]:[]),'kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-ares-1','rocket-saturn-v','rocket-shuttle','rocket-sls','orion','capsule-mercury'];
 // Bake every mesh into one geometry (one draw call per model), drop NASA textures/logos, keep shape only.
 // Original NASA colours, minus markings: each texture is replaced by its dominant colour (this removes all
 // lettering such as "USA"/"UNITED STATES"); meshes are merged per material to keep draw calls low.
 function dominant(img){ try{ const c=document.createElement('canvas'); c.width=c.height=24; const g=c.getContext('2d'); g.drawImage(img,0,0,24,24);
   const d=g.getImageData(0,0,24,24).data, n={}; let best=null,bc=0; for(let i=0;i<d.length;i+=4){ const k=(d[i]>>4)+','+(d[i+1]>>4)+','+(d[i+2]>>4); n[k]=(n[k]||0)+1; if(n[k]>bc){bc=n[k];best=[d[i],d[i+1],d[i+2]];} }
   return new THREE.Color(best[0]/255,best[1]/255,best[2]/255); }catch(e){ return new THREE.Color(1,1,1); } }
-function bake(gltf){ gltf.scene.updateMatrixWorld(true); const all=[], byMat=new Map(); const v=new THREE.Vector3();
+// Some NASA rocket models stand on a display plinth (a flat dark slab under the engines). A rocket on our pads needs no plinth: drop it.
+function stripPlinth(sc){ sc.updateMatrixWorld(true); const A=new THREE.Box3().setFromObject(sc), H=A.max.y-A.min.y, W=Math.max(A.max.x-A.min.x,A.max.z-A.min.z); if(!(H>2*W)) return; const rm=[];
+  sc.traverse(o=>{ if(!o.isMesh) return; const b=new THREE.Box3().setFromObject(o); if(b.max.y-b.min.y<H*.05&&b.min.y-A.min.y<H*.01&&Math.max(b.max.x-b.min.x,b.max.z-b.min.z)>W*.8) rm.push(o); }); rm.forEach(o=>o.parent.remove(o)); }
+function bake(gltf){ if(typeof stripPlinth==='function') stripPlinth(gltf.scene); gltf.scene.updateMatrixWorld(true); const all=[], byMat=new Map(); const v=new THREE.Vector3();
   gltf.scene.traverse(o=>{ if(!o.isMesh||!o.geometry) return; const g=o.geometry, P=g.getAttribute('position'), I=g.index; const arr=[];
     const n=I?I.count:P.count; for(let i=0;i<n;i++){ const k=I?I.getX(i):i; v.fromBufferAttribute(P,k).applyMatrix4(o.matrixWorld); arr.push(v.x,v.y,v.z); }
     for(let i=0;i<arr.length;i++) all.push(arr[i]); const m=Array.isArray(o.material)?o.material[0]:o.material; if(!byMat.has(m)) byMat.set(m,[]); { const t=byMat.get(m); for(let i=0;i<arr.length;i++) t.push(arr[i]); }; });
@@ -362,9 +398,19 @@ function procPart(kind){ const g=new THREE.Group();
   if(kind==='nozzle-s'){ lathe([[0,0],[.18,0],[.12,.35],[.22,.7],[0,.7]],GOLD); }
   if(kind==='nozzle-m'){ lathe([[0,1.2],[.25,1.2],[.25,.9],[.12,.75],[.45,0],[.4,0],[.1,.7],[0,.7]],GOLD); const t=new THREE.Mesh(new THREE.SphereGeometry(.3,20,14),CREAM);t.position.y=1.45;g.add(t);}
   if(kind==='ion'){ const c=new THREE.Mesh(new THREE.CylinderGeometry(.5,.55,.6,32),DARK);c.position.y=.3;g.add(c); const grid=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.04,32),GLOWA);grid.position.y=.62;g.add(grid);}
+  if(kind==='rtg'){ const c=new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,1.3,20),DARK); c.position.y=.75; g.add(c); for(let i=0;i<8;i++){ const f=new THREE.Mesh(new THREE.BoxGeometry(.06,1.1,.42),GOLD); const a=i/8*Math.PI*2; f.position.set(Math.cos(a)*.42,.75,Math.sin(a)*.42); f.rotation.y=-a; g.add(f);} }
+  if(kind==='laser'){ const b=new THREE.Mesh(new THREE.BoxGeometry(.6,.4,.6),CREAM); b.position.y=.2; g.add(b); const t=new THREE.Mesh(new THREE.CylinderGeometry(.18,.22,.7,20),DARK); t.position.y=.75; g.add(t); const l=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.05,20),GLOWA); l.position.y=1.12; g.add(l); }
+  if(kind&&kind.startsWith('batt')){ const n=+kind.slice(4); for(let i=0;i<n+1;i++){ const c=new THREE.Mesh(new THREE.BoxGeometry(.32,.7,.5),i%2?TEAL:DARK); c.position.set((i-n/2)*.36,.35,0); g.add(c);} const top=new THREE.Mesh(new THREE.BoxGeometry(.36*(n+1),.06,.54),GOLD); top.position.y=.73; g.add(top); }
+  if(kind&&kind.startsWith('store')){ const n=+kind.slice(5); for(let i=0;i<n;i++){ const c=new THREE.Mesh(new THREE.BoxGeometry(.8,.14,.6),i%2?CREAM:DARK); c.position.y=.08+i*.16; g.add(c);} const led=new THREE.Mesh(new THREE.BoxGeometry(.5,.04,.02),GLOWA); led.position.set(0,.1,.31); g.add(led); }
+  if(kind&&kind.startsWith('tank')){ const n=+kind.slice(4), r=.3+n*.12; const L=n*.25, body=new THREE.Mesh(new THREE.CylinderGeometry(r,r,L+.001,24),CREAM); body.position.y=r+n*.13; g.add(body); for(const sy of [-1,1]){ const cap=new THREE.Mesh(new THREE.SphereGeometry(r,24,12,0,Math.PI*2,0,Math.PI/2),CREAM); cap.position.y=r+n*.13+sy*L/2; if(sy<0) cap.rotation.x=Math.PI; g.add(cap); } const band=new THREE.Mesh(new THREE.CylinderGeometry(r*1.02,r*1.02,.08,24),RUST); band.position.y=r+n*.13; g.add(band); }
+  if(kind==='radar'){ const p=new THREE.Mesh(new THREE.BoxGeometry(1.4,.08,.7),DARK); p.position.y=.9; p.rotation.x=-.4; g.add(p); for(let i=0;i<6;i++){ const s=new THREE.Mesh(new THREE.BoxGeometry(.18,.09,.6),GLOWA); s.position.set(-.55+i*.22,.95,0); s.rotation.x=-.4; g.add(s);} const m=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,.8,8),CREAM); m.position.y=.45; g.add(m); }
+  if(kind==='boom'){ const b=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,1.6,8),CREAM); b.rotation.z=Math.PI/2.4; b.position.set(.5,.6,0); g.add(b); const s=new THREE.Mesh(new THREE.BoxGeometry(.22,.22,.22),GOLD); s.position.set(1.15,.95,0); g.add(s); const base=new THREE.Mesh(new THREE.CylinderGeometry(.18,.22,.3,16),DARK); base.position.y=.15; g.add(base); }
+  if(kind==='spec'){ const b=new THREE.Mesh(new THREE.BoxGeometry(.7,.55,.55),CREAM); b.position.y=.3; g.add(b); const c=new THREE.Mesh(new THREE.ConeGeometry(.2,.45,20),GOLD); c.rotation.z=-Math.PI/2; c.position.set(.55,.35,0); g.add(c); }
+  if(kind==='neutron'){ const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,.7,24),TEAL); c.position.y=.35; g.add(c); const r=new THREE.Mesh(new THREE.TorusGeometry(.3,.05,8,24),GOLD); r.rotation.x=Math.PI/2; r.position.y=.72; g.add(r); }
+  if(kind==='gravr'){ const b=new THREE.Mesh(new THREE.BoxGeometry(.5,.35,.5),DARK); b.position.y=.18; g.add(b); const d=new THREE.Mesh(new THREE.SphereGeometry(.42,24,12,0,Math.PI*2,0,Math.PI/3),CREAM); d.rotation.x=Math.PI; d.position.y=.85; g.add(d); const f=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.5,8),GOLD); f.position.y=.6; g.add(f); }
   if(kind==='orbit'){ const e=new THREE.Mesh(new THREE.SphereGeometry(.45,24,16),TEAL);e.position.y=1;g.add(e); const o=new THREE.Mesh(new THREE.TorusGeometry(.85,.03,8,64),GLOWA);o.position.y=1;o.rotation.x=1.2;g.add(o);}
   return g; }
-const PART_MAT={bus:CREAM,power:TEAL,comms:RUST,inst:CREAM,engine:GOLD,rocket:CREAM};
+const PART_MAT={bus:CREAM,power:TEAL,comms:RUST,inst:CREAM,engine:GOLD,rocket:CREAM,batt:TEAL,store:DARK,tank:CREAM};
 function partObject(cat,o,size){ return o.model? fromModel(o.model,null,size,{upright:cat==='rocket'}) : (()=>{const p=procPart(o.proc);p.scale.setScalar(size/1.4);return p;})(); }
 
 /* ================= Areas (base + two walk-in rooms) ================= */
@@ -442,27 +488,82 @@ function pedestal(x,z,top){ cyl(.95,1.05,.5,DARK,x,.25,z,32); cyl(.82,.82,.05,to
 // ---------- SPACECRAFT WORKSHOP ----------
 const exhibits=[]; let buildBay;
 function buildCraftRoom(){
-  const A=area('craft'); root=A.group; buildHall(A,-16,-12,16,12,'Spacecraft workshop');
-  const rows=['bus','power','comms','inst','engine'];
-  rows.forEach((cat,ri)=>{ const z=-9+ri*4.2; label(PARTS[cat].label.toUpperCase(),-2.6,1.6,z,3.4);
-    PARTS[cat].opts.forEach((o,oi)=>{ const x=1.5+oi*4.6; pedestal(x,z); const obj=partObject(cat,o,1.7); obj.position.set(x,.56,z); root.add(obj); exhibits.push({obj,cat,id:o.id,spin:Math.random()*6});
-      A.spots.push({id:o.id,cat,o,pos:new THREE.Vector3(x+1.3,0,z+1.3),ring:ring(x,z,1.15,1.35),kind:'part'}); A.block.push([x-1.05,z-1.05,x+1.05,z+1.05]); }); });
-  // build bay: assembled craft from current picks
-  cyl(2.6,2.8,.4,DARK,-10,.2,-3,40); cyl(2.3,2.3,.05,GLOWA,-10,.43,-3,40); label('BUILD BAY',-10,5.4,-3,4.2);
-  buildBay=new THREE.Group(); buildBay.position.set(-10,.5,-3); root.add(buildBay); A.block.push([-12.8,-5.8,-7.2,-.2]);
-  // NASA Landsat 8 on display (hall of fame)
-  pedestal(-11,7); const ls=fromModel('landsat-8',CREAM,3.2); ls.position.set(-11,.56,7); root.add(ls); label('LANDSAT 8',-11,4.6,7,3.6); A.block.push([-12.1,5.9,-9.9,8.1]);
-  A.spots.push({id:'exit',pos:new THREE.Vector3(-2,0,10.6),ring:ring(-2,10.6),label:'Exit to base',act:()=>exitRoom()});
-  label('EXIT',-2,1.8,11.6,2.2);
-  A.spawn=new THREE.Vector3(-2,0,9.4);
+  const A=area('craft'); root=A.group; buildHall(A,-26,-20,26,20,'Spacecraft workshop');
+  // stations around a central build stand; each row is one subsystem
+  const ROWS=[['bus','STRUCTURE',[-4.5,0,4.5],-15.5],['power','POWER',[-21.5,-17.5,-13.5,-9.5],-10],['batt','BATTERIES',[-21.5,-17.5,-13.5],-5],
+    ['comms','COMMS',[9.5,13.5,17.5,21.5],-10],['store','DATA STORAGE',[9.5,13.5,17.5],-5],['engine','ENGINES',[-21.5,-17.5,-13.5],6.5],['tank','FUEL TANKS',[-21.5,-17.5,-13.5],11.5]];
+  const mat=(x0,x1,z0,z1)=>{ box(x1-x0,.06,z1-z0,STONE,(x0+x1)/2,.03,(z0+z1)/2); box(x1-x0+.3,.04,z1-z0+.3,RUST,(x0+x1)/2,.01,(z0+z1)/2,false); };
+  mat(-24,-7.2,-12.6,-2.4); mat(7.2,24,-12.6,-2.4); mat(-24,-11,4,14); mat(7.2,24,4,14); mat(-7.2,7.2,-18,-13);
+  for(const [cat,name,xs,z] of ROWS){ label(name,(xs[0]+xs[xs.length-1])/2,3.6,z-1.6,5.2);
+    PARTS[cat].opts.forEach((o,oi)=>{ const x=xs[oi]; pedestal(x,z); const obj=partObject(cat,o,cat==='bus'?2.1:1.6); obj.position.set(x,.56,z); root.add(obj); exhibits.push({obj,cat,id:o.id,spin:Math.random()*6});
+      A.spots.push({id:o.id,cat,o,pos:new THREE.Vector3(x+1.3,0,z+1.3),ring:ring(x,z,1.15,1.35),kind:'part'}); A.block.push([x-1.05,z-1.05,x+1.05,z+1.05]); }); }
+  label('INSTRUMENTS',15.5,4.2,4.6,6);
+  HZ_INST.forEach((o,i)=>{ const x=9.5+(i%4)*4, z=i<4?6.5:11.5; pedestal(x,z); const obj=partObject('inst',o,1.5); obj.position.set(x,.56,z); root.add(obj); exhibits.push({obj,cat:'inst',id:o.id,spin:Math.random()*6});
+    A.spots.push({id:o.id,cat:'inst',o,pos:new THREE.Vector3(x+1.3,0,z+1.3),ring:ring(x,z,1.15,1.35),kind:'part'}); A.block.push([x-1.05,z-1.05,x+1.05,z+1.05]); });
+  // the build stand: a turntable with an assembly pylon
+  cyl(4.4,4.7,.5,DARK,0,.25,-1,48); cyl(4.1,4.1,.05,GLOWA,0,.52,-1,48); cyl(3.9,3.9,.06,STONE,0,.56,-1,48); cyl(.5,.7,2.9,DARK,0,1.95,-1,16);
+  label('BUILD STAND',0,11.2,-1,6); A.block.push([-4.5,-5.5,4.5,3.2]);
+  buildBay=new THREE.Group(); buildBay.position.set(0,3.3,-1); root.add(buildBay); exhibits.push({obj:buildBay,stand:true});
+  A.spots.push({id:'stand',pos:new THREE.Vector3(0,0,4.6),ring:ring(0,4.6,1.2,1.45),label:'Design spacecraft',act:()=>standAct()});
+  // mission goals board on the back wall
+  goalBoard=new THREE.Mesh(new THREE.PlaneGeometry(17,6.8),new THREE.MeshBasicMaterial({map:goalTex,transparent:true})); goalBoard.position.set(0,5.2,-19.7); root.add(goalBoard); drawGoals();
+  // the mission's NASA spacecraft on display
+  pedestal(-21.5,16); const ls=fromModel(SHOW,SHOW==='landsat-8'?CREAM:null,3.2); ls.position.set(-21.5,.56,16); root.add(ls); label(SHOWN,-21.5,4.6,16,3.6); A.block.push([-22.6,14.9,-20.4,17.1]);
+  A.spots.push({id:'exit',pos:new THREE.Vector3(21.5,0,17.4),ring:ring(21.5,17.4),label:'Exit to base',act:()=>exitRoom()});
+  label('EXIT',21.5,1.8,18.4,2.2);
+  A.spawn=new THREE.Vector3(21.5,0,16.2);
 }
-function refreshBuildBay(){ if(!buildBay) return; buildBay.clear(); const s=new THREE.Group(); buildBay.add(s);
-  const bus=opt('bus'); if(bus){ const b=partObject('bus',bus,1.8); s.add(b); }
-  const pw=opt('power'); if(pw){ for(const side of [-1,1]){ const w=partObject('power',pw,1.6); w.position.set(side*1.6,.6,0); w.rotation.y=side>0?0:Math.PI; s.add(w);} }
-  const cm=opt('comms'); if(cm){ const c=partObject('comms',cm,1.0); c.position.set(0,1.75,0); s.add(c); }
-  const ins=opt('inst'); if(ins){ const i=partObject('inst',ins,.9); i.position.set(0,.2,1.05); s.add(i); }
-  const en=opt('engine'); if(en){ const e=partObject('engine',en,.7); e.position.set(0,-.05,-1.1); e.rotation.x=-Math.PI/2; s.add(e); }
-  s.position.y=.4; }
+/* ---------- goals board (canvas on the back wall) ---------- */
+const goalCv=document.createElement('canvas'); goalCv.width=1300; goalCv.height=520; const goalTex=new THREE.CanvasTexture(goalCv); let goalBoard=null;
+const MKEY_B=(window.HZ&&HZ.mission&&HZ_GOALS[HZ.mission])?HZ.mission:'earth';
+function drawGoals(){ const g=goalCv.getContext('2d'), W=1300, H=520; g.clearRect(0,0,W,H);
+  const rr=(x,y,w,h,r)=>{ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); };
+  g.fillStyle='#1A1206'; rr(10,22,W-20,H-30,36); g.fill(); g.fillStyle='#FFFDF8'; rr(10,10,W-20,H-34,36); g.fill(); g.lineWidth=8; g.strokeStyle='#1A1206'; g.stroke();
+  g.fillStyle='#C2643A'; rr(W/2-300,26,600,78,22); g.fill(); g.stroke(); g.fillStyle='#fff'; g.font="400 44px 'Game Paused','Silkscreen',monospace"; g.textAlign='center'; g.textBaseline='middle'; g.fillText('Mission goals',W/2,66);
+  const goals=hzGoalsMet(MKEY_B,mountedInst()), names=Object.fromEntries(HZ_INST.map(i=>[i.id,i.name]));
+  goals.forEach((gl,i)=>{ const y=150+i*112; g.fillStyle=gl.ok?'#4CC38A':'#F6F1E6'; rr(54,y,64,64,14); g.fill(); g.lineWidth=6; g.stroke();
+    if(gl.ok){ g.strokeStyle='#fff'; g.lineWidth=9; g.beginPath(); g.moveTo(68,y+33); g.lineTo(82,y+48); g.lineTo(106,y+18); g.stroke(); g.strokeStyle='#1A1206'; }
+    g.textAlign='left'; g.fillStyle='#1A1206'; g.font="700 40px Geist,system-ui,sans-serif"; g.fillText(gl.t,146,y+22);
+    g.fillStyle='#6E6457'; g.font="500 28px Geist,system-ui,sans-serif"; g.fillText('Needs: '+gl.need.map(n=>names[n]).join(' or '),146,y+62); });
+  goalTex.needsUpdate=true; }
+/* ---------- carry and mount ---------- */
+let carry=null, carryObj=null, justMounted=null;
+function fitPart(c,id){ let slot=c;
+  if(c==='inst'){ const at=INST_SLOTS.find(k=>pick[k]===id); if(at){ pick[at]=null; const left=mountedInst(); INST_SLOTS.forEach((k,i)=>pick[k]=left[i]||null); renderHUD(); refreshBuildBay(); drawGoals(); return; }
+    slot=INST_SLOTS.find(k=>!pick[k]); if(!slot){ toastMsg('All 3 instrument slots are full: remove one first'); return; } }
+  pick[slot]=id; justMounted=slot; if(carry&&carry.id===id){ carry=null; if(carryObj){ hero.remove(carryObj); carryObj=null; } }
+  renderHUD(); refreshBuildBay(); drawGoals(); if(c==='inst'&&step===1) setStep(2); }
+function startCarry(s){ carry=s; if(carryObj) hero.remove(carryObj); carryObj=partObject(s.cat,s.o,.9); carryObj.position.set(0,2.35,.15); hero.add(carryObj);
+  toastMsg('Carrying '+s.o.name); const st=A().spots.find(x=>x.id==='stand'); if(st) st.label='Mount '+s.o.name; showInfo(s,true); }
+function standAct(){ if(!carry){ openWin('stand'); return; }
+  const s=carry; let slot=s.cat;
+  if(s.cat==='inst'){ if(mountedInst().includes(s.o.id)){ toastMsg('Already mounted'); return; } slot=INST_SLOTS.find(c=>!pick[c]); if(!slot){ toastMsg('All 3 instrument slots are full'); openWin('stand'); return; } }
+  pick[slot]=s.o.id; justMounted=slot; carry=null; if(carryObj){ hero.remove(carryObj); carryObj=null; } A().spots.find(x=>x.id==='stand').label='Design spacecraft';
+  renderHUD(); refreshBuildBay(); drawGoals(); toastMsg(s.o.name+' mounted'); if(s.cat==='inst'&&step===1) setStep(2); }
+function refreshBuildBay(){ if(!buildBay) return; buildBay.clear(); const s=new THREE.Group(); buildBay.add(s); s.scale.setScalar(2.6);
+  const put=(cat,o,size,x,y,z,ry=0,rx=0)=>{ if(!o) return; const g=partObject(cat,o,size); g.userData.cat=cat+(o.proc==='rtg'?'-rtg':''); g.position.set(x,y,z); g.rotation.set(rx,ry,0); s.add(g);
+    if(justMounted===cat||(justMounted&&cat===justMounted.replace(/[0-9]/,''))&&false){} if(justMounted&&(justMounted===cat)){ g.userData.pop=0; pops.push(g); } return g; };
+  const bus=opt('bus'); put('bus',bus,1.8,0,0,0);
+  const pw=opt('power'); if(pw){ if(pw.proc==='rtg') put('power',pw,1.1,0,.3,-1.5,0,0); else for(const side of [-1,1]) put('power',pw,1.6,side*1.6,.6,0,side>0?0:Math.PI); }
+  put('comms',opt('comms'),1.0,0,1.75,0);
+  put('batt',opt('batt'),.55,-.62,1.62,.45); put('store',opt('store'),.5,.62,1.62,.45);
+  const tk=opt('tank'); put('tank',tk,.9,0,.25,-1.05,0,-Math.PI/2); put('engine',opt('engine'),.7,0,.25,tk?-1.75:-1.1,0,-Math.PI/2);
+  INST_SLOTS.forEach((c,i)=>{ const id=pick[c]; if(!id) return; const o=HZ_INST.find(x=>x.id===id); const g=partObject('inst',o,.7); g.userData.cat='inst'; g.position.set((i-1)*.62,.12,1.05); s.add(g); if(justMounted===c){ g.userData.pop=0; pops.push(g); } });
+  justMounted=null; snugCraft(s); }
+// Pull every part flush against the body so the stand shows one connected spacecraft (wings on its sides, dish and boxes on top,
+// instruments on the front, tank and engine on the back). Works from real bounding boxes, so any bus/part size fits.
+function snugCraft(s){ const sc=s.scale.x; s.scale.setScalar(1); const pos=s.position.clone(); s.position.set(0,0,0); const par=s.parent; if(par) par.remove(s); s.updateMatrixWorld(true);
+  const B=o=>{ o.updateMatrixWorld(true); return new THREE.Box3().setFromObject(o); }, by=c=>s.children.filter(g=>(g.userData.cat||'')===c);
+  const bus=by('bus')[0]; if(bus){ const bb=B(bus), cy=(bb.min.y+bb.max.y)/2, cz=(bb.min.z+bb.max.z)/2;
+    for(const w of by('power')){ const wb=B(w), side=w.position.x>=0?1:-1; w.position.x+=side>0?bb.max.x+.02-wb.min.x:bb.min.x-.02-wb.max.x; w.position.y+=cy-(wb.min.y+wb.max.y)/2; w.position.z+=cz-(wb.min.z+wb.max.z)/2; }
+    for(const r of by('power-rtg')){ const rb=B(r); r.position.x+=bb.max.x+.06-rb.min.x; r.position.y+=bb.min.y-rb.min.y; r.position.z+=cz-(rb.min.z+rb.max.z)/2; }
+    const top=[...by('comms'),...by('batt'),...by('store')]; for(const t of top){ const tb=B(t); t.position.y+=bb.max.y-tb.min.y-.01; }
+    for(const t of by('batt').concat(by('store'))){ const tb=B(t); t.position.z+=Math.min(0,bb.max.z-tb.max.z); t.position.x+=(t.position.x<0?bb.min.x-tb.min.x:bb.max.x-tb.max.x); }
+    const ins=by('inst'), sp=(bb.max.x-bb.min.x)*.38; ins.forEach((g,i)=>{ const ib=B(g); g.position.x+=(bb.min.x+bb.max.x)/2+(i-(ins.length-1)/2)*sp-(ib.min.x+ib.max.x)/2; }); for(const g of ins){ const ib=B(g); g.position.z+=bb.max.z-ib.min.z-.01; g.position.y+=bb.min.y+(bb.max.y-bb.min.y)*.15-ib.min.y; }
+    let back=bb.min.z; for(const t of by('tank')){ const tb=B(t); t.position.z+=back+.01-tb.max.z; t.position.y+=cy-(tb.min.y+tb.max.y)/2; t.position.x+=-(tb.min.x+tb.max.x)/2; back=B(t).min.z; }
+    for(const e of by('engine')){ const eb=B(e); e.position.z+=back+.01-eb.max.z; e.position.y+=cy-(eb.min.y+eb.max.y)/2; e.position.x+=-(eb.min.x+eb.max.x)/2; } }
+  if(par) par.add(s); s.position.copy(pos); s.scale.setScalar(sc); }
+const pops=[]; (function popLoop(){ for(let i=pops.length-1;i>=0;i--){ const g=pops[i]; g.userData.pop+=.035; const t=Math.min(1,g.userData.pop), e=1+2.7*Math.pow(t-1,3)+1.7*Math.pow(t-1,2); g.scale.setScalar(Math.max(.01,e)); if(t>=1){ g.scale.setScalar(1); pops.splice(i,1);} } requestAnimationFrame(popLoop); })();
 
 // ---------- ROCKET WORKSHOP ----------
 function buildRocketRoom(){
@@ -473,7 +574,7 @@ function buildRocketRoom(){
     label(o.name.toUpperCase(),x,o.h+1.8,z,3.6);
     A.spots.push({id:o.id,cat:'rocket',o,pos:new THREE.Vector3(x,0,z+3),ring:ring(x,z,2.15,2.4),kind:'part'}); A.block.push([x-2.1,z-2.1,x+2.1,z+2.1]); });
   label('ORBIT',-10,2,3.5,3);
-  PARTS.orbit.opts.forEach((o,i)=>{ const x=-3+i*7, z=3.5; cyl(.7,.9,1.1,DARK,x,.55,z,24); const p=procPart('orbit'); p.position.set(x,.9,z); root.add(p); exhibits.push({obj:p,cat:'orbit',id:o.id});
+  PARTS.orbit.opts.forEach((o,i)=>{ const x=-6+i*5, z=3.5; cyl(.7,.9,1.1,DARK,x,.55,z,24); const p=procPart('orbit'); p.position.set(x,.9,z); root.add(p); exhibits.push({obj:p,cat:'orbit',id:o.id});
     label(o.name.toUpperCase(),x,3.6,z,4.2); A.spots.push({id:o.id,cat:'orbit',o,pos:new THREE.Vector3(x+1.6,0,z+1.6),ring:ring(x,z,1.05,1.3),kind:'part'}); A.block.push([x-.95,z-.95,x+.95,z+.95]); });
   // NASA capsules on display (hall of fame)
   [['orion','ORION',-14,6,2.2],['capsule-mercury','MERCURY',-9.5,6,1.9]].forEach(([m,n,x,z,sz])=>{ pedestal(x,z); const c=fromModel(m,null,sz); c.position.set(x,.56,z); root.add(c); exhibits.push({obj:c}); label(n,x,3.6,z,3); A.block.push([x-1.1,z-1.1,x+1.1,z+1.1]); });
@@ -526,24 +627,37 @@ const enterEl=document.getElementById('enter'), winEl=document.getElementById('w
 let near=null, openZone=null;
 enterEl.onclick=()=>interact();
 function interact(){ if(!near||transitioning) return; if(near.kind==='part') choose(near); else if(near.act) near.act(); }
-function choose(s){ pick[s.cat]=s.id; renderHUD(); refreshBuildBay(); if(s.cat==='rocket') refreshPadRocket(); showInfo(s,true); if(s.cat==='inst'&&step===1) setStep(2); }
+function choose(s){ if(CRAFT_CATS.includes(s.cat)){ startCarry(s); return; } pick[s.cat]=s.id; renderHUD(); refreshBuildBay(); if(s.cat==='rocket') refreshPadRocket(); showInfo(s,true); if(s.cat==='inst'&&step===1) setStep(2); }
 function showInfo(s,force){ if(!s||s.kind!=='part'){ infoEl.classList.remove('show'); infoEl.dataset.id=''; return; }
-  if(!force&&infoEl.dataset.id===s.id) return; infoEl.dataset.id=s.id; const on=pick[s.cat]===s.id;
+  if(!force&&infoEl.dataset.id===s.id) return; infoEl.dataset.id=s.id; const on=isMounted(s);
   infoEl.innerHTML=`<div class="row"><div><div class="cat">${PARTS[s.cat].label.toUpperCase()}</div><h4>${s.o.name}</h4><div class="src">${s.o.model?'Model: '+s.o.src:'Model: Horizons stand-in'}</div></div>
-    <button class="t-btn ${on?'':'primary'}" type="button" id="pickbtn">${on?'Picked ✓':'Pick'} <kbd style="font:400 10px var(--f-num);border:2px solid var(--ink);border-radius:5px;padding:0 4px;margin-left:4px;background:#fff">E</kbd></button></div><div class="fx">${fx(s.o)}</div>`;
+    <button class="t-btn ${on?'':'primary'}" type="button" id="pickbtn">${CRAFT_CATS.includes(s.cat)?(on?'Mounted ✓':carry&&carry.id===s.id?'Carrying':'Carry'):(on?'Picked ✓':'Pick')} <kbd style="font:400 10px var(--f-num);border:2px solid var(--ink);border-radius:5px;padding:0 4px;margin-left:4px;background:#fff">E</kbd></button></div><div class="fx">${fx(s.o)}</div>`;
   infoEl.classList.add('show'); document.getElementById('pickbtn').onclick=()=>choose(s); }
 
 /* ================= Windows (pad / control) ================= */
 function openWin(z){ if(z==='control'&&!launched){ toastMsg('Locked until launch'); return; } openZone=z; autoTarget=null; enterEl.style.display='none'; renderWin(); renderDock(); }
 function closeWin(){ openZone=null; winEl.classList.remove('open'); renderDock(); }
 function renderWin(){ const z=openZone; if(!z) return; let body='',foot='';
-  if(z==='pad'){ const {M}=totals(); const bad=M.filter(m=>m.r>1); const missing=Object.keys(PARTS).filter(c=>!pick[c]);
+  if(z==='pad'){ const {M}=totals(); const bad=M.filter(m=>m.r>1); const missing=Object.keys(PARTS).filter(c=>!pick[c]&&!PARTS[c].optional);
     body=`<ul class="check">${M.map(m=>`<li class="${m.r>1?'bad':''}"><i></i>${m.label}<small>${m.val}</small></li>`).join('')}</ul>`+(missing.length?`<div class="hint">Missing: ${missing.map(c=>PARTS[c].label).join(', ')}. Visit the spacecraft workshop.</div>`:bad.length?`<div class="hint">${bad[0].hint}</div>`:'');
     foot=`<button class="t-btn primary" type="button" id="launch" ${bad.length||missing.length||launched?'disabled':''}>${launched?'Launched':'Launch on '+opt('rocket').name}</button>`; }
+  else if(z==='stand'){   // the design panel: every subsystem and its options side by side
+      const TABS=[['bus','Structure'],['power','Power'],['batt','Battery'],['comms','Comms'],['store','Storage'],['engine','Engine'],['tank','Fuel tank'],['inst','Instruments']];
+      const gl=hzGoalsMet(MKEY_B,mountedInst()), names=Object.fromEntries(HZ_INST.map(i=>[i.id,i.name]));
+      const cur=c=>c==='inst'?(mountedInst().length?mountedInst().map(id=>names[id]).join(', '):'none yet'):(opt(c)?opt(c).name:'none');
+      const tabs=TABS.map(([c,n])=>`<button type="button" class="dz-tab ${designTab===c?'on':''}" data-tab="${c}"><b>${n}</b><small>${cur(c)}</small>${c==='inst'?`<i class="${gl.every(g=>g.ok)?'ok':''}">${gl.filter(g=>g.ok).length}/3</i>`:''}</button>`).join('');
+      const serves=id=>gl.filter(g=>g.need.includes(id)).map(g=>g.t);
+      const cards=(designTab==='inst'?HZ_INST:PARTS[designTab].opts).map(o=>{ const on=designTab==='inst'?mountedInst().includes(o.id):pick[designTab]===o.id, sv=designTab==='inst'?serves(o.id):[];
+        return `<button type="button" class="opt ${on?'on':''}" data-fit="${designTab}:${o.id}"><span class="dot"></span><span class="nm">${o.name}${designTab==='inst'?(on?' · fitted':''):''}</span><span class="fx">${fx(o)}${sv.length?`<span class="good">Goal: ${sv.join(', ')}</span>`:designTab==='inst'?'<span>No goal on this mission</span>':''}</span>${designTab==='power'&&o.proc!=='rtg'&&SUNK!==1?`<small class="nt">${Math.round(o.gen*SUNK)} W at ${DESTN}</small>`:''}</button>`; }).join('');
+      body=`<div class="dz-goals">${gl.map(g=>`<span class="${g.ok?'ok':''}">${g.ok?'✓':'○'} ${g.t}</span>`).join('')}</div><div class="dz"><div class="dz-tabs">${tabs}</div><div class="dz-opts">${designTab==='inst'?`<p class="dz-tip">Tap to add or remove. Up to 3 instruments (${mountedInst().length}/3).</p>`:''}${cards}</div></div>`;
+      foot=`<button class="t-btn primary" type="button" data-close>Done</button>`; }
   else { body=`<div class="hint" style="background:rgba(76,195,138,.2)">Your spacecraft is on its way. The full mission control console comes next.</div>`; foot=`<button class="t-btn ghost" type="button" data-close>Close</button>`; }
-  winEl.innerHTML=`<div class="w-head"><span class="t-ribbon">${z==='pad'?'Launch pad':'Mission control'}</span><h3>${z==='pad'?'Pre-launch check':'Mission control'}</h3><p>${z==='pad'?'All bars must be green to launch.':''}</p><button class="t-round x" type="button" data-close aria-label="Close">${ic('x')}</button></div><div class="w-body">${body}</div><div class="w-foot">${foot}</div>`;
-  winEl.classList.add('open'); const L=document.getElementById('launch'); if(L) L.onclick=doLaunch; }
-winEl.addEventListener('click',e=>{ if(e.target.closest('[data-close]')) closeWin(); });
+  winEl.innerHTML=`<div class="w-head"><span class="t-ribbon">${z==='pad'?'Launch pad':z==='stand'?'Build stand':'Mission control'}</span><h3>${z==='pad'?'Pre-launch check':z==='stand'?'Design your spacecraft':'Mission control'}</h3><p>${z==='pad'?'All bars must be green to launch.':z==='stand'?'Pick one part for each subsystem. Every choice moves the gauges at the top.':''}</p><button class="t-round x" type="button" data-close aria-label="Close">${ic('x')}</button></div><div class="w-body">${body}</div><div class="w-foot">${foot}</div>`;
+  winEl.classList.add('open'); winEl.classList.toggle('wide',z==='stand'); const L=document.getElementById('launch'); if(L) L.onclick=doLaunch; }
+let designTab='inst';
+winEl.addEventListener('click',e=>{ const tb=e.target.closest('[data-tab]'); if(tb){ designTab=tb.dataset.tab; renderWin(); return; }
+  const ft=e.target.closest('[data-fit]'); if(ft){ const [c,id]=ft.dataset.fit.split(':'); fitPart(c,id); renderWin(); return; }
+  const rm=e.target.closest('[data-rm]'); if(rm){ const c=rm.dataset.rm; pick[c]=null; if(c==='inst'){ pick.inst=pick.inst2; pick.inst2=pick.inst3; pick.inst3=null; } else if(c==='inst2'){ pick.inst2=pick.inst3; pick.inst3=null; } renderHUD(); refreshBuildBay(); drawGoals(); renderWin(); return; } if(e.target.closest('[data-close]')) closeWin(); });
 function toastMsg(t){const el=document.getElementById('toast');el.textContent=t;el.style.display='none';void el.offsetWidth;el.style.display='block';clearTimeout(toastMsg.t);toastMsg.t=setTimeout(()=>el.style.display='none',1600);}
 let launchT=-1; function doLaunch(){ launched=true; closeWin(); launchT=0; toastMsg('Liftoff!'); setStep(3); renderDock(); }
 
@@ -596,14 +710,14 @@ function tick(now){
   // spots
   near=null; let best=99; const hp=tmp.set(hero.position.x,0,hero.position.z);
   for(const s of A().spots){ const c=new THREE.Vector3(s.ring.position.x,0,s.ring.position.z); const d=Math.min(s.pos.distanceTo(hp), c.distanceTo(hp)-(s.kind==='part'?1.0:0)); if(d<2.2&&d<best){best=d;near=s;} }
-  for(const s of A().spots){ const goal=(step===0&&s.id==='craft')||(step===1&&s.cat==='inst')||(step===2&&(s.id==='pad'||s.id==='exit'));
-    const chosen=s.kind==='part'&&pick[s.cat]===s.id; const target=s===near?.95:chosen?.75:goal?(.45+.4*Math.sin(t*4)):0; s.ring.material.opacity+=(target-s.ring.material.opacity)*.15; }
+  for(const s of A().spots){ const goal=(step===0&&s.id==='craft')||(step===1&&(s.cat==='inst'||(carry&&carry.cat==='inst'&&s.id==='stand')))||(step===2&&(s.id==='pad'||s.id==='exit'));
+    const chosen=s.kind==='part'&&isMounted(s); const target=s===near?.95:chosen?.75:goal?(.45+.4*Math.sin(t*4)):0; s.ring.material.opacity+=(target-s.ring.material.opacity)*.15; }
   if(near&&!openZone&&!transitioning){ if(near.kind==='part'){ enterEl.style.display='none'; showInfo(near); }
     else { showInfo(null); const p=near.pos.clone().setY(3.2).project(cam); enterEl.style.display='block'; enterEl.style.left=((p.x+1)/2*innerWidth)+'px'; enterEl.style.top=((1-p.y)/2*innerHeight)+'px';
       const lb=near.id==='control'&&!launched?'Locked':near.label; if(enterEl.dataset.l!==lb){enterEl.dataset.l=lb; enterEl.innerHTML=lb+'<kbd>E</kbd>';} } }
   else { if(!openZone) enterEl.style.display='none'; if(!near) showInfo(null); }
   if(lockSprite) lockSprite.visible=!launched;
-  for(const e of exhibits){ if(!e.rocket&&!reduce) e.obj.rotation.y+=dt*.5; }
+  for(const e of exhibits){ if(!e.rocket&&!reduce) e.obj.rotation.y+=dt*(e.stand?.25:.5); }
   if(buildBay&&!reduce) buildBay.rotation.y+=dt*.4;
   // launch
   if(launchT>=0&&padRocket){launchT+=dt; const k=Math.max(0,launchT-.6); padRocket.position.y=.5+k*k*6; flame.material.opacity=Math.min(1,launchT*2)*(.7+.3*Math.sin(t*40)); if(padRocket.position.y>90){launchT=-1;padRocket.visible=false;}}

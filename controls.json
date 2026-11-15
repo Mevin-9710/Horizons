@@ -1,0 +1,2 @@
+{"keyboard":{"ArrowLeft":"pitch left","ArrowRight":"pitch right","KeyA":"pitch left","KeyD":"pitch right","KeyW":"throttle up","KeyS":"throttle down","Space":"next sequence action","KeyM":"next sequence action","KeyX":"next sequence action","KeyF":"jettison fairing","KeyG":"toggle autopilot","KeyC":"cycle camera","Enter":"begin"},
+"touch":{"bL":"pitch left","bR":"pitch right","bT-":"throttle down","bT+":"throttle up","main":"next action","bF":"fairing","bG":"autopilot","bC":"camera","bK":"control room","bGd":"guide"}}

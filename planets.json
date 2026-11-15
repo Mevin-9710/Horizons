@@ -1,0 +1,11 @@
+{"note":"Mirrors the PL table in index.html. a = semi-major axis (AU), P = orbital period (yr), R = radius (km), mu = GM (km^3/s^2)",
+"planets":[
+{"name":"MERCURY","a":0.387,"P":0.241,"R":2440,"mu":22032},
+{"name":"VENUS","a":0.723,"P":0.615,"R":6052,"mu":324859},
+{"name":"EARTH","a":1,"P":1,"R":6371,"mu":398600},
+{"name":"MARS","a":1.524,"P":1.881,"R":3390,"mu":42828},
+{"name":"JUPITER","a":5.203,"P":11.86,"R":69911,"mu":126700000},
+{"name":"SATURN","a":9.537,"P":29.46,"R":58232,"mu":37930000},
+{"name":"URANUS","a":19.19,"P":84,"R":25362,"mu":5794000},
+{"name":"NEPTUNE","a":30.07,"P":164.8,"R":24622,"mu":6837000},
+{"name":"PLUTO","a":39.48,"P":248,"R":1188,"mu":869.6}]}

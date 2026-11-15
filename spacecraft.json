@@ -1,0 +1,24 @@
+{
+  "spacecraft": [
+    {
+      "name": "HORIZON ORBITER",
+      "delta_v_km_s": 11,
+      "nasa_model": "Mars Reconnaissance Orbiter"
+    },
+    {
+      "name": "AURORA LANDER",
+      "delta_v_km_s": 9,
+      "nasa_model": "Apollo Lunar Module"
+    },
+    {
+      "name": "VOYAGER PROBE",
+      "delta_v_km_s": 14,
+      "nasa_model": "Voyager Probe"
+    },
+    {
+      "name": "EXPLORER CREW",
+      "delta_v_km_s": 7,
+      "nasa_model": "Space Shuttle Orbiter"
+    }
+  ]
+}

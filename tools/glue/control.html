@@ -1,0 +1,93 @@
+<script>
+if(window.HZ&&HZ.craftImg){ window.CRAFT_IMG=new Image(); CRAFT_IMG.src=HZ.craftImg; }
+document.querySelector('.tl .t-round').addEventListener('click',()=>hzGo('base',{mission:HZ.mission,pick:HZ.pick}));
+document.addEventListener('click',e=>{ const b=e.target.closest('.report .t-btn.primary'); if(b) hzGo('base',{mission:HZ.mission,pick:HZ.pick}); });
+</script><script>
+/* Hand-off from the launch screen: the player already flew the launch and reached orbit, so mission control starts at check-out. */
+if(window.HZ&&HZ.flight){ const F=HZ.flight;
+  PH[0].t=`You flew ${F.rocket} off the pad in ${F.time} s.`; PH[1].t=`Orbit reached: ${F.peri} x ${F.ap==null?'escape':F.ap} km. Flight score ${F.score}.`;
+  S.t=PH[2].s; S.fuel=Math.round(45+55*F.f2); S.dec+=Math.min(8,F.hits*2)-F.late*2; if(F.dmg) S.res-=6;
+  addLog(`Launch flown by you: orbit ${F.peri} x ${F.ap==null?'escape':F.ap} km, score ${F.score}`); renderUI(); }
+</script>
+<script>
+/* ===== Mission control runs the spacecraft you built =====
+   Power: solar output falls with distance from the Sun (1/d^2); an RTG does not. Batteries carry the craft through
+   eclipses; an empty battery means safe mode (instruments off). Data: instruments fill storage; the dish empties it
+   during ground-station passes (slower far from Earth); anything over capacity is lost. Science = goals your
+   instruments can meet x the share of data that made it home. */
+const CR=window.HZ&&HZ.design&&HZ.design.craft;
+if(CR){
+  const AU=MKEY==='moon'||MKEY==='earth'?1:(HZ_PL[MI.planet]?HZ_PL[MI.planet].a:1), FLYBY=MI.kind==='flyby';
+  const sunK=hzSunK(MKEY), comK=1/Math.max(1,AU*AU*.6);
+  const instData=CR.insts.reduce((a,id)=>a+(HZ_INST.find(i=>i.id===id)||{data:0}).data,0);
+  const goals=hzGoalsMet(MKEY,CR.insts), gMet=goals.filter(g=>g.ok).length;
+  const M={E:CR.wh,lowN:0,lowT:0,safe:false,fullN:0,full:false,lost:0,prod:0,home:0,stored:0,deficit:0,pass:false,sunGen:CR.rtg?CR.gen:CR.gen*sunK};
+  S.gen=Math.round(Math.min(100,M.sunGen/Math.max(1,CR.draw)*100));
+  const H=.4;                                    // hours of spacecraft time per second of mission control time
+  step=function(dt){ if(S.paused||S.done) return; S.t=Math.min(TOTAL,S.t+dt*S.speed); const ph=phaseAt(S.t), k=dt*S.speed, ops=ph>=3;
+    const ORB=CR.orbit||{ecl:.35,sci:1}, nightTh=Math.sin(Math.PI*(ORB.ecl-.5)); const night=!FLYBY&&ops&&ORB.ecl>.01&&Math.sin(S.t*.8)<nightTh;
+    if(ph===1) S.fuel=Math.max(0,S.fuel-k*13); else if(ops&&pick_engine!=='e3') S.fuel=Math.max(0,S.fuel-k*.25);
+    if(ph>=2){ const gen=CR.rtg?CR.gen:(night?0:M.sunGen);
+      const load=(ops&&!M.safe?CR.draw:CR.draw*.35); const net=gen-load; M.E=Math.max(0,Math.min(CR.wh,M.E+net*k*H)); if(net<0&&!night) M.deficit+=k;
+      if(M.E<=0&&!M.safe){ M.safe=true; M.lowN++; addLog('Battery empty: safe mode, instruments off'); toast(`<svg style="width:20px;height:20px"><use href="#i-flare"/></svg>Battery empty! Safe mode: the instruments switch off until there is power again.`); }
+      if(M.safe){ M.lowT+=k; if(M.E>CR.wh*.35) { M.safe=false; addLog('Power back: instruments on'); } }
+      S.power=CR.wh?M.E/CR.wh*100:0; }
+    if(ops){ const on=!M.safe&&!(night&&!CR.rtg&&M.E<CR.wh*.1), g=on?instData*.08*k:0; M.prod+=instData*.08*k;
+      const room=CR.store-M.stored, keep=Math.min(g,room); M.stored+=keep; M.lost+=g-keep; if(g-keep>0&&!M.full){ M.full=true; M.fullN++; addLog('Storage full: new data is lost until the next ground pass'); toast(`<svg style="width:20px;height:20px"><use href="#i-data"/></svg>Storage full! New data is lost until the next ground pass.`); }
+      const pass=Math.sin(S.t*.55+1)>.55; if(pass&&!M.pass) addLog('Ground station pass: sending data home'); M.pass=pass;
+      if(pass){ const d=Math.min(M.stored,CR.down*comK*.35*k); M.stored-=d; M.home+=d; if(M.stored<CR.store*.9) M.full=false; }
+      S.data=CR.store?M.stored/CR.store*100:100; S.sci=M.home*(gMet/3)*(ORB.sci||1)/4+M.bonus; }
+    for(const e of EVENTS){ if(!e.f&&S.t>=e.t){ e.f=true; if(e.auto){ apply(e.fx); addLog(e.title+' '+e.text); toast(`<svg style="width:20px;height:20px"><use href="#i-${e.kind}"/></svg>${e.title} ${e.text}`); } else decide(e); } }
+    if(S.t>=TOTAL){ S.done=true; setTimeout(report,600); } };
+  M.bonus=0; const _apply=apply; apply=function(f){ const before=S.sci; _apply(Object.assign({},f,{power:0})); M.bonus+=(S.sci-before); if(f.power) M.E=Math.max(0,Math.min(CR.wh,M.E+CR.wh*f.power/100)); if(f.gen) M.sunGen*=1+f.gen/100; };
+  var pick_engine=(HZ.pick&&HZ.pick.engine)||'e1';
+  report=function(){ const ORB=CR.orbit||{sci:1,name:'orbit'}, eff=M.prod?M.home/M.prod:0, gFrac=gMet/3*Math.min(1.15,ORB.sci||1);
+    const perf=Math.round(Math.max(0,Math.min(40,40*gFrac*Math.min(1,eff*1.2)+(gMet?Math.max(-4,Math.min(4,M.bonus*.15)):0))));
+    const TR=(HZ.flight&&HZ.flight.transfer)||null, bud=CR.budget?Math.max(0,Math.min(1,(CR.budget-CR.cost)/(CR.budget*.35))):.5, dvm=TR?Math.max(0,Math.min(1,TR.dvLeft/1.5)):Math.max(0,Math.min(1,S.fuel/60));
+    const pMargin=M.lowN?0:M.deficit>2?3:6, effS=Math.round(Math.max(0,Math.min(20,8*bud+6*dvm+pMargin)));
+    const dec=Math.max(0,Math.min(20,Math.round(S.dec+4))), res=Math.max(0,Math.min(20,Math.round(Math.min(20,S.res+4)-M.lowN*5-M.fullN*2)));
+    const raw=perf+effS+dec+res, DF=hzDiff(), total=Math.min(100,Math.round(raw*DF.score)), st=total>=80?3:total>=60?2:1, pct=Math.round(eff*100);
+    const flight={mission:MKEY,score:total,sandbox:hzSandbox(),diff:DF.name,date:Date.now(),rocket:HZ.design.rocket,orbit:(CR.orbit&&CR.orbit.name)||'',power:CR.power,batt:CR.batt,comms:CR.comms,store:CR.storeName,insts:CR.insts.slice(),mass:CR.mass,cost:CR.cost};
+    const prev=HZ_FLIGHTS.of(MKEY).slice(-1)[0]; HZ_FLIGHTS.save(flight); const board=HZ_FLIGHTS.best(MKEY).slice(0,5), rank=flight.sandbox?0:board.indexOf(board.find(f=>f.date===flight.date))+1;
+    const why=[]; if(gMet<3) why.push(goals.filter(g=>!g.ok).map(g=>`"${g.t}" needed ${g.need.map(n=>HZ_INST.find(i=>i.id===n).name).join(' or ')}`).join('; ')+'.');
+    if(M.fullN) why.push(`Storage filled up and ${Math.round(M.lost)} Gb of data was lost. More storage or a faster dish would save it.`);
+    else if(pct<70) why.push(`Only ${pct}% of the data reached Earth: the ${CR.comms} could not send it fast enough${AU>1.6?' from this far away':''}.`);
+    if(M.lowN) why.push(`The battery ran flat ${M.lowN} time${M.lowN>1?'s':''} and the instruments sat in safe mode. ${CR.rtg?'':AU>3?`At ${PNAME} sunlight is ${Math.round(sunK*100)}% of Earth's: an RTG or bigger wings would help.`:'A bigger battery or bigger wings would help.'}`);
+    if(!CR.insts.length) why.push('No instruments were mounted, so there was no science.');
+    const rows=[['Performance',perf,40,`Goals your instruments could meet: ${gMet} of 3. Data that made it home: ${pct}%. Orbit: ${ORB.name} (science x${ORB.sci||1}). ${why[0]||'Every goal was covered and the data got home. Great design.'}`],
+      ['Efficiency',effS,20,`${CR.budget?`Spent $${CR.cost}M of $${CR.budget}M. `:''}${TR?`Delta-v left on arrival: ${TR.dvLeft} km/s. `:''}${M.lowN?'Power ran out during the mission.':M.deficit>2?'The parts used more power than the wings made in sunlight.':'Power stayed positive the whole mission.'}`],
+      ['Decisions',dec,20,'How well your choices during events paid off.'],
+      ['Resilience',res,20,why.slice(1).join(' ')||'The spacecraft handled the surprises.']];
+    const goalList=goals.map(g=>`<div class="r"><b>${g.ok?'Met':'Missed'}</b><em>${g.ok?'✓':'✗'}</em><p>${g.t}</p></div>`).join('');
+    modal.className='t-win report'; scrim.classList.add('open');
+    modal.innerHTML=`<span class="t-ribbon">Mission report</span><h3>${total>=80?'Outstanding mission':total>=60?'Mission success':'Mission complete'}</h3>
+     <div class="ringwrap"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="rgba(26,18,6,.12)" stroke-width="14"/><circle id="ring" cx="60" cy="60" r="50" fill="none" stroke="#2C5B65" stroke-width="14" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" style="transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)"/></svg><b>${total}</b><small>out of 100</small></div>
+     <div class="stars">${[1,2,3].map(i=>`<svg style="--sf:${i<=st?'#F2A541':'#E4DED2'}"><use href="#i-star"/></svg>`).join('')}</div>
+     <div class="why">${DF.score!==1||flight.sandbox?`<div class="r"><b>${flight.sandbox?'Sandbox':DF.name}</b><em>${flight.sandbox?'not ranked':'x'+DF.score}</em><p>${flight.sandbox?'No limits, so this flight is not on the leaderboard.':'Difficulty bonus applied to '+raw+' points.'}</p></div>`:''}${rows.map(r=>`<div class="r"><b>${r[0]}</b><em>${r[1]}/${r[2]}</em><div class="tr"><i data-w="${r[1]/r[2]*100}"></i></div><p>${r[3]}</p></div>`).join('')}${goalList}${extras(flight,prev,board,rank)}</div>
+     <div class="row"><button class="t-btn ghost" type="button" onclick="location.reload()">Fly again</button><button class="t-btn primary" type="button">Redesign spacecraft</button></div>`;
+    requestAnimationFrame(()=>{ document.getElementById('ring').style.strokeDashoffset=314-314*total/100; modal.querySelectorAll('.tr i').forEach(i=>i.style.width=i.dataset.w+'%'); });
+    window.LAST_REPORT={raw,rank,total,perf,effS,dec,res,gMet,pct,lowN:M.lowN,fullN:M.fullN,lost:Math.round(M.lost)}; };
+  function extras(f,prev,board,rank){ const R=HZ_REAL[MKEY]; let h='';
+    if(R){ const shared=f.insts.filter(i=>R.inst.includes(i)).map(i=>HZ_INST.find(x=>x.id===i).name), pw=(f.power||'').includes('RTG')?'rtg':'solar';
+      h+=`<div class="r"><b>The real mission: ${R.n}</b><em>${R.y}</em><p>${R.txt} It weighed ${R.mass.toLocaleString()} kg and flew on ${R.rocket}. Yours: ${f.mass} kg on ${f.rocket}, ${pw===R.power?'same kind of power':'different power ('+(R.power==='rtg'?'they used an RTG':'they used solar')+')'}${shared.length?`, and you share the ${shared.join(', ')}`:''}.</p></div>`; }
+    if(prev){ const ch=[]; for(const [k,l] of [['rocket','rocket'],['orbit','orbit'],['power','power'],['batt','battery'],['comms','comms'],['store','storage']]) if(prev[k]!==f[k]) ch.push(`${l}: ${prev[k]} → ${f[k]}`);
+      const ia=prev.insts.join(','), ib=f.insts.join(','); if(ia!==ib) ch.push('instruments changed'); const d=f.score-prev.score;
+      h+=`<div class="r"><b>Compared with your last flight</b><em>${d>0?'+':''}${d}</em><p>${ch.length?ch.join('; ')+'.':'Same design as last time.'}</p></div>`; }
+    if(board.length) h+=`<div class="r"><b>Your best ${MI.name} flights</b><em>${rank?'#'+rank:''}</em><p>${board.map((b,i)=>`${i+1}. ${b.score} (${b.rocket}, ${b.diff})`).join(' · ')}</p></div>`;
+    return h; }
+  PH[2].t=`Systems switch on: ${CR.power}, ${CR.batt}, ${CR.comms}. ${CR.rtg?'The RTG gives steady power.':AU>1.6?`Sunlight here is ${Math.round(sunK*100)}% of Earth's.`:'Solar wings unfold and charge the battery.'}`;
+  addLog(`Design: ${HZ.design.inst||'no instrument'}; goals covered ${gMet} of 3`); renderUI();
+}
+</script>
+<script>
+/* Tutorial, part 4: operating the mission */
+if(window.COACH&&COACH.active()){ const _rep=report; let reported=false; report=function(){ reported=true; return _rep(); };
+  COACH.run('Mission control',[
+    {say:'Mission control runs the spacecraft you built, phase by phase.',target:()=>document.getElementById('stepper'),next:'Next'},
+    {say:'Watch <b>Battery</b>, <b>Storage</b> and <b>Fuel</b>.',why:'They come from your design: wings and battery for power, storage and dish for data.',target:()=>document.getElementById('gauges'),next:'Next'},
+    {say:'Speed up time with this button if you like.',target:()=>document.getElementById('speed'),next:'Next'},
+    {say:'Something will happen soon. When it does, choose what to do.',until:()=>!!document.querySelector('.choice')},
+    {say:'Pick an option. Each one trades science against safety.',target:()=>document.querySelector('.choice'),until:()=>!document.querySelector('.choice')},
+    {say:'Keep watching. The mission report comes at the end.',until:()=>reported},
+    {say:'Your report explains <b>why</b> you got this score. Read it, then press <b>Redesign spacecraft</b> to try a better design.',why:'That is the whole game: design, fly, learn, redesign. Tutorial complete!',target:()=>document.querySelector('.report .t-btn.primary'),next:'Finish',leave:()=>COACH.finish()}]); }
+</script>
