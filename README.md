@@ -307,6 +307,8 @@ Contributions are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 - Mission data follows the real NASA missions listed above.
 - Fonts: [Game Paused DEMO](https://dharmasstudio.com/game-paused) by Dharmas Studio (free for personal and non-commercial use), [Silkscreen](https://fonts.google.com/specimen/Silkscreen) and [Geist](https://fonts.google.com/specimen/Geist) (SIL Open Font License). See [`Design System/fonts/`](./Design%20System/fonts/).
 - Built with [three.js](https://threejs.org/).
+- Home-screen night sky (`Design System/assets/home-sky.webp`): a free asset downloaded by the team, used non-commercially.
+- **Design inspirations are not ours.** [`Design System/Design Inspirations/`](./Design%20System/Design%20Inspirations/) holds screenshots and pages from Perplexity, Pinterest artists and an isometric asset pack, kept only as design references. All rights are reserved by their owners; none of it ships in the game.
 
 Horizons is not affiliated with or endorsed by NASA.
 

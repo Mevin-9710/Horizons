@@ -1,5 +1,7 @@
 # Inspiration 02: Perplexity "Comet" page
 
+> **Third-party material, all rights reserved by Perplexity AI, Inc..** Kept only as design inspiration; not part of the game and not under this repo's licence. See [the notice](../README.md).
+
 - **Source:** https://www.perplexity.ai/comet (built with Framer)
 - **Captured:** 2026-11-14, Chromium, 1440×900
 - **Use in Horizons:**
