@@ -61,3 +61,50 @@ Use HTML4's `plan()` (Hohmann transfer, patched conics) for each destination's T
 - 03:40 IST 15 Nov: milestone 3 (transfer: burn, cruise, course correction, insertion or flyby; mission control hand-off) done. See cook/ROUNDS.md round 02.
 - 03:44 IST 15 Nov: milestone 4 (10 missions on all planets + Moon, 8 NASA spacecraft models, delta-v gauge, mission-aware mission control) done. See cook/ROUNDS.md round 03.
 - 08:03 IST 15 Nov: user feedback applied (original base HUD restored, delta-v moved into the pad check); trees merged (249 -> 10 draw calls); Music toggle. PR opened.
+
+---
+
+# Phase 2: home extras and the rest of HTML4 (15 Nov 2026)
+
+## What HTML4 has that the game still lacks
+| HTML4 part | In our game? |
+|---|---|
+| Mini-games: Max-Q throttle timing, Sequence order (tap launch events in order) | No |
+| Lander & rover mini-game (soft landing, then drive and collect 5 samples in 40 s) | No |
+| Rocket anatomy (tap a part, learn what it does) | No |
+| Operations manual (controls, flight procedure) and Warnings & how to fix them | No |
+| Difficulty: Cadet (+25% delta-v, autopilot on), Pilot, Commander (-15% delta-v, autopilot off, score x1.5) | No |
+| Mission team (9 console roles), go/no-go poll, comms chatter | No (skipped as "minimal" in phase 1) |
+| Tutorial slides + 30 s spoken audio guide with captions | Partly (our Tutorial button starts a walkthrough, no slides or audio guide) |
+| 13 music themes that follow the phase | Partly (one quiet music bed) |
+| Space quiz, rocket-equation toy | No (not wanted) |
+| Payload builder extras (name, rover / lander legs / relay add-ons) | No (not wanted) |
+| 6 launch sites, GitHub template page | No (not wanted) |
+
+## Challenge brief (Details tab, from a participant mirror; the official page was unreachable from the container)
+Expected journey: objectives first, design spacecraft and payload, pick launcher/destination/orbit, check mass/energy/budget/data/comms/lifetime, simulate, then revise from the report. No single right answer; feedback must explain consequences.
+Design considerations: clear UI, **tutorials, progressive difficulty and scenarios**; explicit goals and realistic constraints; satellite subsystems; payload trade-offs; orbits (coverage, windows, lifetime); launch compatibility; understandable resource indicators; evaluation of performance, efficiency and decision quality with explanations; co-op for up to 4 with distinct roles.
+Extras named in the brief: multiple scenarios, unexpected events, final reports, **design comparisons, leaderboards**, team competition, sandbox, post-mission analysis.
+Resources tab: could not be read (site returned 503/502 to this container). Search results point at NASA GMAT, NASA Eyes on the Solar System and NASA 3D Resources; verify on the official page.
+
+## Decisions from the interview
+- Home: the 3 mission cards become **Mini-games, Rocket anatomy, Manual** (same card style). Missions stay behind Play.
+- Mini-games window: Max-Q timing, Sequence order, Lander & rover.
+- Lander & rover: **3D in our style** (isometric diorama), playable from the home AND as a phase of the Moon and Mars missions after orbit insertion. Models: Apollo Lunar Module (Moon) and Perseverance (Mars), from NASA 3D Resources (no preference given; default).
+- Rocket anatomy: tap parts of a NASA rocket model in 3D.
+- Manual window: Controls, Flight procedure, Warnings & fixes.
+- Difficulty: Cadet / Pilot / Commander as a row in Settings.
+- Go/no-go: quick poll before the count, console roles only (no named crew), comms captions during flight.
+- Tutorial button: slides + 30 s spoken guide with captions, then the walkthrough mission.
+- Music: auto themes by phase (no preference given; default).
+- Original design stays: new things use existing styles only.
+
+## Build order
+1. Home cards + Manual window (incl. Warnings & fixes) + Difficulty in Settings.
+2. Mini-games: Max-Q timing, Sequence order.
+3. Rocket anatomy (3D, tap parts).
+4. Go/no-go poll + comms captions in the launch.
+5. Tutorial slides + audio guide.
+6. Lander & rover (3D), from home and inside Moon/Mars missions.
+7. Music themes by phase.
+8. Brief extras if time allows: local best scores (leaderboard) and "compare with your last design" in the report.
