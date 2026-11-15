@@ -42,7 +42,8 @@ for name, fn in SCREENS:
     glue = os.path.join(ROOT, 'tools', 'glue', name + '.html')
     shared = '' if name in ('home', 'launch') else '<script>\n' + read(os.path.join(ROOT, 'tools', 'sim', 'missions.js')) + '</script>\n'
     coach = '<script>\n' + read(os.path.join(ROOT, 'tools', 'sim', 'coach.js')) + '</script>\n'
-    d[name] = PRE + shared + src + '\n' + coach + (read(glue) if os.path.exists(glue) else '')
+    music = '<script>\n' + read(os.path.join(ROOT, 'tools', 'sim', 'music.js')) + '</script>\n'
+    d[name] = PRE + shared + src + '\n' + coach + music + (read(glue) if os.path.exists(glue) else '')
 
 for out in [os.path.join(ROOT, 'game', 'index.html'), os.path.join(DS, 'horizons-game.html')]:
     lines = read(out).split('\n')

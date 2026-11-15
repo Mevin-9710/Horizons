@@ -161,7 +161,8 @@ let ac=null, ngain=null, mgain=null;
 function audio(){ if(ac||(!SET.sfx&&!SET.music)) return; try{ ac=new (window.AudioContext||window.webkitAudioContext)();
   const b=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate), d=b.getChannelData(0); let l=0; for(let i=0;i<d.length;i++){ l=(l+.02*(Math.random()*2-1))/1.02; d[i]=l*3.5; }
   const s=ac.createBufferSource(); s.buffer=b; s.loop=true; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=380; ngain=ac.createGain(); ngain.gain.value=0; s.connect(f); f.connect(ngain); ngain.connect(ac.destination); s.start();
-  if(SET.music){ mgain=ac.createGain(); mgain.gain.value=0; const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=900; mgain.connect(lp); lp.connect(ac.destination);
+  if(SET.music&&!window.HZ_MUSIC){ mgain=ac.createGain();   // in the game the shared score (tools/sim/music.js) plays instead
+ mgain.gain.value=0; const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=900; mgain.connect(lp); lp.connect(ac.destination);
     const CH=[[110,164.8,220,277.2],[98,146.8,196,246.9],[130.8,196,261.6,329.6],[146.8,220,293.7,370]]; let bar=0;
     const play=()=>{ if(!ac) return; const t=ac.currentTime; for(const fq of CH[bar%4]){ const o=ac.createOscillator(), g=ac.createGain(); o.type='triangle'; o.frequency.value=fq; o.detune.value=rnd(6); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.05,t+1.2); g.gain.linearRampToValueAtTime(0,t+4.4); o.connect(g); g.connect(mgain); o.start(t); o.stop(t+4.5); } bar++; };
     play(); setInterval(play,4000); mgain.gain.linearRampToValueAtTime(.9,ac.currentTime+3); } }catch(e){ ac=null; } }
