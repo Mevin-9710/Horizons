@@ -300,7 +300,7 @@ Import the repo in Vercel. `vercel.json` already serves `game/` as a static site
 <td align="center" width="50%"><img src="docs/team/pawan.svg" width="96" alt="Pawan"><br><b>Pawan Indalkar</b><br><sub>Lead flight engineer · creator of <a href="./game-mechanics">The Horizon Explorers launch simulator</a></sub></td>
 </tr>
 </table>
-<sub>Portraits drawn with AI assistance.</sub>
+<sub>Portraits drawn in code (SVG).</sub>
 
 **What the team did.** Horizons is Mevin and Pawan's project from start to finish:
 
@@ -318,12 +318,18 @@ NASA Space Apps asks teams to say where Super Intelligence (SI) tools were used.
 
 | Where | What the AI did | Marked |
 |---|---|---|
-| **Code** | The team used **Claude** (Anthropic), in Claude Code, as a coding assistant. The team set the goals, designed the features and reviewed and tested every change; Claude helped write and refactor the code to that direction (screens, simulation glue, build script, tests). | This section; commit trailers (`Co-Authored-By`); `aiDisclosure` in `package.json`; `ai-disclosure` meta tag in the game |
-| **Images** | The two lead-engineer portraits were drawn by Claude as SVG. | "AI art" tag on the portraits in the game; caption above |
-| **Video** | The 30-second demo was assembled with Claude's help from real gameplay captures, with music from the game. | Visible "Made with AI assistance (Claude)" watermark |
-| **Audio** | The music is generated live by the game's code (Web Audio), which was written with AI assistance. The tutorial voice is the browser's built-in speech. | This section |
+| **Code** | The team used **Claude** (Anthropic), in Claude Code, as a coding assistant. The team set the goals, designed the features and reviewed and tested every change; Claude helped write and refactor the code to that direction (screens, simulation glue, build script, tests). | This section; commit trailers (`Co-Authored-By`); `aiDisclosure` in `package.json`; `ai-disclosure` meta tag in the game; the game's Credits |
 
-**Not AI-made:** the idea, the game design and every design decision; The Horizon Explorers simulator; the NASA 3D models and mission data (NASA); the home-screen sky image (a free asset); the fonts; the README screenshots, which are captures of the real game.
+**No generative AI images, video or audio.** Everything you see and hear is made by code or comes from NASA:
+
+- The two lead-engineer portraits are vector drawings written in code (SVG).
+- The music is synthesised live by the game's code (Web Audio).
+- The 30-second demo video is put together by code from real gameplay screenshots, with the game's own music.
+- The tutorial voice is the browser's built-in speech.
+
+**Made by the team, not AI:** the idea, the game design and every design decision; The Horizon Explorers simulator; the NASA research.
+
+**From others:** the NASA 3D models and mission data (NASA); the home-screen sky image (a free asset); the fonts; the README screenshots, which are captures of the real game.
 
 ## Credits
 
