@@ -2,7 +2,7 @@
 
 | File | Role | Licence | Status |
 |---|---|---|---|
-| Game Paused DEMO (embedded as base64 in the screen sources; the raw `.otf` is not kept in this public repo, as its EULA asks) | **Chosen display font** (titles, buttons, pause and score screens) | 1001Fonts *Free For Personal Use*, see `GamePaused-DEMO-EULA.txt` | OK for the non-commercial hackathon build. **Buy a commercial licence** (https://dharmasstudio.com/game-paused) before any commercial or company use. |
+| Game Paused DEMO (embedded as base64 in the screen sources; the raw `.otf` is not kept in this public repo, as its EULA asks) | **Chosen display font** (titles, buttons, pause and score screens) | 1001Fonts *Free For Personal Use*, see `GamePaused-DEMO-EULA.txt` | OK for the non-commercial hackathon build. **Buy a commercial licence** (https://dharmasfoundry.com/game-paused) before any commercial or company use. |
 
 Two rejected candidates (Priestacy, Godtyr) were removed: both are all rights reserved.
 
