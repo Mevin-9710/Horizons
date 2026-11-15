@@ -32,6 +32,7 @@ Ten real NASA-inspired missions, five NASA rockets, real orbital physics, and a 
 - [Repository layout](#repository-layout)
 - [Run it locally](#run-it-locally)
 - [Team](#team)
+- [AI disclosure](#ai-disclosure)
 - [Credits](#credits)
 
 ---
@@ -59,7 +60,7 @@ flowchart LR
 6. **Run the mission** from mission control. The spacecraft you built is simulated phase by phase, with random events and decisions.
 7. **Read your report.** A score out of 100, explained line by line, compared with your last flight and with the real NASA mission.
 
-> **First time?** Press **Tutorial**. Your two lead engineers, **Mevin** on the ground and **Pawan** in flight, walk you through one whole mission by doing it.
+> **First time, or judging?** Press **Tutorial**. Your two lead engineers, **Mevin** on the ground and **Pawan** in flight, walk you through one whole mission. It's hands-free: press **Next** at every step and the game does each action for you, from mission select to the final report (about 5 minutes).
 
 ---
 
@@ -273,6 +274,7 @@ Open http://localhost:8765. Opening the file straight from disk won't work becau
 npm run build            # rebuild game/index.html after changing a source
 npm install              # once, installs Playwright for the tests
 npm run test:tutorial    # plays the whole tutorial like a player
+npm run test:tutorial-auto  # plays it pressing only Next
 npm run test:full        # one full mission, design to report
 npm run test:balance     # every mission has a feasible design
 npm run test:launch      # drives a launch
@@ -294,12 +296,34 @@ Import the repo in Vercel. `vercel.json` already serves `game/` as a static site
 
 <table>
 <tr>
-<td align="center" width="50%"><img src="docs/team/mevin.svg" width="96" alt="Mevin"><br><b>Mevin</b><br><sub>Lead mission engineer</sub><br><sub>Horizons game</sub></td>
-<td align="center" width="50%"><img src="docs/team/pawan.svg" width="96" alt="Pawan"><br><b>Pawan</b><br><sub>Lead flight engineer</sub><br><sub>NASA models, <a href="./game-mechanics">The Horizon Explorers launch simulator</a></sub></td>
+<td align="center" width="50%"><img src="docs/team/mevin.svg" width="96" alt="Mevin"><br><b>Mevin Joseph Seby</b><br><sub>Lead mission engineer</sub></td>
+<td align="center" width="50%"><img src="docs/team/pawan.svg" width="96" alt="Pawan"><br><b>Pawan Indalkar</b><br><sub>Lead flight engineer · creator of <a href="./game-mechanics">The Horizon Explorers launch simulator</a></sub></td>
 </tr>
 </table>
+<sub>Portraits drawn with AI assistance.</sub>
+
+**What the team did.** Horizons is Mevin and Pawan's project from start to finish:
+
+- **The idea and the game design:** a mission-design game where every trade-off is visible, from the parts you mount to the rocket you pick, and a report that explains the score.
+- **The launch mechanics:** Pawan built The Horizon Explorers, the launch and transfer simulator (ascent, Max-Q, staging, Hohmann transfers) that Horizons' launch is based on, and sourced its NASA models.
+- **The look:** Mevin led the design direction: the references, the cream-and-ink "Tactile" style, the screen designs and the isometric base.
+- **The science:** choosing the ten destinations and the real NASA missions behind them, the instruments, the rockets and the numbers.
+- **Every decision and every test:** the team played each build, found what felt wrong and decided what to change, round after round.
 
 Contributions are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## AI disclosure
+
+NASA Space Apps asks teams to say where Super Intelligence (SI) tools were used. Here is exactly where:
+
+| Where | What the AI did | Marked |
+|---|---|---|
+| **Code** | The team used **Claude** (Anthropic), in Claude Code, as a coding assistant. The team set the goals, designed the features and reviewed and tested every change; Claude helped write and refactor the code to that direction (screens, simulation glue, build script, tests). | This section; commit trailers (`Co-Authored-By`); `aiDisclosure` in `package.json`; `ai-disclosure` meta tag in the game |
+| **Images** | The two lead-engineer portraits were drawn by Claude as SVG. | "AI art" tag on the portraits in the game; caption above |
+| **Video** | The 30-second demo was assembled with Claude's help from real gameplay captures, with music from the game. | Visible "Made with AI assistance (Claude)" watermark |
+| **Audio** | The music is generated live by the game's code (Web Audio), which was written with AI assistance. The tutorial voice is the browser's built-in speech. | This section |
+
+**Not AI-made:** the idea, the game design and every design decision; The Horizon Explorers simulator; the NASA 3D models and mission data (NASA); the home-screen sky image (a free asset); the fonts; the README screenshots, which are captures of the real game.
 
 ## Credits
 

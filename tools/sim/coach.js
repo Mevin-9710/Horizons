@@ -4,7 +4,9 @@
    step = {say, why?, target?: ()=>({x,y})|Element|null, until?: ()=>bool, next?: 'Next', enter?: fn, leave?: fn}
    Skipping turns the tutorial off for the whole game (the shell keeps HZ.tutorial).
    The two lead engineers coach the player: Mevin on the ground (mission choice, base, workshops), Pawan in flight (launch, mission control).
-   step.who ('mevin'|'pawan') overrides the speaker for one step. */
+   step.who ('mevin'|'pawan') overrides the speaker for one step.
+   Hands-free: a step with auto() gets a Next button that does the action for the player (so a judge can click Next all the way through);
+   autoIf() hides that button while there is nothing to do yet. */
 (function(){
   const css=`.coach{position:fixed;z-index:60;left:max(12px,env(safe-area-inset-left,0px));top:calc(78px + env(safe-area-inset-top,0px));width:min(350px,calc(100% - 24px));
     background:#1A1206;color:#FBFAF4;border:3px solid #1A1206;border-radius:16px;box-shadow:0 5px 0 rgba(26,18,6,.35);padding:12px 14px 12px;font:600 14px/1.4 Geist,system-ui,sans-serif;display:none;animation:cpop .35s cubic-bezier(.34,1.56,.64,1) both}
@@ -12,11 +14,15 @@
   .coach .k{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px;font:400 10px 'Silkscreen',monospace;letter-spacing:.08em;color:#F2A541}
   .coach .who{display:flex;align-items:center;gap:10px;margin:2px 0 8px}
   .coach .who svg{width:46px;height:46px;flex:none;border-radius:50%;border:3px solid #FBFAF4;background:#F3EEE4;box-shadow:0 3px 0 rgba(251,250,244,.25)}
+  .coach .who .av{position:relative;flex:none;display:block;line-height:0}
+  .coach .who .ai{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);font:700 8px/1 Geist,system-ui,sans-serif;font-style:normal;letter-spacing:.04em;background:#F2A541;color:#1A1206;border:1.5px solid #FBFAF4;border-radius:6px;padding:2px 4px;white-space:nowrap}
   .coach .who b{display:block;font:400 17px/1 'Game Paused','Silkscreen',monospace;color:#FBFAF4;letter-spacing:.02em}
   .coach .who span{display:block;margin-top:3px;font:400 9px 'Silkscreen',monospace;letter-spacing:.08em;color:#F2A541}
   .coach .k button{background:none;border:0;color:#B9B0A0;font:600 12px Geist,system-ui,sans-serif;cursor:pointer;padding:2px 4px}
   .coach .why{display:block;margin-top:6px;font-weight:500;font-size:12.5px;color:#D7D0C0}
   .coach .nx{margin-top:10px;display:flex;justify-content:flex-end}
+  .coach .nx button:disabled{opacity:.55;cursor:wait}
+  .coach .nx[hidden]{display:none}
   .coach .nx button{border:3px solid #FBFAF4;border-radius:12px;background:#F2A541;color:#1A1206;font:400 15px 'Game Paused','Silkscreen',monospace;padding:5px 14px 7px;cursor:pointer;box-shadow:0 3px 0 #FBFAF4}
   .coach .bar{height:5px;border-radius:3px;background:rgba(251,250,244,.18);margin-top:10px;overflow:hidden}.coach .bar i{display:block;height:100%;background:#F2A541;transition:width .4s}
   .coach-arrow{position:fixed;z-index:59;width:44px;height:52px;pointer-events:none;display:none;transform:translate(-50%,-100%);filter:drop-shadow(0 3px 0 #1A1206)}
@@ -50,14 +56,16 @@
   function show(){ cur=list[idx]; if(!cur){ stop(false); return; } if(cur.enter) try{ cur.enter(); }catch(e){} lastDyn='';
     if(typeof cur.dyn==='function'){ const d=cur.dyn()||['','']; cur.say=d[0]; cur.why=d[1]; lastDyn=d[0]; }
     if(idx===0&&INTRO[name]&&!cur._intro){ cur._intro=1; cur.say=INTRO[name]+cur.say; } const L=LEADS[who()];
-    el.innerHTML=`<div class="k"><span>Tutorial · ${name} ${idx+1}/${list.length}</span><button type="button" data-skip>Skip tutorial</button></div><div class="who">${L.svg}<div><b>${L.name}</b><span>${L.role}</span></div></div><div data-say>${cur.say}</div><span class="why" data-why ${cur.why?'':'hidden'}>${cur.why||''}</span>${cur.next?`<div class="nx"><button type="button" data-next>${cur.next}</button></div>`:''}<div class="bar"><i style="width:${(idx)/list.length*100}%"></i></div>`;
+    el.innerHTML=`<div class="k"><span>Tutorial · ${name} ${idx+1}/${list.length}</span><button type="button" data-skip>Skip tutorial</button></div><div class="who"><span class="av">${L.svg}<i class="ai" title="Portrait drawn with AI assistance">AI art</i></span><div><b>${L.name}</b><span>${L.role}</span></div></div><div data-say>${cur.say}</div><span class="why" data-why ${cur.why?'':'hidden'}>${cur.why||''}</span>${cur.next?`<div class="nx"><button type="button" data-next>${cur.next}</button></div>`:cur.auto?`<div class="nx" data-autow><button type="button" data-auto>${cur.autoLabel||'Next'}</button></div>`:''}<div class="bar"><i style="width:${(idx)/list.length*100}%"></i></div>`;
     el.classList.remove('s'); void el.offsetWidth; el.classList.add('s'); speak(cur.say.replace(/<[^>]+>/g,''));
-    const nb=el.querySelector('[data-next]'); if(nb) nb.onclick=advance; el.querySelector('[data-skip]').onclick=()=>stop(true); }
+    const nb=el.querySelector('[data-next]'); if(nb) nb.onclick=advance;
+    const ab=el.querySelector('[data-auto]'); if(ab){ const me=cur; ab.onclick=()=>{ if(ab.disabled) return; ab.disabled=true; try{ me.auto(); }catch(e){} setTimeout(()=>{ if(ab.isConnected) ab.disabled=false; },1600); }; } el.querySelector('[data-skip]').onclick=()=>stop(true); }
   function advance(){ if(cur&&cur.leave) try{ cur.leave(); }catch(e){} idx++; show(); }
   function tick(){ if(!on||!cur) return; let p=null;
     if(typeof cur.dyn==='function'){ const d=cur.dyn()||['','']; if(d[0]&&d[0]!==lastDyn){ lastDyn=d[0]; el.querySelector('[data-say]').innerHTML=d[0]; const w=el.querySelector('[data-why]'); w.innerHTML=d[1]||''; w.hidden=!d[1]; speak(d[0].replace(/<[^>]+>/g,'')); } } try{ p=cur.target&&cur.target(); }catch(e){ p=null; }
     if(p&&p.getBoundingClientRect){ const r=p.getBoundingClientRect(); p=r.width?{x:r.left+r.width/2,y:r.top-4}:null; }
     if(p&&isFinite(p.x)&&p.y>-40&&p.y<innerHeight+40){ ar.style.left=p.x+'px'; ar.style.top=Math.max(56,p.y)+'px'; ar.classList.add('s'); } else ar.classList.remove('s');
+    if(cur.autoIf){ const w=el.querySelector('[data-autow]'); if(w){ let v=false; try{ v=!!cur.autoIf(); }catch(e){} w.hidden=!v; } }
     let done=false; try{ done=cur.until&&cur.until(); }catch(e){} if(done) advance(); }
   function stop(skipped){ on=false; clearInterval(timer); if(el) el.classList.remove('s'); if(ar) ar.classList.remove('s'); try{ speechSynthesis.cancel(); }catch(e){}
     if(skipped){ if(window.HZ) HZ.tutorial=false; try{ parent.postMessage({hzState:{tutorial:false}},'*'); }catch(e){} if(window.COACH.onSkip) window.COACH.onSkip(); } }

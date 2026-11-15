@@ -11,17 +11,17 @@
   LX.tutCue=true; const btn=()=>document.getElementById('act'); let seen={};
   setInterval(()=>{ LX.hold=LX.mode==='fly'&&!!LX.cue; },60);
   COACH.run('Launch',[
-    {say:'The rocket is being prepared in the hangar. Watch, or press <b>Skip</b>.',until:()=>LX.mode!=='cine'&&LX.mode!=='load'},
+    {say:'The rocket is being prepared in the hangar. Watch, or press <b>Skip</b>.',until:()=>LX.mode!=='cine'&&LX.mode!=='load',auto:()=>LX.skip(),autoIf:()=>LX.mode==='cine'},
     {say:'Countdown. Ignition is automatic.',until:()=>LX.mode==='fly'},
     {say:'Liftoff! The autopilot flies the rocket. Your job: fire each event when its button lights up.',until:()=>LX.S.q>9e3,enter:()=>{ LX.timeK=.7; }},
-    {say:'<b>Max-Q</b>: the air pushes hardest now. Hold <b>S</b> or the throttle button to ease off.',why:'Less push means less stress on the rocket.',target:()=>document.getElementById('thr'),enter:()=>{ LX.timeK=.3; },until:()=>LX.S.maxq,leave:()=>{ LX.timeK=1; }},
+    {say:'<b>Max-Q</b>: the air pushes hardest now. Hold <b>S</b> or the throttle button to ease off.',why:'Less push means less stress on the rocket.',target:()=>document.getElementById('thr'),enter:()=>{ LX.timeK=.3; },until:()=>LX.S.maxq,auto:()=>dispatchEvent(new KeyboardEvent('keydown',{code:'KeyS',key:'s'})),leave:()=>{ LX.timeK=1; dispatchEvent(new KeyboardEvent('keyup',{code:'KeyS',key:'s'})); }},
     {dyn:()=>{ const T={sep:['Stage 1 is empty. Press <b>Space</b> or the glowing button to drop it.','Dead weight costs speed.'],
         ses:['Light the second stage: press <b>Space</b>.','Stage 2 carries the spacecraft the rest of the way.'],
         fairing:['Above 100 km the air is too thin to matter. Drop the nose fairing: press <b>Space</b>.','Too early, and air heating would damage the spacecraft.'],
         seco:['Orbit reached. Cut the engine: press <b>Space</b>.','The button only lights once the orbit is safe.'],
         deploy:['Release your spacecraft into orbit: press <b>Space</b>.','Its solar wings unfold once it is free.']};
         return LX.cue?T[LX.cue]:['The autopilot keeps flying. The next event button will light up soon.','Time stops at each event so you can read.']; },
-      target:()=>LX.cue?document.getElementById('act'):null,until:()=>LX.S.dep},
+      target:()=>LX.cue?document.getElementById('act'):null,until:()=>LX.S.dep,auto:()=>{ if(LX.cue) LX.press(); },autoIf:()=>!!LX.cue},
     {say:'In orbit! Extra: <b>T</b> shows full telemetry, <b>C</b> changes the camera.',until:()=>!!LX.flight},
-    {say:'Press <b>Continue</b> to hand over to mission control.',target:()=>document.getElementById('c-next')}]); })();
+    {say:'Press <b>Continue</b> to hand over to mission control.',target:()=>document.getElementById('c-next'),auto:()=>document.getElementById('c-next').click()}]); })();
 </script>
