@@ -1,0 +1,32 @@
+{
+  "note": "Launch vehicles. a1/a2 = stage acceleration (m/s^2), b1/b2 = burn time (s). nasa_model = NASA 3D Resources asset used for the visuals.",
+  "vehicles": [
+    {
+      "name": "HORIZON-9 MEDIUM",
+      "a1": 16,
+      "b1": 150,
+      "a2": 12,
+      "b2": 380,
+      "scale": 1,
+      "nasa_model": "Saturn V"
+    },
+    {
+      "name": "TITAN HEAVY",
+      "a1": 19,
+      "b1": 170,
+      "a2": 13.5,
+      "b2": 430,
+      "scale": 1.18,
+      "nasa_model": "Space Shuttle External Tank"
+    },
+    {
+      "name": "AURORA-L LIGHT",
+      "a1": 15,
+      "b1": 140,
+      "a2": 12,
+      "b2": 360,
+      "scale": 0.9,
+      "nasa_model": "Explorer Jupiter-C Rocket"
+    }
+  ]
+}
