@@ -326,7 +326,7 @@ NASA Space Apps asks teams to say where Super Intelligence (SI) tools were used.
 
 - The two lead-engineer portraits are vector drawings written in code (SVG).
 - The music is synthesised live by the game's code (Web Audio).
-- The 30-second demo video is put together by code from real gameplay screenshots, with the game's own music.
+- The 30-second demo video is put together by code from real gameplay screenshots. Its score and launch sounds (roar, crackle, countdown beeps) are synthesised in code too.
 - The tutorial voice is the browser's built-in speech.
 
 As a precaution, because the code that draws them was written with AI help, the portraits in the game and the demo video carry a small **"AI-assisted"** mark.
