@@ -4,7 +4,7 @@
 
 ### Design a space mission. Launch it. See if your trade-offs hold up.
 
-A browser game for the **NASA Space Apps Challenge 2026**, challenge *"Space Mission Design Game"*.
+A browser game by **Team HZN** for the **NASA Space Apps Challenge 2026**, challenge *"Space Mission Design Game"*.
 Ten real NASA-inspired missions, five NASA rockets, real orbital physics, and a mission report that tells you why it worked or didn't.
 
 [![Play now](https://img.shields.io/badge/▶_PLAY_NOW-in_your_browser-F2A541?style=for-the-badge&labelColor=1A1206)](https://horizons-delta-ten.vercel.app)
@@ -294,13 +294,15 @@ Import the repo in Vercel. `vercel.json` already serves `game/` as a static site
 
 ## Team
 
+**Team HZN** (say it "Horizon").
+
 <table>
 <tr>
 <td align="center" width="50%"><img src="docs/team/mevin.svg" width="96" alt="Mevin"><br><b>Mevin Joseph Seby</b><br><sub>Lead mission engineer</sub></td>
 <td align="center" width="50%"><img src="docs/team/pawan.svg" width="96" alt="Pawan"><br><b>Pawan Indalkar</b><br><sub>Lead flight engineer · creator of <a href="./game-mechanics">The Horizon Explorers launch simulator</a></sub></td>
 </tr>
 </table>
-<sub>Portraits drawn in code (SVG).</sub>
+<sub>Portraits drawn in code (SVG), written with AI assistance.</sub>
 
 **What the team did.** Horizons is Mevin and Pawan's project from start to finish:
 
@@ -326,6 +328,8 @@ NASA Space Apps asks teams to say where Super Intelligence (SI) tools were used.
 - The music is synthesised live by the game's code (Web Audio).
 - The 30-second demo video is put together by code from real gameplay screenshots, with the game's own music.
 - The tutorial voice is the browser's built-in speech.
+
+As a precaution, because the code that draws them was written with AI help, the portraits in the game and the demo video carry a small **"AI-assisted"** mark.
 
 **Made by the team, not AI:** the idea, the game design and every design decision; The Horizon Explorers simulator; the NASA research.
 

@@ -15,7 +15,7 @@
   .coach .who{display:flex;align-items:center;gap:10px;margin:2px 0 8px}
   .coach .who svg{width:46px;height:46px;flex:none;border-radius:50%;border:3px solid #FBFAF4;background:#F3EEE4;box-shadow:0 3px 0 rgba(251,250,244,.25)}
   .coach .who .av{position:relative;flex:none;display:block;line-height:0}
-  .coach .who .ai{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);font:700 8px/1 Geist,system-ui,sans-serif;font-style:normal;letter-spacing:.04em;background:#F2A541;color:#1A1206;border:1.5px solid #FBFAF4;border-radius:6px;padding:2px 4px;white-space:nowrap}
+  .coach .who .ai{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);font:600 6.5px/1 Geist,system-ui,sans-serif;font-style:normal;letter-spacing:.03em;background:rgba(251,250,244,.92);color:#1A1206;border:1px solid #1A1206;border-radius:5px;padding:1.5px 3px;opacity:.85;white-space:nowrap}
   .coach .who b{display:block;font:400 17px/1 'Game Paused','Silkscreen',monospace;color:#FBFAF4;letter-spacing:.02em}
   .coach .who span{display:block;margin-top:3px;font:400 9px 'Silkscreen',monospace;letter-spacing:.08em;color:#F2A541}
   .coach .k button{background:none;border:0;color:#B9B0A0;font:600 12px Geist,system-ui,sans-serif;cursor:pointer;padding:2px 4px}
@@ -56,7 +56,7 @@
   function show(){ cur=list[idx]; if(!cur){ stop(false); return; } if(cur.enter) try{ cur.enter(); }catch(e){} lastDyn='';
     if(typeof cur.dyn==='function'){ const d=cur.dyn()||['','']; cur.say=d[0]; cur.why=d[1]; lastDyn=d[0]; }
     if(idx===0&&INTRO[name]&&!cur._intro){ cur._intro=1; cur.say=INTRO[name]+cur.say; } const L=LEADS[who()];
-    el.innerHTML=`<div class="k"><span>Tutorial · ${name} ${idx+1}/${list.length}</span><button type="button" data-skip>Skip tutorial</button></div><div class="who"><span class="av">${L.svg}</span><div><b>${L.name}</b><span>${L.role}</span></div></div><div data-say>${cur.say}</div><span class="why" data-why ${cur.why?'':'hidden'}>${cur.why||''}</span>${cur.next?`<div class="nx"><button type="button" data-next>${cur.next}</button></div>`:cur.auto?`<div class="nx" data-autow><button type="button" data-auto>${cur.autoLabel||'Next'}</button></div>`:''}<div class="bar"><i style="width:${(idx)/list.length*100}%"></i></div>`;
+    el.innerHTML=`<div class="k"><span>Tutorial · ${name} ${idx+1}/${list.length}</span><button type="button" data-skip>Skip tutorial</button></div><div class="who"><span class="av">${L.svg}<i class="ai" title="Drawn in code (SVG); the code was written with AI assistance">AI-assisted</i></span><div><b>${L.name}</b><span>${L.role}</span></div></div><div data-say>${cur.say}</div><span class="why" data-why ${cur.why?'':'hidden'}>${cur.why||''}</span>${cur.next?`<div class="nx"><button type="button" data-next>${cur.next}</button></div>`:cur.auto?`<div class="nx" data-autow><button type="button" data-auto>${cur.autoLabel||'Next'}</button></div>`:''}<div class="bar"><i style="width:${(idx)/list.length*100}%"></i></div>`;
     el.classList.remove('s'); void el.offsetWidth; el.classList.add('s'); speak(cur.say.replace(/<[^>]+>/g,''));
     const nb=el.querySelector('[data-next]'); if(nb) nb.onclick=advance;
     const ab=el.querySelector('[data-auto]'); if(ab){ const me=cur; ab.onclick=()=>{ if(ab.disabled) return; ab.disabled=true; try{ me.auto(); }catch(e){} setTimeout(()=>{ if(ab.isConnected) ab.disabled=false; },1600); }; } el.querySelector('[data-skip]').onclick=()=>stop(true); }

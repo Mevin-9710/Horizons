@@ -1,5 +1,7 @@
 # NASA Space Apps 2026: project submission text
 
+**Team HZN**: Mevin Joseph Seby and Pawan Indalkar
+
 Copy each block into the matching field on the team's Project page (My Team → Project → Edit). Everything here follows the 2026 Project Submission Guide and the Judging & Awards Guide.
 
 **Deadline:** Sunday, November 15, 11:59 p.m. local time of your Local Event (Universal Event: the Team Owner's local time). Only the last saved submission counts, and you can resubmit until the deadline.
@@ -68,7 +70,7 @@ Open source (MIT): https://github.com/Mevin-9710/Horizons
 (Only for data collection; judges don't see this field, but they do see the markings in the project.)
 
 ```
-Yes. We used Claude (Anthropic), through Claude Code, as an AI coding assistant. The idea, the game design, the choice of missions and NASA data, and every design decision are the team's (Mevin Joseph Seby and Pawan Indalkar). Pawan's launch simulator, The Horizon Explorers, is the basis of the launch mechanics. We directed the work, reviewed and playtested every build, and decided every change. Claude helped write and refactor the code. No generative AI images, video or audio were used: the portraits are drawn in code (SVG), the music is synthesised by the game's code, and the demo video is put together by code from real gameplay screenshots. This is disclosed in the README (AI disclosure section), in the game's Credits, in the page metadata and in package.json.
+Yes. We used Claude (Anthropic), through Claude Code, as an AI coding assistant. The idea, the game design, the choice of missions and NASA data, and every design decision are the team's (Mevin Joseph Seby and Pawan Indalkar). Pawan's launch simulator, The Horizon Explorers, is the basis of the launch mechanics. We directed the work, reviewed and playtested every build, and decided every change. Claude helped write and refactor the code. No generative AI images, video or audio were used: the portraits are drawn in code (SVG), the music is synthesised by the game's code, and the demo video is put together by code from real gameplay screenshots. As a precaution, the portraits and the demo video carry a small "AI-assisted" mark. This is disclosed in the README (AI disclosure section), in the game's Credits, in the page metadata and in package.json.
 ```
 
 ## NASA Data
