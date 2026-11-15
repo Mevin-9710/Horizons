@@ -22,7 +22,9 @@ Source: https://science.nasa.gov/3d-resources/ (mirror: https://github.com/nasa/
 The SLS Block 1 model is only published as split 7z archives (no GLB), so it is not bundled.
 
 ## Run
-Open `index.html` in a browser (internet needed for three.js and the Draco decoder CDN).
+Serve the folder and open `index.html`, for example `npx serve game-mechanics` from the repo root (internet needed for three.js and the Draco decoder CDN).
+
+The main Horizons game lives in [`../game/`](../game/); this folder is the standalone launch simulator it borrows mechanics from.
 
 
 ## Models used (NASA 3D Resources)

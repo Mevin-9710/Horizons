@@ -1,25 +1,21 @@
 {
   "name": "horizons",
+  "version": "1.0.0",
+  "description": "Horizons: design a space mission, launch it, and see if your trade-offs hold up. NASA Space Apps Challenge 2026.",
   "private": true,
-  "version": "0.0.0",
+  "license": "MIT",
   "type": "module",
+  "repository": { "type": "git", "url": "https://github.com/Mevin-9710/Horizons.git" },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "build": "python3 tools/build-game.py",
+    "start": "python3 -m http.server 8765 --directory game",
+    "check": "python3 tools/build-game.py && git diff --exit-code -- game/index.html",
+    "test:tutorial": "node tools/test-tutorial.mjs /tmp",
+    "test:full": "node tools/test-full.mjs /tmp",
+    "test:balance": "node tools/test-balance.mjs",
+    "test:launch": "node tools/test-launch.mjs /tmp"
   },
   "devDependencies": {
-    "@types/node": "^24.19.2",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.2",
-    "oxlint": "^1.90.0",
-    "typescript": "~7.0.2",
-    "vite": "^8.3.6"
+    "playwright": "^1.63.0"
   }
 }

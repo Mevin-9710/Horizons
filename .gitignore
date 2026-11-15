@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 Design System/models-b64/
-cook/stills/
-cook/compare/
+docs/dev/cook/stills/
+docs/dev/cook/compare/
