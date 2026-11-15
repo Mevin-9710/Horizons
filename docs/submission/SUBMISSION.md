@@ -32,6 +32,50 @@ https://horizons-delta-ten.vercel.app/demo.mp4
 
 It plays directly in any browser. The same file is in the repo at `docs/demo/horizons-demo.mp4`. A YouTube upload (Public or Unlisted) also works, if you'd rather paste that. Test the link in a private window first.
 
+## YouTube upload (for the demo link)
+
+Upload `docs/demo/horizons-demo.mp4`. Visibility: **Public** (or Unlisted). Audience: **No, it's not made for kids**. Altered or synthetic content: **No** (nothing realistic is AI-generated; it's real gameplay). Category: Education or Science & Technology. Then paste the YouTube link in "Link to Project Demo".
+
+**Title**
+```
+Horizons: Design, Launch & Fly Your Own Space Mission | NASA Space Apps 2026 | Team HZN
+```
+
+**Description**
+```
+Horizons is a free browser game where you design a real space mission, launch it and find out if your trade-offs hold up. Built by Team HZN for the NASA Space Apps Challenge 2026 (challenge: Space Mission Design Game).
+
+▶ Play free (no install, any device): https://horizons-delta-ten.vercel.app
+💻 Open source: https://github.com/Mevin-9710/Horizons
+
+How it works:
+🪐 Pick one of 10 worlds, each based on a real NASA mission (Landsat, LRO, MAVEN, MESSENGER, Magellan, Juno, Cassini, Voyager 2, New Horizons)
+🛠 Build your spacecraft part by part: mass, budget, power, data, comms and time, all live
+🚀 Choose one of 5 NASA rockets and fly a real ascent: Max-Q, staging, fairing, deploy
+🌌 Transfer burn, course correction, orbit insertion or flyby, with real delta-v
+📡 Run the mission from mission control
+📊 Get a score that explains every point, compared with the real NASA mission
+
+New to it? Press Tutorial: it's hands-free, just press Next.
+
+Team HZN
+• Mevin Joseph Seby: software engineer, built the game
+• Pawan Indalkar: aerospace engineering student, launch physics and orbital mechanics
+
+Credits
+3D models courtesy of NASA (NASA 3D Resources). Horizons is not affiliated with or endorsed by NASA.
+Music: "Piano and Strings Ambient (Confident and Light)" by zec53 (Pixabay).
+Launch sounds synthesised in code.
+AI disclosure: we used Claude (Anthropic) as a coding assistant. The video is assembled by code from real gameplay screenshots; no generative AI images or video.
+
+#NASASpaceApps #SpaceApps2026 #SpaceMissionDesign #NASA #SpaceGame #Rocket #OrbitalMechanics #STEM #GameDev
+```
+
+**Tags**
+```
+NASA Space Apps, Space Apps Challenge 2026, Space Mission Design Game, Horizons, Team HZN, space game, rocket launch, orbital mechanics, Hohmann transfer, delta-v, spacecraft design, STEM education, three.js, browser game, NASA 3D models
+```
+
 ## Link to Final Project
 
 ```
