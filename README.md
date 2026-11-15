@@ -339,7 +339,7 @@ As a precaution, because the code that draws them was written with AI help, the 
 
 - **3D models courtesy of NASA** ([NASA 3D Resources](https://science.nasa.gov/3d-resources/)). Full list and processing notes: [`Design System/models/CREDITS.md`](./Design%20System/models/CREDITS.md).
 - Mission data follows the real NASA missions listed above.
-- Fonts: [Game Paused DEMO](https://dharmasstudio.com/game-paused) by Dharmas Studio (free for personal and non-commercial use), [Silkscreen](https://fonts.google.com/specimen/Silkscreen) and [Geist](https://fonts.google.com/specimen/Geist) (SIL Open Font License). See [`Design System/fonts/`](./Design%20System/fonts/).
+- Fonts: [Game Paused DEMO](https://dharmasfoundry.com/game-paused) by Dharmas Studio (free for personal and non-commercial use), [Silkscreen](https://fonts.google.com/specimen/Silkscreen) and [Geist](https://fonts.google.com/specimen/Geist) (SIL Open Font License). See [`Design System/fonts/`](./Design%20System/fonts/).
 - Built with [three.js](https://threejs.org/).
 - Home-screen night sky (`Design System/assets/home-sky.webp`): a free asset downloaded by the team, used non-commercially.
 - Demo video music: "Piano and Strings Ambient (Confident and Light)" by zec53, from Pixabay (Pixabay Content License), chosen by the team (`docs/demo/music/`).

@@ -152,17 +152,55 @@ Every rocket and spacecraft in Horizons is a real NASA 3D model (NASA 3D Resourc
 
 ## Space Agency Partner Data and Other References
 
+We did not use Space Agency Partner data. This field lists **every other resource** we used, as **link text** plus **link URL**. All links were opened to check them except the two marked "(your link)".
+
+**Libraries and tools**
+
+| Link text | Link URL |
+|---|---|
+| three.js (r128): 3D rendering in the browser (MIT) | https://threejs.org/ |
+| Web Audio API: in-game music and launch sounds, synthesised in code | https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API |
+| glTF Transform: converting the NASA 3D models | https://gltf-transform.dev/ |
+| Playwright: automated tests that play the whole game | https://playwright.dev/ |
+| Claude Code (Anthropic): AI coding assistant used by the team | https://claude.com/product/claude-code |
+
+**Fonts**
+
+| Link text | Link URL |
+|---|---|
+| Game Paused font by Dharmas: titles and buttons (free for personal and non-commercial use) | https://dharmasfoundry.com/game-paused |
+| Silkscreen font: labels and numbers (SIL Open Font License) | https://fonts.google.com/specimen/Silkscreen |
+| Geist font: body text (SIL Open Font License) | https://fonts.google.com/specimen/Geist |
+
+**Music and images**
+
+| Link text | Link URL |
+|---|---|
+| Music in the demo video: "Piano and Strings Ambient - Confident and Light" by zec53 (Pixabay) | https://pixabay.com/music/modern-classical-piano-and-strings-ambient-confident-and-light-full-633882/ |
+| Pixabay Content License (covers the music) | https://pixabay.com/service/license-summary/ |
+| Home-screen night-sky image (free asset, used non-commercially) | (your link): paste the page you downloaded it from |
+
+**Our own work and hosting**
+
+| Link text | Link URL |
+|---|---|
+| Horizons source code (MIT licence) | https://github.com/Mevin-9710/Horizons |
+| The Horizon Explorers launch simulator by Pawan Indalkar (basis of the launch physics) | https://github.com/Mevin-9710/Horizons/tree/main/game-mechanics |
+| Play Horizons (hosted on Vercel) | https://horizons-delta-ten.vercel.app |
+
+**Design inspiration only** (not used in the game; all rights reserved by their owners)
+
+| Link text | Link URL |
+|---|---|
+| Perplexity "Computer" page: inspiration for the glass-ball home screen | https://www.perplexity.ai/products/computer |
+| Perplexity "Comet" page: inspiration for the banded planets | https://www.perplexity.ai/comet |
+| Pinterest "Game UI Design" board: inspiration for the chunky game buttons | https://in.pinterest.com/ilairaz/game-ui-design/ |
+| Isometric "Space Level Kit" asset pack: inspiration for the base layout | (your link): where the pack is sold, if you have it |
+
+If the form also has a text box, paste:
+
 ```
-Code and libraries: three.js r128 (MIT) with GLTFLoader and BufferGeometryUtils; Web Audio API; Playwright (tests); gltf-transform (model conversion); Python 3 (build).
-Hosting: Vercel (game), GitHub (code, demo video).
-Fonts: Game Paused DEMO by Dharmas Studio (free for personal and non-commercial use); Silkscreen and Geist (SIL Open Font License, Google Fonts).
-Images: home-screen night-sky image (free asset, used non-commercially).
-Music (demo video): "Piano and Strings Ambient (Confident and Light)" by zec53, Pixabay (Pixabay Content License). All other visuals are made in code or are NASA 3D models.
-Design inspiration only (not used in the game, all rights reserved by their owners): Perplexity's "Computer" and "Comet" web pages, a Pinterest "Game UI Design" board, and the isometric "Space Level Kit" asset pack.
-Launch mechanics: ported from The Horizon Explorers, the team's own launch simulator (Pawan Indalkar).
-AI assistance: Claude (Anthropic), see the SI field and the README's AI disclosure.
-3D models courtesy of NASA. Horizons is not affiliated with or endorsed by NASA.
-Source code: https://github.com/Mevin-9710/Horizons (MIT licence)
+No Space Agency Partner data was used. Other resources: three.js r128 (MIT) for 3D; the Web Audio API for music and sounds synthesised in code; glTF Transform to convert NASA models; Playwright for tests; Claude Code (Anthropic) as an AI coding assistant. Fonts: Game Paused by Dharmas (free for personal and non-commercial use), Silkscreen and Geist (SIL Open Font License). Demo-video music: "Piano and Strings Ambient - Confident and Light" by zec53 (Pixabay Content License). Home-screen sky image: a free asset, used non-commercially. The launch physics come from The Horizon Explorers, Pawan Indalkar's own launch simulator. Design inspiration only, not used in the game: Perplexity's Computer and Comet pages, a Pinterest Game UI board and the Space Level Kit asset pack (all rights reserved by their owners). 3D models courtesy of NASA; not affiliated with or endorsed by NASA.
 ```
 
 ---
