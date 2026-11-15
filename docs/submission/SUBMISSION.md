@@ -19,7 +19,7 @@ Horizons: Design a Mission, Launch It, Learn Why
 ```
 Horizons is a free browser game that turns real space mission design into play. You pick one of ten destinations, each modelled on a real NASA mission (Landsat, LRO, MAVEN, MESSENGER, Magellan, Juno, Cassini, Voyager 2, New Horizons). You build a spacecraft part by part, with mass, budget, power, data, comms and time all live. Then you pick one of five NASA rockets and an orbit, fly a real ascent (Max-Q, staging, fairing, deploy) and a transfer with real delta-v. Finally, you run the mission from mission control. A report out of 100 explains every point and compares your design with the real NASA one. It answers the challenge by making the trade-offs engineers face visible and hands-on, so anyone can learn why missions are built the way they are, in under ten minutes, on any device.
 
-BUILT BY A SOFTWARE ENGINEER AND AN AEROSPACE ENGINEER: Team HZN pairs Mevin Joseph Seby, the software engineer who built the game, with Pawan Indalkar, an undergraduate aerospace engineering student who made sure the spaceflight is real. Pawan's aerospace training shaped the launch physics, the staging, the orbital transfers and the spacecraft trade-offs; Mevin turned that engineering into a fast, polished game anyone can play.
+BUILT BY A SOFTWARE EXPERT AND AN AEROSPACE ENGINEER: Team HZN pairs Mevin Joseph Seby, the software expert who built the game, with Pawan Indalkar, an undergraduate aerospace engineering student who made sure the spaceflight is real. Pawan's aerospace training shaped the launch physics, the staging, the orbital transfers and the spacecraft trade-offs; Mevin turned that engineering into a fast, polished game anyone can play.
 ```
 
 ## Link to Project Demo
@@ -59,7 +59,7 @@ How it works:
 New to it? Press Tutorial: it's hands-free, just press Next.
 
 Team HZN
-• Mevin Joseph Seby: software engineer, built the game
+• Mevin Joseph Seby: software expert, built the game
 • Pawan Indalkar: aerospace engineering student, launch physics and orbital mechanics
 
 Credits
@@ -88,10 +88,10 @@ Source code (mention it in the description too): `https://github.com/Mevin-9710/
 
 ```
 THE TEAM: SOFTWARE MEETS AEROSPACE
-Horizons was built by two engineers with complementary expertise.
+Horizons was built by a software expert and an aerospace engineer with complementary expertise.
+- Mevin Joseph Seby, lead mission engineer, is the software expert who turned the engineering into a game. He designed and built the software: the screens and their flow, the walk-around isometric base, the spacecraft builder with its live gauges, the 3D launch and transfer scenes, mission control, the scoring and the hands-free tutorial. He also built the build pipeline and automated tests, the visual design and the deployment. He directed the AI coding assistant that helped write the code.
 - Pawan Indalkar, lead flight engineer, is an undergraduate aerospace engineering student. His aerospace knowledge is the backbone of the game's realism. He built The Horizon Explorers, the launch simulator whose physics Horizons' launch is based on: the ascent model (thrust, drag, an exponential atmosphere, dynamic pressure and Max-Q, the gravity turn, two-stage staging, the orbit computed from the state vector). His understanding of orbital mechanics and spacecraft systems grounds the rest of the physics: Hohmann transfers and delta-v budgets for each destination, a heavier payload costing a rocket its delta-v, and sunlight falling with distance, which is why Mars missions fly solar wings and Saturn missions need RTGs. He also sourced NASA 3D models for the launch.
-- Mevin Joseph Seby, lead mission engineer, is the software engineer who turned that engineering into a game. He designed and built the software: the screens and their flow, the walk-around isometric base, the spacecraft builder with its live gauges, the 3D launch and transfer scenes, mission control, the scoring and the hands-free tutorial. He also built the build pipeline and automated tests, the visual design and the deployment. He directed the AI coding assistant that helped write the code.
-Together: Pawan made sure every number means something; Mevin made sure anyone can feel it in a few minutes.
+Together: Mevin made sure anyone can feel it in a few minutes; Pawan made sure every number means something.
 
 WHAT IT DOES
 Horizons is a mission-design game for everyone, from students to space fans. In one loop you:
