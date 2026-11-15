@@ -49,3 +49,29 @@
   if(typeof lockSprite!=='undefined'&&lockSprite) lockSprite.position.y=7.6;
 })();
 </script>
+<script>
+/* Tutorial, part 2: design and build the spacecraft, pick a rocket and an orbit, launch */
+(function tut(){ if(!(window.COACH&&COACH.active())) return; if(typeof AREAS==='undefined'||!AREAS.craft||!AREAS.base){ setTimeout(tut,250); return; }
+  calloutEl.style.display='none';
+  const W=(x,y,z)=>{ const v=new THREE.Vector3(x,y,z).project(cam); return {x:(v.x+1)/2*innerWidth,y:(1-v.y)/2*innerHeight}; };
+  const start=hero.position.clone(); let rocketPicked=false, orbitPicked=false; const _choose=choose;
+  choose=function(s){ if(s.cat==='rocket') rocketPicked=true; if(s.cat==='orbit') orbitPicked=true; return _choose(s); };
+  COACH.run('Base',[
+    {say:'Welcome to your launch base. You are the engineer who builds this mission.',next:'Next'},
+    {say:'Walk around: <b>WASD</b> or arrow keys, or drag the joystick. You can also tap the floor.',until:()=>hero.position.distanceTo(start)>1.5},
+    {say:'These six gauges are your limits: mass, money, power, data, comms and time.',why:'Green is fine, amber is close, red blocks the launch.',target:()=>document.getElementById('res'),next:'Got it'},
+    {say:'Walk into the <b>Spacecraft workshop</b>.',target:()=>where==='base'?W(10.6,2.5,0):null,until:()=>where==='craft'},
+    {say:'Each floor mat is a subsystem station: power, batteries, comms, storage, engines, tanks and instruments.',why:'You build the spacecraft on the stand in the middle.',next:'Next'},
+    {say:'The board on the wall shows the 3 goals of this mission.',why:'Each goal needs a certain instrument. Watch it tick as you build.',target:()=>W(0,6.5,-19.7),next:'Next'},
+    {say:'Go to the <b>Instruments</b> station and pick up the <b>Thermal IR imager</b>.',why:'It sees heat, so it spots fires day and night and through smoke.',target:()=>W(13.5,2.6,6.5),until:()=>carry&&carry.o.id==='ir'},
+    {say:'Carry it to the <b>build stand</b> and mount it.',target:()=>W(0,1.5,4.6),until:()=>mountedInst().includes('ir')},
+    {say:'Two goals ticked! But check <b>Power</b>: the imager draws 110 W.',why:'Parts that draw more than the wings make will drain the battery.',target:()=>document.getElementById('res'),next:'Next'},
+    {say:'Fit bigger wings: pick up <b>Solar wings M</b> at Power and mount them.',target:()=>W(-17.5,2.6,-10),until:()=>['p2','p3','p4'].includes(pick.power)},
+    {say:'The imager also fills storage fast. Mount <b>Storage 120 Gb</b>.',why:'When storage is full, new pictures are lost until the next ground pass.',target:()=>W(13.5,2.2,-5),until:()=>pick.store!=='s1'},
+    {say:'Nice design. Head out through the <b>Exit</b>.',target:()=>W(21.5,1.5,17.4),until:()=>where==='base'},
+    {say:'Now walk into the <b>Rocket workshop</b>.',target:()=>where==='base'?W(-10.4,2.5,0):null,until:()=>where==='rocket'},
+    {say:'Pick a rocket. Bigger rockets lift more but cost more.',why:'Watch the Mass gauge: your spacecraft must fit the rocket.',target:()=>W(-6.5,4,-5),until:()=>rocketPicked},
+    {say:'Pick an orbit. Read each card: shadow, ground passes and science.',why:'More shadow needs a bigger battery; more passes send more data home.',target:()=>W(-6,2.5,3.5),until:()=>orbitPicked},
+    {say:'Exit and walk to the <b>Launch pad</b>.',target:()=>where==='rocket'?W(14,1.5,8.6):W(0,2.5,-9.4),until:()=>openZone==='pad'},
+    {say:'The pre-launch check: if every bar is green, press <b>Launch</b>.',why:'Red rows tell you what to fix.',target:()=>document.getElementById('launch')}]); })();
+</script>

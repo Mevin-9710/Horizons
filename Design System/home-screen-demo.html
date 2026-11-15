@@ -563,7 +563,7 @@ syncSettings();
 
 /* ---------- menu actions ---------- */
 document.querySelectorAll('.t-btn.primary.btn').forEach(b=>b.addEventListener('click',()=>go('select')));
-document.querySelectorAll('.ctas .t-btn.ghost').forEach(b=>{ if(/Tutorial/.test(b.textContent)) b.addEventListener('click',()=>go('base',{mission:'earth',tutorial:true})); });
+document.querySelectorAll('.ctas .t-btn.ghost').forEach(b=>{ if(/Tutorial/.test(b.textContent)) b.addEventListener('click',()=>go('select',{mission:'earth',tutorial:true})); });
 document.querySelectorAll('.card').forEach(c=>{ const m=c.dataset.m; c.addEventListener('click',()=>go('select',{mission:m})); c.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go('select',{mission:m}); } }); });
 
 /* ---------- keyboard: Enter plays, ◀ ▶ swap rockets, S settings, Esc closes ---------- */

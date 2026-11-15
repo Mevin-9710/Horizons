@@ -1,0 +1,48 @@
+// Plays the whole tutorial like a player and screenshots the coach at each part.  node tools/test-tutorial.mjs <outDir>
+import { createRequire } from 'node:module'; const require=createRequire(import.meta.url); const {chromium}=require('playwright');
+const [O]=process.argv.slice(2);
+const b=await chromium.launch({args:['--use-gl=swiftshader','--enable-unsafe-swiftshader']}); const p=await b.newPage({viewport:{width:1300,height:800}});
+p.on('pageerror',e=>console.log('PAGEERR',e.message)); const f=()=>p.frames().find(x=>x!==p.mainFrame());
+const coach=async()=>f().evaluate(()=>{ const c=document.querySelector('.coach.s'); return c?c.innerText.replace(/\n/g,' | ').slice(0,140):'(no coach)'; });
+const waitCoach=async(re,t=90000)=>{ await f().waitForFunction(re=>{ const c=document.querySelector('.coach.s'); return c&&new RegExp(re).test(c.innerText); },re,{timeout:t}); };
+const next=async()=>{ await f().click('.coach [data-next]'); await p.waitForTimeout(400); };
+let n=0; const shot=async(t)=>{ await p.screenshot({path:`${O}/t${String(++n).padStart(2,'0')}-${t}.png`}); console.log(n,t,'::',await coach()); };
+await p.goto('http://localhost:8765/'); await p.reload(); await p.waitForTimeout(2500);
+await f().click('.ctas .t-btn.ghost'); await p.waitForFunction(()=>location.hash==='#select',null,{timeout:20000}); await p.waitForTimeout(3000);
+await waitCoach('solar system'); await shot('select-intro'); await next(); await shot('select-click-earth');
+await f().evaluate(()=>select('earth')); await waitCoach('Start mission'); await p.waitForTimeout(800); await shot('select-start'); await f().click('#start');
+await p.waitForFunction(()=>location.hash==='#base',null,{timeout:20000}); await p.waitForTimeout(3000);
+await f().waitForFunction(()=>typeof MODELS!=='undefined'&&Object.keys(MODELS).length>=14,null,{timeout:120000});
+await waitCoach('launch base'); await shot('base-welcome'); await next();
+await waitCoach('Walk around'); await p.keyboard.down('KeyW'); await p.waitForTimeout(2500); await p.keyboard.up('KeyW');
+await waitCoach('six gauges'); await shot('base-gauges'); await next();
+await waitCoach('Spacecraft workshop'); await shot('base-go-craft'); await f().evaluate(()=>enterRoom('craft'));
+await waitCoach('floor mat',20000); await p.waitForTimeout(800); await shot('craft-stations'); await next();
+await waitCoach('3 goals'); await shot('craft-board'); await next();
+await waitCoach('Thermal IR'); await shot('craft-pick-ir'); await f().evaluate(()=>{ hero.position.set(14.8,0,7.8); }); await p.waitForTimeout(700); await p.keyboard.press('KeyE');
+await waitCoach('build stand'); await f().evaluate(()=>{ hero.position.set(0,0,4.6); }); await p.waitForTimeout(700); await shot('craft-carry'); await p.keyboard.press('KeyE');
+await waitCoach('Two goals'); await p.waitForTimeout(600); await shot('craft-mounted'); await next();
+await waitCoach('Solar wings M'); await shot('craft-wings'); await f().evaluate(()=>{ hero.position.set(-16.2,0,-8.7); }); await p.waitForTimeout(700); await p.keyboard.press('KeyE'); await f().evaluate(()=>{ hero.position.set(0,0,4.6); }); await p.waitForTimeout(700); await p.keyboard.press('KeyE');
+await waitCoach('Storage 120'); await f().evaluate(()=>{ hero.position.set(14.8,0,-3.7); }); await p.waitForTimeout(700); await p.keyboard.press('KeyE'); await f().evaluate(()=>{ hero.position.set(0,0,4.6); }); await p.waitForTimeout(700); await p.keyboard.press('KeyE');
+await waitCoach('Exit'); await p.waitForTimeout(800); await shot('craft-done'); await f().evaluate(()=>exitRoom());
+await waitCoach('Rocket workshop',20000); await f().evaluate(()=>enterRoom('rocket'));
+await waitCoach('Pick a rocket',20000); await p.waitForTimeout(900); await shot('rocket-pick'); await f().evaluate(()=>{ hero.position.set(-6.5,0,-2); }); await p.waitForTimeout(700); await p.keyboard.press('KeyE');
+await waitCoach('Pick an orbit'); await f().evaluate(()=>{ hero.position.set(-4.4,0,5.1); }); await p.waitForTimeout(700); await p.keyboard.press('KeyE');
+await waitCoach('Launch pad'); await shot('rocket-to-pad'); await f().evaluate(()=>{ exitRoom(); }); await p.waitForTimeout(2500); await f().evaluate(()=>openWin('pad'));
+await waitCoach('pre-launch'); await p.waitForTimeout(700); await shot('pad-check');
+console.log('pad:',await f().evaluate(()=>document.querySelector('.check').innerText.replace(/\n/g,' ')+' | launch disabled '+document.getElementById('launch').disabled));
+await f().click('#launch'); await p.waitForFunction(()=>location.hash==='#launch',null,{timeout:30000}); await p.waitForTimeout(3000);
+await f().waitForFunction(()=>window.LX&&LX.mode!=='load',null,{timeout:120000}); await waitCoach('hangar'); await shot('launch-hangar'); await f().evaluate(()=>LX.skip());
+await waitCoach('autopilot flies',60000); await shot('launch-liftoff');
+await waitCoach('Max-Q',120000); await p.waitForTimeout(500); await shot('launch-maxq'); await p.keyboard.down('KeyS');
+for(let i=0;i<600;i++){ const st=await f().evaluate(()=>({cue:LX.cue,dep:LX.S.dep,mq:LX.S.maxq,mode:LX.mode})); if(st.mq) await p.keyboard.up('KeyS');
+  if(st.dep||st.mode!=='fly') break; if(st.cue){ await p.waitForTimeout(700); if(i<400) await shot('launch-cue-'+st.cue); await p.keyboard.press('Space'); } await p.waitForTimeout(250); }
+await waitCoach('Continue',90000); await p.waitForTimeout(1200); await shot('launch-continue'); await f().click('#c-next');
+await p.waitForFunction(()=>location.hash==='#control',null,{timeout:30000}); await p.waitForTimeout(3000);
+await waitCoach('phase by phase'); await shot('control-intro'); await next(); await waitCoach('Battery'); await shot('control-gauges'); await next(); await next();
+await f().evaluate(()=>{ S.speed=4; }); await waitCoach('choose what',60000);
+await f().waitForFunction(()=>document.querySelector('.choice'),null,{timeout:120000}); await p.waitForTimeout(600); await shot('control-decision'); await f().click('.choice');
+for(let i=0;i<200;i++){ if(await f().evaluate(()=>!!window.LAST_REPORT)) break; await f().evaluate(()=>{ const c=document.querySelector('.choice'); if(c) c.click(); }); await p.waitForTimeout(400); }
+await waitCoach('Tutorial complete',60000); await p.waitForTimeout(1500); await shot('control-report'); await next();
+console.log('tutorial flag after finish:', await p.evaluate(()=>state.tutorial), '| report', JSON.stringify(await f().evaluate(()=>window.LAST_REPORT)));
+await b.close();

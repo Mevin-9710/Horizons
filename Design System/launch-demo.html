@@ -584,14 +584,14 @@ function frame(now){ if(!running) return; const dt=Math.min((now-last)/1000,.05)
   if(mode==='fly'){ tReal+=dt; const TS=7+9*sstep(5,8,tReal);
     const maxqWin=S.q>9e3&&!S.maxq&&S.alt<45e3; thrEl.style.display=maxqWin?'inline-block':'none';
     const down=(thrHeld||K.KeyS||K.ArrowDown)&&maxqWin; inp.down=!!down; inp.up=!down&&S.thr<1; inp.left=!!(K.ArrowLeft||K.KeyA); inp.right=!!(K.ArrowRight||K.KeyD);
-    prevP.copy(P); stepAscent(S,V,dt*TS,inp); place(); if(dt>0) rv.subVectors(P,prevP).divideScalar(dt);
+    prevP.copy(P); stepAscent(S,V,dt*TS*LX.timeK*(LX.hold?0:1),inp); place(); if(dt>0) rv.subVectors(P,prevP).divideScalar(dt);
     for(const e of S.ev){ if(e==='maxq'){ toast('Max-Q',S.thrQ?'Throttled down through peak pressure. Nice.':'Peak aerodynamic pressure passed.','Max Q'); setPhase('Max-Q passed'); }
       else if(e==='meco'){ toast('MECO','Main engine cutoff.','Main engine cutoff'); setPhase('MECO'); } else if(e==='liftoff') setPhase('Ascent','Autopilot is flying the gravity turn. Fire each event on cue.'); else if(e==='seco'&&S.f2<=0) setPhase('Stage 2 empty'); }
     S.ev.length=0;
     if(S.fail){ explode(S.fail); }
     else { const o=orbitOf(S); let want=null;
       if(S.stage==='C1') want='sep'; else if(S.stage==='C2') want='ses'; else if(S.fair&&S.alt>=110e3) want='fairing'; else if(S.stage==='S2'&&S.engine&&o.peri>=150e3) want='seco'; else if(S.stage==='C3'&&o.peri>=140e3) want='deploy';
-      setCue(want); if(cue){ cueT+=dt; if(cueT>=CUES[cue][1]) fireCue(false); }
+      setCue(want); if(cue){ cueT+=dt; if(!LX.tutCue&&cueT>=CUES[cue][1]) fireCue(false); }
       if(S.stage==='C3'&&!S.dep&&o.peri<140e3&&S.f2<=.001&&mode==='fly'){ mode='fail'; setCue(null); setPhase('Suborbital'); card('Not in orbit',`<p>Stage 2 ran dry at a perigee of ${(o.peri/1e3).toFixed(0)} km. The spacecraft falls back to Earth.</p><p>Try a bigger rocket or a lighter spacecraft.</p><div class="btns"><button class="t-btn primary" type="button" id="c-retry">Launch again</button><button class="t-btn" type="button" id="c-base">Back to base</button></div>`); } }
     elClock.textContent=fmtT(S.met); }
   if(mode==='orbit'){ orbT+=dt; prevP.copy(P); stepAscent(S,V,dt*16,null); place(); pay.position.copy(P).addScaledVector(dirv,H2+1+orbT*1.6); pay.quaternion.copy(rocket.quaternion); wings.scale.x=.05+.95*sstep(1,3.2,orbT);
@@ -640,7 +640,7 @@ function frame(now){ if(!running) return; const dt=Math.min((now-last)/1000,.05)
   updateClips(); renderer.render(scene,cam); requestAnimationFrame(frame); }
 
 /* ---------- start ---------- */
-window.LX={S,get tr(){return tr},get mode(){return mode},get flight(){return flight},get cue(){return cue},press,skip:()=>{ if(mode==='cine') endCine(); },stats:()=>({tCine,tReal,frames,avg:ftSum/Math.max(1,frames),max:ftMax,calls:renderer.info.render.calls,tris:renderer.info.render.triangles}),resetStats:()=>{frames=0;ftSum=0;ftMax=0}};
+window.LX={timeK:1,hold:false,tutCue:false,get thrHeld(){return thrHeld},S,get tr(){return tr},get mode(){return mode},get flight(){return flight},get cue(){return cue},press,skip:()=>{ if(mode==='cine') endCine(); },stats:()=>({tCine,tReal,frames,avg:ftSum/Math.max(1,frames),max:ftMax,calls:renderer.info.render.calls,tris:renderer.info.render.triangles}),resetStats:()=>{frames=0;ftSum=0;ftMax=0}};
 ready.then(()=>{ $('load').style.display='none'; if(HZ.skipCine) { cinePose(5,1); startCount(); camP.set(-19,4.5,29); camT.set(0,HT*.5,0); } else startCine(); requestAnimationFrame(t=>{ last=t; frame(t); }); });
 
 </script>

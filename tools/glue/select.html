@@ -1,3 +1,10 @@
 <script>
 document.addEventListener('click',e=>{ if(e.target.closest('#start')) hzGo('base',{mission:selected}); if(e.target.closest('#home')&&!selected) hzGo('home'); },true);
+</script><script>
+/* Tutorial, part 1: choose the mission */
+if(window.COACH&&COACH.active()){ const P=()=>{ const v=new THREE.Vector3(); earth.mesh.getWorldPosition(v); v.project(camera); return {x:(v.x+1)/2*innerWidth,y:(1-v.y)/2*innerHeight-26}; };
+  COACH.run('Mission',[
+    {say:'This is the solar system. Every glowing planet has a mission, based on a real NASA one.',why:'Your first mission watches for wildfires on Earth.',next:'Next'},
+    {say:'Click <b>Earth</b> to open its mission brief.',target:P,until:()=>selected==='earth'},
+    {say:'Read the brief: the objective, the goals and the limits. Then press <b>Start mission</b>.',why:'Every mission starts with a goal. You design the spacecraft to meet it.',target:()=>document.getElementById('start')}]); }
 </script>

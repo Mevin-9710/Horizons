@@ -231,3 +231,7 @@ Resources tab: could not be read (site returned 503/502 to this container). Sear
 ## Added 15 Nov: fully interactive tutorial (requested)
 A complete guided first mission that teaches by doing, across every screen: mission select, walking, carrying and mounting a part, the gauges and goals board, rocket and orbit, the pad check, the launch cues and Max-Q, mission control gauges and a decision, and the report. Every step waits for the player's action, points at the thing to use, and can be skipped.
 Also finishing the design task: more orbits, each explained, with real effects in the simulation.
+
+## Done 15 Nov: orbits + interactive tutorial
+- Orbits per mission type with real effects (shadow, ground passes, science, insertion fuel); see `HZ_ORBITS` in tools/sim/missions.js.
+- Interactive tutorial (Home > Tutorial): 34 steps across mission select (3), base and workshops (17), launch (7) and mission control (7). Each step waits for the player's action and points at the target; launch time slows for Max-Q and stops at each cue; Skip turns it off game-wide. Shared coach: tools/sim/coach.js. Playthrough test: tools/test-tutorial.mjs.
