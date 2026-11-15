@@ -200,12 +200,22 @@ Resources tab: could not be read (site returned 503/502 to this container). Sear
 - Music: auto themes by phase (no preference given; default).
 - Original design stays: new things use existing styles only.
 
+## Decisions, round 2 (after reading the official brief)
+- **Co-op: online rooms, peer to peer** (WebRTC through the free public PeerJS broker). The host's browser runs the room; up to 3 others join with a 5-letter code. Roles own gauges (mission lead: time; structures: mass; power & comms: power, data, comms; finance: budget); every player must give GO to launch; events go to the owning role. No accounts or server. Known limits: host must stay connected; some strict networks block peer connections (fallback: solo).
+- **New parts:** batteries, onboard computer, attitude control; more orbits, each explained (coverage, comms passes, lifetime).
+- **Brief extras:** local leaderboard, save and compare designs, sandbox mode, "real NASA mission like yours" in the report.
+- **Order:** brief gaps first, then the HTML4 extras.
+
 ## Build order
-1. Home cards + Manual window (incl. Warnings & fixes) + Difficulty in Settings.
-2. Mini-games: Max-Q timing, Sequence order.
-3. Rocket anatomy (3D, tap parts).
-4. Go/no-go poll + comms captions in the launch.
-5. Tutorial slides + audio guide.
-6. Lander & rover (3D), from home and inside Moon/Mars missions.
-7. Music themes by phase.
-8. Brief extras if time allows: local best scores (leaderboard) and "compare with your last design" in the report.
+1. Difficulty (Cadet / Pilot / Commander) in Settings, simple vs advanced parts by difficulty.
+2. New parts (batteries, computer, attitude control) and more orbits with explanations.
+3. Co-op online rooms (PeerJS): lobby, roles, shared design, everyone's GO, events to roles.
+4. Report extras: "real NASA mission like yours", save and compare designs, local leaderboard.
+5. Sandbox mode.
+6. Home cards (Mini-games, Rocket anatomy, Manual with Warnings & fixes).
+7. Mini-games: Max-Q timing, Sequence order.
+8. Rocket anatomy.
+9. Go/no-go poll + comms captions.
+10. Tutorial slides + audio guide.
+11. Lander & rover (3D), from home and in Moon/Mars missions.
+12. Music themes by phase.
