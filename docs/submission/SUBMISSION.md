@@ -152,7 +152,7 @@ Every rocket and spacecraft in Horizons is a real NASA 3D model (NASA 3D Resourc
 
 ## Space Agency Partner Data and Other References
 
-We did not use Space Agency Partner data. This field lists **every other resource** we used, as **link text** plus **link URL**. All links were opened to check them except the two marked "(your link)".
+We did not use Space Agency Partner data. This field lists **every other resource** we used, as **link text** plus **link URL**. All links were opened to check them.
 
 **Libraries and tools**
 
@@ -178,7 +178,7 @@ We did not use Space Agency Partner data. This field lists **every other resourc
 |---|---|
 | Music in the demo video: "Piano and Strings Ambient - Confident and Light" by zec53 (Pixabay) | https://pixabay.com/music/modern-classical-piano-and-strings-ambient-confident-and-light-full-633882/ |
 | Pixabay Content License (covers the music) | https://pixabay.com/service/license-summary/ |
-| Home-screen night-sky image (free asset, used non-commercially) | (your link): paste the page you downloaded it from |
+| Home-screen night-sky image: a free wallpaper owned by the team, used non-commercially | https://github.com/Mevin-9710/Horizons/blob/main/Design%20System/assets/home-sky.webp |
 
 **Our own work and hosting**
 
@@ -195,12 +195,12 @@ We did not use Space Agency Partner data. This field lists **every other resourc
 | Perplexity "Computer" page: inspiration for the glass-ball home screen | https://www.perplexity.ai/products/computer |
 | Perplexity "Comet" page: inspiration for the banded planets | https://www.perplexity.ai/comet |
 | Pinterest "Game UI Design" board: inspiration for the chunky game buttons | https://in.pinterest.com/ilairaz/game-ui-design/ |
-| Isometric "Space Level Kit" asset pack: inspiration for the base layout | (your link): where the pack is sold, if you have it |
+| Isometric "Space Level Kit" reference images: inspiration for the base layout | https://github.com/Mevin-9710/Horizons/tree/main/Design%20System/Design%20Inspirations/space-level-kit |
 
 If the form also has a text box, paste:
 
 ```
-No Space Agency Partner data was used. Other resources: three.js r128 (MIT) for 3D; the Web Audio API for music and sounds synthesised in code; glTF Transform to convert NASA models; Playwright for tests; Claude Code (Anthropic) as an AI coding assistant. Fonts: Game Paused by Dharmas (free for personal and non-commercial use), Silkscreen and Geist (SIL Open Font License). Demo-video music: "Piano and Strings Ambient - Confident and Light" by zec53 (Pixabay Content License). Home-screen sky image: a free asset, used non-commercially. The launch physics come from The Horizon Explorers, Pawan Indalkar's own launch simulator. Design inspiration only, not used in the game: Perplexity's Computer and Comet pages, a Pinterest Game UI board and the Space Level Kit asset pack (all rights reserved by their owners). 3D models courtesy of NASA; not affiliated with or endorsed by NASA.
+No Space Agency Partner data was used. Other resources: three.js r128 (MIT) for 3D; the Web Audio API for music and sounds synthesised in code; glTF Transform to convert NASA models; Playwright for tests; Claude Code (Anthropic) as an AI coding assistant. Fonts: Game Paused by Dharmas (free for personal and non-commercial use), Silkscreen and Geist (SIL Open Font License). Demo-video music: "Piano and Strings Ambient - Confident and Light" by zec53 (Pixabay Content License). Home-screen sky image: a free wallpaper owned by the team, used non-commercially. The launch physics come from The Horizon Explorers, Pawan Indalkar's own launch simulator. Design inspiration only, not used in the game: Perplexity's Computer and Comet pages, a Pinterest Game UI board and the Space Level Kit asset pack (all rights reserved by their owners). 3D models courtesy of NASA; not affiliated with or endorsed by NASA.
 ```
 
 ---

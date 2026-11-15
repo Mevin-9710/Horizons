@@ -333,7 +333,7 @@ As a precaution, because the code that draws them was written with AI help, the 
 
 **Made by the team, not AI:** the idea, the game design and every design decision; The Horizon Explorers simulator; the NASA research.
 
-**From others:** the NASA 3D models and mission data (NASA); the home-screen sky image (a free asset); the fonts; the README screenshots, which are captures of the real game.
+**From others:** the NASA 3D models and mission data (NASA); the home-screen sky image (a free wallpaper owned by the team); the fonts; the README screenshots, which are captures of the real game.
 
 ## Credits
 
@@ -341,7 +341,7 @@ As a precaution, because the code that draws them was written with AI help, the 
 - Mission data follows the real NASA missions listed above.
 - Fonts: [Game Paused DEMO](https://dharmasfoundry.com/game-paused) by Dharmas Studio (free for personal and non-commercial use), [Silkscreen](https://fonts.google.com/specimen/Silkscreen) and [Geist](https://fonts.google.com/specimen/Geist) (SIL Open Font License). See [`Design System/fonts/`](./Design%20System/fonts/).
 - Built with [three.js](https://threejs.org/).
-- Home-screen night sky (`Design System/assets/home-sky.webp`): a free asset downloaded by the team, used non-commercially.
+- Home-screen night sky (`Design System/assets/home-sky.webp`): a free wallpaper owned by the team, used non-commercially.
 - Demo video music: "Piano and Strings Ambient (Confident and Light)" by zec53, from Pixabay (Pixabay Content License), chosen by the team (`docs/demo/music/`).
 - **Design inspirations are not ours.** [`Design System/Design Inspirations/`](./Design%20System/Design%20Inspirations/) holds screenshots and pages from Perplexity, Pinterest artists and an isometric asset pack, kept only as design references. All rights are reserved by their owners; none of it ships in the game.
 
