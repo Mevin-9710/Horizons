@@ -1,4 +1,11 @@
 <script>
+/* Music follows the launch: pad, count, ascent, orbit, cruise, arrival, or a loss. */
+(function(){ if(!window.HZ_MUSIC||typeof setPhase!=='function') return; const M=HZ_MUSIC, _sp=setPhase;
+  const pick=t=>/^Terminal count/.test(t)?'count':/^(Ignition|Liftoff|Ascent|Max-Q|Stage|MECO|Gravity)/.test(t)?'ascent':/^(Orbit|Spacecraft deployed|Parking orbit)/.test(t)?'orbit'
+    :/^Cruise/.test(t)?'cruise':/^(Arrival|In orbit around|Flyby)/.test(t)?'arrive':/^(Vehicle lost|Suborbital|Not in orbit|Missed)/.test(t)?'lose':null;
+  setPhase=function(t,c){ _sp(t,c); const ph=pick(String(t||'')); if(ph==='lose') M.sting('lose'); else if(ph) M.phase(ph); }; })();
+</script>
+<script>
 /* Tutorial, part 3: the launch. Time slows for Max-Q and stops at every cue until the player presses it. */
 (function tut(){ if(!(window.COACH&&COACH.active())) return; if(!window.LX){ setTimeout(tut,200); return; }
   LX.tutCue=true; const btn=()=>document.getElementById('act'); let seen={};

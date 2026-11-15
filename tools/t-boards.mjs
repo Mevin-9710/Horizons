@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module'; const require=createRequire(import.meta.url); const {chromium}=require('playwright');
 const b=await chromium.launch({args:['--use-gl=swiftshader','--enable-unsafe-swiftshader']}); const p=await b.newPage({viewport:{width:1100,height:690}});
-p.on('pageerror',e=>console.log('PAGEERR',e.message)); const f=()=>p.frames().find(x=>x!==p.mainFrame()); const O='cook/stills/r05/';
+p.on('pageerror',e=>console.log('PAGEERR',e.message)); const f=()=>p.frames().find(x=>x!==p.mainFrame()); const O='docs/dev/cook/stills/r05/';
 await p.goto('http://localhost:8765/#base'); await p.reload(); await p.waitForTimeout(3000);
 await f().waitForFunction(()=>typeof MODELS!=='undefined'&&Object.keys(MODELS).length>=14,null,{timeout:120000}); await p.waitForTimeout(1500);
 await p.screenshot({path:O+'base.png'}); await f().evaluate(()=>{camZoomGoal=.55}); await p.waitForTimeout(2500); await p.screenshot({path:O+'base-wide.png'});

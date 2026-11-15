@@ -50,3 +50,12 @@ NASA's Shuttle (A) and the STL files have no colours of their own. The colours a
 | cassini.glb | Cassini-Huygens (A) | Rings and Titan |
 | voyager.glb | Voyager Probe (A) | Ice giant flyby (Uranus), Edge of the planets (Neptune) |
 | new-horizons.glb | `3D Printing/` New Horizons, body part (**STL**) | Pluto flyby |
+
+**Added 2026-11-15 from the team's `game-mechanics/` upload** (decoded from Draco with `gltf-transform copy`, the Lunar Module welded and simplified to 35%):
+
+| File | NASA source | Used as |
+|---|---|---|
+| launch-tower.glb | Mobile Launcher (assembled) | Launch pad tower. The platform is cut off at load (our pad is the platform) and the access arm is turned to the rocket. |
+| apollo-lm.glb | Apollo Lunar Module | Hall of fame, rocket workshop |
+| mro.glb | Mars Reconnaissance Orbiter | Hall of fame, rocket workshop |
+

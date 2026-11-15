@@ -354,7 +354,7 @@ const atm=new THREE.Mesh(new THREE.SphereGeometry(R*1.045,64,48),new THREE.Shade
 const pad=new THREE.Group(); scene.add(pad);
 cyl(10,10.4,.5,STONE,0,-.25,0,48,pad); cyl(7.6,7.6,.06,GOLD,0,.02,0,48,pad); cyl(7.2,7.2,.08,STONE,0,.04,0,48,pad); box(3,.1,16,DARK,0,.06,0,pad);
 const tower=new THREE.Group(); tower.position.set(-HT*.11-3.2,0,0); pad.add(tower);
-box(1.5,HT+3,1.5,DARK,0,(HT+3)/2,0,tower); const arms=[]; for(let i=1;i<=3;i++) arms.push(box(3.4,.24,.5,RUST,1.9,HT*i/3.6,0,tower));
+const towerCol=box(1.5,HT+3,1.5,DARK,0,(HT+3)/2,0,tower); const arms=[]; for(let i=1;i<=3;i++) arms.push(box(3.4,.24,.5,RUST,1.9,HT*i/3.6,0,tower));
 const clamps=[]; for(let i=0;i<4;i++){ const a=i*1.5708+.785; clamps.push(box(.6,.9,.6,DARK,Math.cos(a)*(HT*.07+.5),.45,Math.sin(a)*(HT*.07+.5),pad)); }
 box(34,.3,5.4,STONE,27,gy(27,0)-.1,0).rotation.z=-.045;                         // road from the hangar to the pad
 const HGX=52, hg=new THREE.Group(); hg.position.set(HGX,gy(HGX,0),0); hg.rotation.z=-HGX/R; scene.add(hg);   // cutaway hangar, like the workshop halls
@@ -413,6 +413,15 @@ function fillRocket(meshes){ for(const g of CLIPS) for(const m of meshes){ const
 function fallbackRocket(){ const w=new THREE.MeshStandardMaterial({color:0xF2F0EA,roughness:.5,side:THREE.DoubleSide}), r=HT*.055;
   const body=new THREE.CylinderGeometry(r,r,HT*.86,28); body.translate(0,HT*.43,0); const nose=new THREE.ConeGeometry(r,HT*.14,28); nose.translate(0,HT*.93,0); return [{geo:body,mat:w},{geo:nose,mat:w}]; }
 const PS_=Math.max(.9,HT*.075);
+// NASA Mobile Launcher tower in place of the plain column. Its platform is cut off (our pad is the platform) and its access arm turned to the rocket. If it fails, the column stays.
+loadModel('launch-tower',1,true).then(ms=>{ const CUT=.21, kept=[], P=new THREE.Vector3(); let lo=[1e9,1e9,-1e9,-1e9], ax=0, az=0, an=0;
+  for(const m of ms){ const a=m.geo.attributes.position.array, out=[];
+    for(let i=0;i<a.length;i+=9){ if(Math.min(a[i+1],a[i+4],a[i+7])<CUT) continue; for(let j=0;j<9;j++) out.push(a[i+j]);
+      for(let j=0;j<9;j+=3){ const x=a[i+j],y=a[i+j+1],z=a[i+j+2]; if(y<CUT+.15){ lo[0]=Math.min(lo[0],x); lo[1]=Math.min(lo[1],z); lo[2]=Math.max(lo[2],x); lo[3]=Math.max(lo[3],z); } if(y>.6){ ax+=x; az+=z; an++; } } }
+    if(out.length) kept.push(out); }
+  if(!kept.length) return; const cx=(lo[0]+lo[2])/2, cz=(lo[1]+lo[3])/2, k=(HT+3)/(1-CUT), g=new THREE.Group();
+  for(const out of kept){ const f=new Float32Array(out); for(let i=0;i<f.length;i+=3){ f[i]-=cx; f[i+1]-=CUT; f[i+2]-=cz; } const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.BufferAttribute(f,3)); geo.computeVertexNormals(); g.add(new THREE.Mesh(geo,DARK)); }
+  g.scale.setScalar(k); if(an) g.rotation.y=Math.atan2(az/an-cz,ax/an-cx); tower.add(g); towerCol.visible=false; }).catch(()=>{});
 const ready=Promise.all([
   loadModel(RK,HT,true).catch(()=>fallbackRocket()).then(fillRocket),
   parent!==window&&(()=>{ try{ return parent.HZ_CRAFT3D; }catch(e){ return null; } })()?Promise.resolve():loadModel(BUS,PS_,false).then(ms=>{ for(const m of ms){ const o=new THREE.Mesh(m.geo,m.mat); o.position.y=PS_*.5; pay.add(o); } }).catch(()=>{ box(PS_*.6,PS_*.9,PS_*.6,GOLD,0,PS_*.5,0,pay); }),
@@ -458,7 +467,8 @@ let ac=null, ngain=null, mgain=null;
 function audio(){ if(ac||(!SET.sfx&&!SET.music)) return; try{ ac=new (window.AudioContext||window.webkitAudioContext)();
   const b=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate), d=b.getChannelData(0); let l=0; for(let i=0;i<d.length;i++){ l=(l+.02*(Math.random()*2-1))/1.02; d[i]=l*3.5; }
   const s=ac.createBufferSource(); s.buffer=b; s.loop=true; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=380; ngain=ac.createGain(); ngain.gain.value=0; s.connect(f); f.connect(ngain); ngain.connect(ac.destination); s.start();
-  if(SET.music){ mgain=ac.createGain(); mgain.gain.value=0; const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=900; mgain.connect(lp); lp.connect(ac.destination);
+  if(SET.music&&!window.HZ_MUSIC){ mgain=ac.createGain();   // in the game the shared score (tools/sim/music.js) plays instead
+ mgain.gain.value=0; const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=900; mgain.connect(lp); lp.connect(ac.destination);
     const CH=[[110,164.8,220,277.2],[98,146.8,196,246.9],[130.8,196,261.6,329.6],[146.8,220,293.7,370]]; let bar=0;
     const play=()=>{ if(!ac) return; const t=ac.currentTime; for(const fq of CH[bar%4]){ const o=ac.createOscillator(), g=ac.createGain(); o.type='triangle'; o.frequency.value=fq; o.detune.value=rnd(6); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.05,t+1.2); g.gain.linearRampToValueAtTime(0,t+4.4); o.connect(g); g.connect(mgain); o.start(t); o.stop(t+4.5); } bar++; };
     play(); setInterval(play,4000); mgain.gain.linearRampToValueAtTime(.9,ac.currentTime+3); } }catch(e){ ac=null; } }

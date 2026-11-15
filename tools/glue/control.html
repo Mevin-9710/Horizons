@@ -66,6 +66,7 @@ if(CR){
      <div class="why">${DF.score!==1||flight.sandbox?`<div class="r"><b>${flight.sandbox?'Sandbox':DF.name}</b><em>${flight.sandbox?'not ranked':'x'+DF.score}</em><p>${flight.sandbox?'No limits, so this flight is not on the leaderboard.':'Difficulty bonus applied to '+raw+' points.'}</p></div>`:''}${rows.map(r=>`<div class="r"><b>${r[0]}</b><em>${r[1]}/${r[2]}</em><div class="tr"><i data-w="${r[1]/r[2]*100}"></i></div><p>${r[3]}</p></div>`).join('')}${goalList}${extras(flight,prev,board,rank)}</div>
      <div class="row"><button class="t-btn ghost" type="button" onclick="location.reload()">Fly again</button><button class="t-btn primary" type="button">Redesign spacecraft</button></div>`;
     requestAnimationFrame(()=>{ document.getElementById('ring').style.strokeDashoffset=314-314*total/100; modal.querySelectorAll('.tr i').forEach(i=>i.style.width=i.dataset.w+'%'); });
+    try{ if(window.HZ_MUSIC) HZ_MUSIC.sting(total>=60?'win':'lose'); }catch(e){}
     window.LAST_REPORT={raw,rank,total,perf,effS,dec,res,gMet,pct,lowN:M.lowN,fullN:M.fullN,lost:Math.round(M.lost)}; };
   function extras(f,prev,board,rank){ const R=HZ_REAL[MKEY]; let h='';
     if(R){ const shared=f.insts.filter(i=>R.inst.includes(i)).map(i=>HZ_INST.find(x=>x.id===i).name), pw=(f.power||'').includes('RTG')?'rtg':'solar';

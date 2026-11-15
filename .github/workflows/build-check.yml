@@ -1,0 +1,20 @@
+name: Build check
+
+# game/index.html is generated. This fails if someone edits it by hand
+# or changes a screen source without rebuilding.
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rebuild the game from its sources
+        run: python3 tools/build-game.py
+      - name: Fail if the committed bundle is out of date
+        run: git diff --exit-code -- game/index.html "Design System/horizons-game.html" "Design System/launch-demo.html"

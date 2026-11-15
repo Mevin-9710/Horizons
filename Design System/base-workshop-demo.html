@@ -356,7 +356,7 @@ function label(text,x,y,z,w=3.2){const c=document.createElement('canvas');c.widt
 /* ================= NASA model loading ================= */
 const loader=new THREE.GLTFLoader(); const MODELS={};
 const SHOWM=(typeof HZ_MISSIONS!=='undefined'&&window.HZ&&HZ_MISSIONS[HZ.mission])||null, SHOW=SHOWM?SHOWM.model:'landsat-8', SHOWN=SHOWM&&SHOW!=='landsat-8'?SHOWM.nasa.toUpperCase():'LANDSAT 8';
-const MODEL_FILES=[...(SHOW!=='landsat-8'?[SHOW]:[]),'kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-ares-1','rocket-saturn-v','rocket-shuttle','rocket-sls','orion','capsule-mercury'];
+const MODEL_FILES=[...(SHOW!=='landsat-8'?[SHOW]:[]),'kit-body-1','kit-body-2','kit-body-3','kit-wings-1','kit-wings-2','kit-wings-3','kit-radio-1','kit-radio-2','kit-radio-3','infrared-camera','landsat-8','rocket-jupiter-c','rocket-ares-1','rocket-saturn-v','rocket-shuttle','rocket-sls','orion','capsule-mercury','apollo-lm','mro'];
 // Bake every mesh into one geometry (one draw call per model), drop NASA textures/logos, keep shape only.
 // Original NASA colours, minus markings: each texture is replaced by its dominant colour (this removes all
 // lettering such as "USA"/"UNITED STATES"); meshes are merged per material to keep draw calls low.
@@ -577,7 +577,7 @@ function buildRocketRoom(){
   PARTS.orbit.opts.forEach((o,i)=>{ const x=-6+i*5, z=3.5; cyl(.7,.9,1.1,DARK,x,.55,z,24); const p=procPart('orbit'); p.position.set(x,.9,z); root.add(p); exhibits.push({obj:p,cat:'orbit',id:o.id});
     label(o.name.toUpperCase(),x,3.6,z,4.2); A.spots.push({id:o.id,cat:'orbit',o,pos:new THREE.Vector3(x+1.6,0,z+1.6),ring:ring(x,z,1.05,1.3),kind:'part'}); A.block.push([x-.95,z-.95,x+.95,z+.95]); });
   // NASA capsules on display (hall of fame)
-  [['orion','ORION',-14,6,2.2],['capsule-mercury','MERCURY',-9.5,6,1.9]].forEach(([m,n,x,z,sz])=>{ pedestal(x,z); const c=fromModel(m,null,sz); c.position.set(x,.56,z); root.add(c); exhibits.push({obj:c}); label(n,x,3.6,z,3); A.block.push([x-1.1,z-1.1,x+1.1,z+1.1]); });
+  [['orion','ORION',-14,6,2.2],['capsule-mercury','MERCURY',-9.5,6,1.9],['apollo-lm','APOLLO LM',8.5,.8,2.2],['mro','MRO',12.8,1.6,2.6]].forEach(([m,n,x,z,sz])=>{ pedestal(x,z); const c=fromModel(m,null,sz); c.position.set(x,.56,z); root.add(c); exhibits.push({obj:c}); label(n,x,3.6,z,3); A.block.push([x-1.1,z-1.1,x+1.1,z+1.1]); });
   A.spots.push({id:'exit',pos:new THREE.Vector3(14,0,8.6),ring:ring(14,8.6),label:'Exit to base',act:()=>exitRoom()});
   label('EXIT',14,1.8,9.6,2.2);
   A.spawn=new THREE.Vector3(14,0,7.4);
