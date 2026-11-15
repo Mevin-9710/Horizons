@@ -219,3 +219,11 @@ Resources tab: could not be read (site returned 503/502 to this container). Sear
 10. Tutorial slides + audio guide.
 11. Lander & rover (3D), from home and in Moon/Mars missions.
 12. Music themes by phase.
+
+## Spacecraft design (built 15 Nov 2026)
+- The spacecraft workshop is now a 52 x 40 hall (was 32 x 24) around a central **build stand**.
+- Stations on outlined floor mats: Structure (3 frames), Power (solar S/M/L + nuclear RTG), Batteries (S/M/L), Comms (dish S/M/L + laser), Data storage (S/M/L), Engines (cold gas, hydrazine, electric), Fuel tanks (S/M/L), Instruments (8: camera, thermal IR, hyperspectral, radar, magnetometer, mass spectrometer, neutron spectrometer, gravity radio).
+- **Carry and mount:** E/tap at a station picks the part up (the engineer carries it); E/tap at the stand snaps it onto its mount with a pop. Up to 3 instruments. The stand window lists every mount, removes instruments, and says which goals are still open.
+- **Mission goals board** on the back wall: 3 goals per mission, each met by any one of its instruments, ticked live.
+- Spacecraft delta-v now comes from engine x tank (plus the rocket's upper stage).
+- Next: mission control simulates this design (power with batteries through eclipses, data vs storage and downlink, science from goals met), and the report checks each goal.

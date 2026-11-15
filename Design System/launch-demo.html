@@ -221,6 +221,33 @@ function hzPlan(key){ const M=HZ_MISSIONS[key]||HZ_MISSIONS.earth;
 const HZ_STAGE_DV={r1:3.2,r2:4.6,r3:9.5,r4:7.2,r5:12.5}, HZ_ENGINE_DV={e1:.4,e2:1.6,e3:3.6};
 function hzDvCap(pick){ return (HZ_STAGE_DV[pick&&pick.rocket]||3.2)+(HZ_ENGINE_DV[pick&&pick.engine]||.4); }
 
+/* ===== Spacecraft design: instruments and mission goals (phase 2) =====
+   Each mission has 3 goals; each goal is met by any one of its listed instruments. */
+const HZ_INST=[
+  {id:'cam',    name:'Visible camera',       proc:'scope',  mass:18, cost:10, time:3, pw:30,  data:12, note:'Sharp pictures in daylight'},
+  {id:'ir',     name:'Thermal IR imager',    src:'NASA', model:'infrared-camera', mass:38, cost:32, time:5, pw:110, data:35, note:'Sees heat, day and night'},
+  {id:'hyper',  name:'Hyperspectral imager', proc:'scope2', mass:70, cost:58, time:8, pw:190, data:95, note:'Hundreds of colours: what things are made of'},
+  {id:'radar',  name:'Imaging radar',        proc:'radar',  mass:90, cost:45, time:7, pw:220, data:120, note:'Sees through clouds and haze'},
+  {id:'mag',    name:'Magnetometer',         proc:'boom',   mass:6,  cost:8,  time:2, pw:8,   data:2,  note:'Measures magnetic fields on a long boom'},
+  {id:'spec',   name:'Mass spectrometer',    proc:'spec',   mass:25, cost:30, time:5, pw:45,  data:10, note:'Sniffs gases and charged particles'},
+  {id:'neutron',name:'Neutron spectrometer', proc:'neutron',mass:15, cost:18, time:4, pw:20,  data:4,  note:'Finds hidden water ice'},
+  {id:'grav',   name:'Gravity science radio',proc:'gravr',  mass:8,  cost:12, time:3, pw:25,  data:3,  note:'Tracks tiny speed changes to map gravity'}];
+const HZ_GOALS={
+  earth:  [['Spot fires day and night',['ir','hyper']],['Map burned land',['cam','hyper']],['See through the smoke',['ir','radar']]],
+  moon:   [['Find ice in dark craters',['neutron','radar']],['Map the polar terrain',['cam','radar']],['Measure surface temperature',['ir']]],
+  mars:   [['Sample the upper air',['spec']],['Measure the magnetic field',['mag']],['Image the glowing atmosphere',['hyper','cam']]],
+  mercury:[['Map the whole surface',['cam','hyper']],['Find ice at the poles',['neutron','radar']],['Measure the magnetic field',['mag']]],
+  venus:  [['Map the surface through the clouds',['radar']],['Map the gravity field',['grav']],['Study the cloud tops',['ir','hyper']]],
+  jupiter:[['Map the gravity field',['grav']],['Map the magnetic field',['mag']],['Look under the clouds',['ir']]],
+  saturn: [['Image the rings',['cam','hyper']],['See through the haze on Titan',['radar','ir']],['Sample the plasma',['spec','mag']]],
+  uranus: [['Photograph the planet and moons',['cam','hyper']],['Measure the magnetic field',['mag']],['Measure the heat inside',['ir']]],
+  neptune:[['Photograph Neptune and Triton',['cam','hyper']],['Measure the magnetic field',['mag']],['Measure the heat inside',['ir']]],
+  pluto:  [['Map the icy heart',['cam','hyper']],['Measure the thin air',['spec']],['Measure surface temperatures',['ir']]]};
+function hzGoalsMet(key,ids){ return (HZ_GOALS[key]||HZ_GOALS.earth).map(([t,need])=>({t,need,ok:need.some(n=>ids.includes(n))})); }
+// propulsion: engine efficiency x tank size gives the spacecraft's own delta-v
+const HZ_ENGINE_K={e1:.35,e2:1,e3:1.9}, HZ_TANK_DV={t1:1,t2:2,t3:3.4};
+function hzDvCap(pick){ return (HZ_STAGE_DV[pick&&pick.rocket]||3.2)+(HZ_ENGINE_K[pick&&pick.engine]||.35)*(HZ_TANK_DV[pick&&pick.tank]||1); }
+
 </script>
 <script>
 /* ================= Horizons launch screen =================
