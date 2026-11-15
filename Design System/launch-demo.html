@@ -466,7 +466,7 @@ function nozzleY(){ return S.s1gone?H1:0; }
 let ac=null, ngain=null, mgain=null;
 function audio(){ if(ac||(!SET.sfx&&!SET.music)) return; try{ ac=new (window.AudioContext||window.webkitAudioContext)();
   const b=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate), d=b.getChannelData(0); let l=0; for(let i=0;i<d.length;i++){ l=(l+.02*(Math.random()*2-1))/1.02; d[i]=l*3.5; }
-  const s=ac.createBufferSource(); s.buffer=b; s.loop=true; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=380; ngain=ac.createGain(); ngain.gain.value=0; s.connect(f); f.connect(ngain); ngain.connect(ac.destination); s.start();
+  const s=ac.createBufferSource(); s.buffer=b; s.loop=true; const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=650; ngain=ac.createGain(); ngain.gain.value=0; s.connect(f); f.connect(ngain); ngain.connect(ac.destination); s.start();
   if(SET.music&&!window.HZ_MUSIC){ mgain=ac.createGain();   // in the game the shared score (tools/sim/music.js) plays instead
  mgain.gain.value=0; const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=900; mgain.connect(lp); lp.connect(ac.destination);
     const CH=[[110,164.8,220,277.2],[98,146.8,196,246.9],[130.8,196,261.6,329.6],[146.8,220,293.7,370]]; let bar=0;
@@ -675,7 +675,7 @@ function frame(now){ if(!running) return; const dt=Math.min((now-last)/1000,.05)
   atm.material.opacity=1; drawFx(now,night);
 
   /* camera */
-  if(mode!=='cine'){ if(autoCam&&mode==='fly'&&S.alt>2600) camMode=1;
+  if(mode!=='cine'){ if(autoCam&&mode==='fly'&&S.alt>2600)camMode=S.alt>100e3?3:1;   // chase while climbing, orbit camera once in space
     const mid=t2.copy(P).addScaledVector(dirv,S.s1gone?HT*.7:HT*.55);
     if(mode==='count'||(camMode===0)){ dP.set(-19,4.5,29); dT.copy(mode==='count'||S.alt<60?t3.set(0,HT*.5,0):mid); }
     else if(camMode===1){ const up=sstep(20e3,120e3,S.alt); t3.set(Math.sin(S.theta),Math.cos(S.theta),0); dP.copy(mid).addScaledVector(dirv,-HT*1.5).addScaledVector(ZV,HT*(.8+up*.5)).addScaledVector(t3,HT*up*1.1); dT.copy(mid).addScaledVector(t3,-HT*up*.9); }
@@ -694,7 +694,7 @@ function frame(now){ if(!running) return; const dt=Math.min((now-last)/1000,.05)
     if(telOn){ const o=orbitOf(S); $('t-acc').textContent=(S.th>0?S.acc:0).toFixed(1)+' g'; $('t-q').textContent=(S.q/1e3).toFixed(1)+' kPa'; $('t-pit').textContent=S.pitch.toFixed(0)+' / '+S.aoa.toFixed(1); $('t-pe').textContent=S.lifted&&o.peri>0?(o.peri/1e3).toFixed(0)+' km':'-'; $('t-ap').textContent=S.lifted?(isFinite(o.ap)?(o.ap/1e3).toFixed(0)+' km':'escape'):'-';
       $('t-thr').textContent=(S.thr*100).toFixed(0)+'%'; $('b-thr').style.width=S.thr*100+'%'; $('t-f1').textContent=(S.f1*100).toFixed(0)+'%'; $('b-f1').style.width=S.f1*100+'%'; $('t-f2').textContent=(S.f2*100).toFixed(0)+'%'; $('b-f2').style.width=S.f2*100+'%';
       const sl=clamp(S.stress/220,0,1); $('t-st').textContent=(sl*100).toFixed(0)+'%'; $('b-st').style.width=sl*100+'%'; $('b-st').style.background=sl>.6?'var(--bad)':'var(--warn)'; $('t-ap2').textContent=S.auto?'ON':'OFF'; } }
-  if(ngain) ngain.gain.value=SET.sfx?th*.45*(.15+.85*atmo)*(mode==='fail'?0:1):0;
+  if(ngain) ngain.gain.value=SET.sfx?th*1.05*(.2+.8*atmo)*(mode==='fail'?0:1):0;
   updateClips(); renderer.render(scene,cam); requestAnimationFrame(frame); }
 
 /* ---------- start ---------- */

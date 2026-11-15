@@ -15,6 +15,8 @@
   function engine(){
     const W=window; let ac=null, out=null, bus={}, cur='', want='', on=true, next=0, step=0, timer=0;
     const mtof=m=>440*Math.pow(2,(m-69)/12);
+    // music sits under the game: quieter overall, and quieter still while the rocket roars
+    const LV={pad:.3,count:.16,ascent:.12,orbit:.3,cruise:.32,arrive:.32,control:.3,win:.4,lose:.35};
     // bpm, chords (MIDI, one per bar), layers and their volumes. 16 steps per bar.
     const P={
       home:   {bpm:68, ch:[[48,55,64,71],[45,52,60,67],[41,48,57,64],[43,50,59,62]], pad:.05, arp:[0,null,null,7,null,null,4,null,null,null,12,null,null,9,null,null], arpV:.028, bell:true},
@@ -57,8 +59,8 @@
       if(cur&&bus[cur]){ const g=bus[cur].g.gain; g.cancelScheduledValues(t); g.setValueAtTime(g.value,t); g.linearRampToValueAtTime(0,t+1.8); }
       cur=ph; const b=busFor(ph); b.g.gain.cancelScheduledValues(t); b.g.gain.setValueAtTime(b.g.gain.value,t); b.g.gain.linearRampToValueAtTime(1,t+2.2);
       if(P[ph].rise){ b.f.frequency.cancelScheduledValues(t); b.f.frequency.setValueAtTime(500,t); b.f.frequency.linearRampToValueAtTime(3200,t+6); }
-      step=Math.ceil(step/16)*16; }
-    function apply(){ if(!ac) return; const t=ac.currentTime, v=on&&!document.hidden?.9:0; out.gain.cancelScheduledValues(t); out.gain.setValueAtTime(out.gain.value,t); out.gain.linearRampToValueAtTime(v,t+.8); }
+      step=Math.ceil(step/16)*16; apply(); }
+    function apply(){ if(!ac) return; const t=ac.currentTime, v=on&&!document.hidden?(LV[cur]!=null?LV[cur]:.35):0; out.gain.cancelScheduledValues(t); out.gain.setValueAtTime(out.gain.value,t); out.gain.linearRampToValueAtTime(v,t+.8); }
     function sting(kind){ if(!ac||!on) return; const t=ac.currentTime+.05, d=ac.createGain(); d.gain.value=1; d.connect(out);
       const notes=kind==='win'?[60,64,67,72,76,79,84]:[57,56,53,50,45];
       notes.forEach((m,i)=>voice(d,'triangle',mtof(m),t+i*(kind==='win'?.09:.22),kind==='win'?1.4:1.1,.06,.01,.9,3000));
