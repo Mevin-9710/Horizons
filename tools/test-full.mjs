@@ -3,7 +3,7 @@
 import { createRequire } from 'node:module'; const require = createRequire(import.meta.url); const { chromium, devices } = require('playwright');
 const [O, MIS = 'mars'] = process.argv.slice(2);
 const b = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
-const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+const p = await b.newPage({ viewport: { width: +(process.env.VW || 1440), height: +(process.env.VH || 900) } });
 p.on('pageerror', e => console.log('PAGEERR', e.message));
 const f = () => p.frames().find(x => x !== p.mainFrame());
 let n = 0; const shot = async (t, pg = p) => { await pg.screenshot({ path: `${O}/${String(++n).padStart(2, '0')}-${t}.png` }); console.log(n, t); };
@@ -46,7 +46,7 @@ if (await f().evaluate(() => LX.mode === 'ss')) { last = null;
 await p.waitForFunction(() => location.hash === '#control', null, { timeout: 30000 }); await p.waitForTimeout(3500); await shot('control');
 await f().evaluate(() => { S.speed = 4; });
 for (let i = 0; i < 400; i++) { if (await f().evaluate(() => !!window.LAST_REPORT)) break; const c = await f().evaluate(() => { const c = document.querySelector('.choice'); return !!c; });
-  if (c) { if (i < 3) await shot('control-decision'); await f().evaluate(() => { document.querySelector('.choice').click(); }); } await p.waitForTimeout(400); }
+  if (c) { if (i < 3) await shot('control-decision'); await f().evaluate(() => { const c = document.querySelector('.choice'); if (c) c.click(); }); } await p.waitForTimeout(400); }
 await p.waitForTimeout(1500); await shot('report'); console.log('  report:', JSON.stringify(await f().evaluate(() => window.LAST_REPORT)));
 // phone: base checklist + design panel
 const ph = await b.newContext({ ...devices['iPhone 13'] }); const q = await ph.newPage(); const g = () => q.frames().find(x => x !== q.mainFrame());

@@ -26,6 +26,7 @@ and commit the rebuilt `game/index.html` with your change. CI fails if it is out
 npm start                       # serves game/ on http://localhost:8765
 npm install                     # once, for Playwright
 npm run test:tutorial           # plays the whole tutorial
+npm run test:tutorial-auto      # plays it again pressing only Next (the judges' path)
 npm run test:full               # one full mission, design to report
 npm run test:balance            # every mission has a feasible design
 ```

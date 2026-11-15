@@ -87,8 +87,8 @@ if(window.COACH&&COACH.active()){ const _rep=report; let reported=false; report=
     {say:'Mission control runs the spacecraft you built, phase by phase.',target:()=>document.getElementById('stepper'),next:'Next'},
     {say:'Watch <b>Battery</b>, <b>Storage</b> and <b>Fuel</b>.',why:'They come from your design: wings and battery for power, storage and dish for data.',target:()=>document.getElementById('gauges'),next:'Next'},
     {say:'Speed up time with this button if you like.',target:()=>document.getElementById('speed'),next:'Next'},
-    {say:'Something will happen soon. When it does, choose what to do.',until:()=>!!document.querySelector('.choice')},
-    {say:'Pick an option. Each one trades science against safety.',target:()=>document.querySelector('.choice'),until:()=>!document.querySelector('.choice')},
-    {say:'Keep watching. The mission report comes at the end.',until:()=>reported},
+    {say:'Something will happen soon. When it does, choose what to do.',until:()=>!!document.querySelector('.choice'),auto:()=>{ S.speed=4; }},
+    {say:'Pick an option. Each one trades science against safety.',target:()=>document.querySelector('.choice'),until:()=>!document.querySelector('.choice'),auto:()=>{ const c=document.querySelector('.choice'); if(c) c.click(); }},
+    {say:'Keep watching. The mission report comes at the end.',until:()=>reported,auto:()=>{ S.speed=4; const c=document.querySelector('.choice'); if(c) c.click(); }},
     {say:'Your report explains <b>why</b> you got this score. Read it, then press <b>Redesign spacecraft</b> to try a better design.',why:'That is the whole game: design, fly, learn, redesign. Tutorial complete!',target:()=>document.querySelector('.report .t-btn.primary'),next:'Finish',leave:()=>COACH.finish()}]); }
 </script>
