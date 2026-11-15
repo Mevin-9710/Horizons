@@ -1,0 +1,1 @@
+{"cadet":{"delta_v_multiplier":1.25,"autopilot":true},"pilot":{"delta_v_multiplier":1.0,"autopilot":true},"commander":{"delta_v_multiplier":0.85,"autopilot":false,"score_multiplier":1.5}}
