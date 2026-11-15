@@ -1,5 +1,7 @@
 # Inspiration 04: "Space Level Kit" (isometric base)
 
+> **Third-party material, all rights reserved by the creator of the Space Level Kit asset pack.** Kept only as design inspiration; not part of the game and not under this repo's licence. See [the notice](../README.md).
+
 - **Source:** two images sent by Mevin (`ref-01-blue.jpg`, `ref-02-green.jpg`), from an isometric asset pack.
 - **Use in Horizons:** the **base and workshop** screen. Take the **structure and layout only**. **Do not use its colours** (cyan/green glow, purple space). Colours come from our Warm Nebula on cream palette. The **3D style** comes from the Comet planets: grainy colour bands, a soft terminator and matte surfaces.
 

@@ -1,5 +1,7 @@
 # Inspiration 03: Pinterest board "Game UI Design"
 
+> **Third-party material, all rights reserved by the original artists of each pin.** Kept only as design inspiration; not part of the game and not under this repo's licence. See [the notice](../README.md).
+
 - **Source:** https://in.pinterest.com/ilairaz/game-ui-design/ (820 pins)
 - **Captured:** 2026-11-14. Pinterest only loads about 20 pins without logging in, so **17 pins** were collected (`pins/`, combined in `contact-sheet.jpg`). They cover the board's main styles: casual mobile, card battlers, level maps and RPG inventory.
 - **Use in Horizons:** the "game feel" layer for every screen. Only how the UI chrome looks changes (buttons, windows, bars, badges). **3D models, colour palette and fonts stay the same.**
