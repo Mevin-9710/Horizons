@@ -326,7 +326,7 @@ NASA Space Apps asks teams to say where Super Intelligence (SI) tools were used.
 
 - The two lead-engineer portraits are vector drawings written in code (SVG).
 - The music is synthesised live by the game's code (Web Audio).
-- The 30-second demo video is put together by code from real gameplay screenshots. Its score and launch sounds (roar, crackle, countdown beeps) are synthesised in code too.
+- The 30-second demo video is put together by code from real gameplay screenshots. Its music is a track the team chose (zec53, Pixabay); the launch sounds (roar, crackle, countdown beeps) are synthesised in code.
 - The tutorial voice is the browser's built-in speech.
 
 As a precaution, because the code that draws them was written with AI help, the portraits in the game and the demo video carry a small **"AI-assisted"** mark.
@@ -342,6 +342,7 @@ As a precaution, because the code that draws them was written with AI help, the 
 - Fonts: [Game Paused DEMO](https://dharmasstudio.com/game-paused) by Dharmas Studio (free for personal and non-commercial use), [Silkscreen](https://fonts.google.com/specimen/Silkscreen) and [Geist](https://fonts.google.com/specimen/Geist) (SIL Open Font License). See [`Design System/fonts/`](./Design%20System/fonts/).
 - Built with [three.js](https://threejs.org/).
 - Home-screen night sky (`Design System/assets/home-sky.webp`): a free asset downloaded by the team, used non-commercially.
+- Demo video music: "Piano and Strings Ambient (Confident and Light)" by zec53, from Pixabay (Pixabay Content License), chosen by the team (`docs/demo/music/`).
 - **Design inspirations are not ours.** [`Design System/Design Inspirations/`](./Design%20System/Design%20Inspirations/) holds screenshots and pages from Perplexity, Pinterest artists and an isometric asset pack, kept only as design references. All rights are reserved by their owners; none of it ships in the game.
 
 Horizons is not affiliated with or endorsed by NASA.

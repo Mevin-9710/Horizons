@@ -70,7 +70,7 @@ Open source (MIT): https://github.com/Mevin-9710/Horizons
 (Only for data collection; judges don't see this field, but they do see the markings in the project.)
 
 ```
-Yes. We used Claude (Anthropic), through Claude Code, as an AI coding assistant. The idea, the game design, the choice of missions and NASA data, and every design decision are the team's (Mevin Joseph Seby and Pawan Indalkar). Pawan's launch simulator, The Horizon Explorers, is the basis of the launch mechanics. We directed the work, reviewed and playtested every build, and decided every change. Claude helped write and refactor the code. No generative AI images, video or audio were used: the portraits are drawn in code (SVG), the music is synthesised by the game's code, and the demo video is put together by code from real gameplay screenshots, with its music and launch sounds synthesised in code. As a precaution, the portraits and the demo video carry a small "AI-assisted" mark. This is disclosed in the README (AI disclosure section), in the game's Credits, in the page metadata and in package.json.
+Yes. We used Claude (Anthropic), through Claude Code, as an AI coding assistant. The idea, the game design, the choice of missions and NASA data, and every design decision are the team's (Mevin Joseph Seby and Pawan Indalkar). Pawan's launch simulator, The Horizon Explorers, is the basis of the launch mechanics. We directed the work, reviewed and playtested every build, and decided every change. Claude helped write and refactor the code. No generative AI images, video or audio were used: the portraits are drawn in code (SVG), the music is synthesised by the game's code, and the demo video is put together by code from real gameplay screenshots, with music the team chose (zec53, Pixabay) and launch sounds synthesised in code. As a precaution, the portraits and the demo video carry a small "AI-assisted" mark. This is disclosed in the README (AI disclosure section), in the game's Credits, in the page metadata and in package.json.
 ```
 
 ## NASA Data
@@ -87,7 +87,8 @@ Yes. We used Claude (Anthropic), through Claude Code, as an AI coding assistant.
 Code and libraries: three.js r128 (MIT) with GLTFLoader and BufferGeometryUtils; Web Audio API; Playwright (tests); gltf-transform (model conversion); Python 3 (build).
 Hosting: Vercel (game), GitHub (code, demo video).
 Fonts: Game Paused DEMO by Dharmas Studio (free for personal and non-commercial use); Silkscreen and Geist (SIL Open Font License, Google Fonts).
-Images: home-screen night-sky image (free asset, used non-commercially). All other visuals are made in code or are NASA 3D models.
+Images: home-screen night-sky image (free asset, used non-commercially).
+Music (demo video): "Piano and Strings Ambient (Confident and Light)" by zec53, Pixabay (Pixabay Content License). All other visuals are made in code or are NASA 3D models.
 Design inspiration only (not used in the game, all rights reserved by their owners): Perplexity's "Computer" and "Comet" web pages, a Pinterest "Game UI Design" board, and the isometric "Space Level Kit" asset pack.
 Launch mechanics: ported from The Horizon Explorers, the team's own launch simulator (Pawan Indalkar).
 AI assistance: Claude (Anthropic), see the SI field and the README's AI disclosure.
