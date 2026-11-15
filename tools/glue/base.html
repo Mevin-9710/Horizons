@@ -12,7 +12,12 @@
       r.M.push({k:'dv',icon:'rocket',label:'Delta-v',val:`${cap.toFixed(1)}/${PLAN.total.toFixed(1)} km/s`,r:PLAN.total/cap,hint:`Not enough delta-v to reach ${names[M]}. It needs ${PLAN.total.toFixed(1)} km/s. Pick a bigger rocket or a stronger engine.`}); return r; };
     renderWin=function(){ inPad=openZone==='pad'; try{ _rw(); } finally{ inPad=false; } }; }
   // Launch: dive the camera into the pad, then hand over to the launch screen (hangar cinematic, count, ascent).
-  const design=()=>({rocket:opt('rocket').name,inst:opt('inst')?opt('inst').name:'camera',orbit:opt('orbit').name});
+  // the design travels to the launch and mission control as real numbers, so the simulation runs YOUR spacecraft
+  const design=()=>{ let gen=0,draw=0,down=0,store=0,wh=0,mass=0,link=1; for(const c in PARTS){ const o=opt(c); if(!o) continue; if(c==='rocket'||c==='orbit'){ if(o.link) link=o.link; continue; }
+      gen+=o.gen||0; draw+=o.pw||0; down+=o.down||0; store+=o.store||0; wh+=o.wh||0; mass+=o.mass||0; }
+    const insts=mountedInst(), names=insts.map(id=>HZ_INST.find(i=>i.id===id).name);
+    return {rocket:opt('rocket').name,inst:names.length?names.join(', '):'no instrument',orbit:opt('orbit').name,
+      craft:{gen,draw,down:down*link,store,wh,mass,insts,rtg:pick.power==='p4',power:opt('power').name,batt:opt('batt').name,comms:opt('comms').name,storeName:opt('store').name}}; };
   doLaunch=function(){ closeWin(); transition(new THREE.Vector3(0,0,-16),()=>hzGo('launch',{mission:M,pick:Object.assign({},pick),design:design(),skipCine:false})); };
   const _open=openWin; openWin=function(z){ if(z==='control'&&launched){ return hzGo('control',{mission:M,pick:Object.assign({},pick),design:{rocket:opt('rocket').name,inst:opt('inst')?opt('inst').name:'camera',orbit:opt('orbit').name}}); } return _open(z); };
 })();
