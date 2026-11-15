@@ -127,10 +127,27 @@ Yes. We used Claude (Anthropic), through Claude Code, as an AI coding assistant.
 
 ## NASA Data
 
+The form asks for each item as **link text** plus **link URL**; you need at least one. Here are ten, each checked to open. Add them in this order, with the first five as the key ones.
+
+| # | Link text | Link URL |
+|---|---|---|
+| 1 | NASA 3D Resources: every rocket, spacecraft and part model in the game | https://science.nasa.gov/3d-resources/ |
+| 2 | NASA 3D Resources on GitHub: the model files we converted | https://github.com/nasa/NASA-3D-Resources |
+| 3 | NASA Planetary Fact Sheet: planet distances for transfers and sunlight | https://nssdc.gsfc.nasa.gov/planetary/factsheet/ |
+| 4 | NASA Basics of Space Flight: Hohmann transfers and orbital mechanics | https://science.nasa.gov/learn/basics-of-space-flight/ |
+| 5 | Juno mission: solar power at Jupiter (Inside Jupiter mission) | https://science.nasa.gov/mission/juno/ |
+| 6 | Landsat 8 mission: Earth observation (Wildfire watch mission) | https://science.nasa.gov/mission/landsat-8 |
+| 7 | Lunar Reconnaissance Orbiter: lunar polar ice (Moon mission) | https://science.nasa.gov/mission/lro/ |
+| 8 | MAVEN mission: the Martian atmosphere (Mars mission) | https://science.nasa.gov/mission/maven/ |
+| 9 | Cassini-Huygens mission: Saturn, rings and Titan (Saturn mission) | https://science.nasa.gov/mission/cassini/ |
+| 10 | Voyager and New Horizons: outer-planet and Pluto flybys | https://science.nasa.gov/mission/voyager/ |
+
+Optional 11th: `New Horizons mission: Pluto flyby` → https://science.nasa.gov/mission/new-horizons/
+
+If the form also has a text box for this section, paste:
+
 ```
-- NASA 3D Resources (science.nasa.gov/3d-resources, github.com/nasa/NASA-3D-Resources): every rocket and spacecraft in the game is a real NASA model: Jupiter-C, Ares I, Saturn V, Space Shuttle, SLS, Orion, Mercury (Faith 7), Mobile Launcher, Apollo Lunar Module, Mars Reconnaissance Orbiter, Landsat 8, LRO, MAVEN, MESSENGER, Magellan, Juno, Cassini, Voyager, New Horizons, the NASA Satellite Kit (bus, solar wings, radios) and the Infrared Camera.
-- NASA mission data: each of the ten missions follows a real NASA mission. Its objective, instruments, launch vehicle, mass, launch year and power source (solar or RTG) appear in the post-flight report next to the player's own design (Landsat 8, LRO, MAVEN, MESSENGER, Magellan, Juno, Cassini-Huygens, Voyager 2, New Horizons).
-- Planetary and orbital data: orbital distances for the transfers and delta-v budgets, and sunlight falling with distance from the Sun for solar power, based on NASA planetary data.
+Every rocket and spacecraft in Horizons is a real NASA 3D model (NASA 3D Resources): Jupiter-C, Ares I, Saturn V, Space Shuttle, SLS, Orion, Mercury, the Mobile Launcher, the Apollo Lunar Module, MRO, Landsat 8, LRO, MAVEN, MESSENGER, Magellan, Juno, Cassini, Voyager, New Horizons and the NASA Satellite Kit. Each of the ten missions follows a real NASA mission; the report compares the player's design with it (mass, rocket, power source, instruments). Transfers and sunlight use NASA planetary data (Planetary Fact Sheet), and the transfer model follows NASA's Basics of Space Flight.
 ```
 
 ## Space Agency Partner Data and Other References
