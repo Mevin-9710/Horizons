@@ -238,7 +238,8 @@ header .right{display:flex;gap:10px;align-items:center}
   <span class="t-ribbon" id="set-title">Settings</span>
   <button class="t-round x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
   <div class="d-body">
-   <div class="set"><div class="l"><b>Sound effects</b><span>Clicks and blips on buttons.</span></div><button class="sw" type="button" role="switch" data-k="sfx" aria-label="Sound effects"></button></div>
+   <div class="set"><div class="l"><b>Sound effects</b><span>Clicks, engine rumble and voice callouts.</span></div><button class="sw" type="button" role="switch" data-k="sfx" aria-label="Sound effects"></button></div>
+   <div class="set"><div class="l"><b>Music</b><span>A quiet score during the launch and the cruise.</span></div><button class="sw" type="button" role="switch" data-k="music" aria-label="Music"></button></div>
    <div class="set"><div class="l"><b>Reduce motion</b><span>Stops floating, spinning and twinkling.</span></div><button class="sw" type="button" role="switch" data-k="motion" aria-label="Reduce motion"></button></div>
    <div class="set"><div class="l"><b>Tutorial hints</b><span>Step-by-step callouts in the base.</span></div><button class="sw" type="button" role="switch" data-k="hints" aria-label="Tutorial hints"></button></div>
    <div class="set"><div class="l"><b>Graphics</b><span>Low runs smoother on older phones.</span></div><div class="seg" data-k="gfx" role="radiogroup" aria-label="Graphics"><button type="button" data-v="low">Low</button><button type="button" data-v="high">High</button></div></div>
@@ -268,7 +269,7 @@ header .right{display:flex;gap:10px;align-items:center}
 <script>
 const OS_REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Settings are kept per browser; the game state (window.HZ) wins when the shell passes them on.
-const SET_DEF={sfx:true,motion:OS_REDUCE,hints:true,gfx:'high',rocket:2};
+const SET_DEF={sfx:true,music:true,motion:OS_REDUCE,hints:true,gfx:'high',rocket:2};
 const SET=(()=>{let v={};try{v=JSON.parse(localStorage.getItem('hz-settings')||'{}')||{}}catch(e){}
   return Object.assign({},SET_DEF,v,(window.HZ&&window.HZ.settings)||{})})();
 let reduce=SET.motion;

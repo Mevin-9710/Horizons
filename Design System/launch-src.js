@@ -57,11 +57,14 @@ for(const x of [-12,-4,4,12]) box(.4,.4,26,DARK,x,12.6,0,hg);
 const crane=box(.7,.7,26,GOLD,0,11.8,0,hg), cable=box(.12,1,.12,DARK,0,9,0,hg);
 for(const x of [-9,0,9]){ const w=new THREE.Mesh(new THREE.PlaneGeometry(4,2.6),mat(['#A9D2EE','#CFE4F0','#8FC3E8','#6E9BB8'],[.2,1,0],.5)); w.position.set(x,7.5,-12.7); hg.add(w); }
 const tp=box(HT*.9,1,3.2,DARK,0,0,0); for(const dx of [-.35,-.12,.12,.35]) for(const z of [-1.6,1.6]){ const w=new THREE.Mesh(new THREE.CylinderGeometry(.8,.8,.5,14),DARK); w.rotation.x=1.5708; w.position.set(dx*HT,-.7,z); tp.add(w); }
-{ let ts=11; const TR=()=>(ts=(ts*16807)%2147483647)/2147483647;
+// trees: ~140 of them, merged into three meshes (trunks, leaves, pines) so the whole forest costs three draw calls
+{ let ts=11; const TR=()=>(ts=(ts*16807)%2147483647)/2147483647; const acc={t:[],l:[],p:[]}, m4=new THREE.Matrix4(), q=new THREE.Quaternion(), e=new THREE.Euler(), sv=new THREE.Vector3(), pv=new THREE.Vector3(), v=new THREE.Vector3();
+  const G={trunk:new THREE.CylinderGeometry(.12,.17,1,6).toNonIndexed(),leaf:new THREE.IcosahedronGeometry(.95,0).toNonIndexed(),pine:new THREE.ConeGeometry(.85,2.4,7).toNonIndexed()};
+  const put=(arr,g,base,sc,dy,sy=1)=>{ const P=g.getAttribute('position'); for(let i=0;i<P.count;i++){ v.fromBufferAttribute(P,i); v.x*=sc; v.z*=sc; v.y=v.y*sc*sy+dy; v.applyMatrix4(base); arr.push(v.x,v.y,v.z); } };
   for(let i=0;i<150;i++){ const a=TR()*6.283, r=16+TR()*92, x=Math.cos(a)*r, z=Math.sin(a)*r; if((Math.abs(z)<5&&x>0&&x<76)||(Math.abs(x-HGX)<22&&Math.abs(z)<17)) continue;
-    const y=gy(x,z), sc=.9+TR()*.9, g=new THREE.Group(); g.position.set(x,y,z); g.rotation.set(z/R,0,-x/R); scene.add(g);
-    if(TR()<.4){ cyl(.1*sc,.14*sc,.7*sc,TRUNK,0,.3*sc,0,6,g); const c=new THREE.Mesh(new THREE.ConeGeometry(.85*sc,2.4*sc,7),PINE); c.position.y=1.7*sc; g.add(c); }
-    else { cyl(.12*sc,.17*sc,1.1*sc,TRUNK,0,.5*sc,0,6,g); const c=new THREE.Mesh(new THREE.IcosahedronGeometry(.95*sc,0),LEAF); c.position.y=1.7*sc; g.add(c); } } }
+    const sc=.9+TR()*.9; e.set(z/R,TR()*6,-x/R); q.setFromEuler(e); m4.compose(pv.set(x,gy(x,z),z),q,sv.set(1,1,1));
+    if(TR()<.4){ put(acc.t,G.trunk,m4,sc,.3*sc,.7); put(acc.p,G.pine,m4,sc,1.7*sc); } else { put(acc.t,G.trunk,m4,sc,.5*sc,1.1); put(acc.l,G.leaf,m4,sc,1.7*sc); } }
+  for(const [k,mt] of [['t',TRUNK],['l',LEAF],['p',PINE]]){ const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(acc[k],3)); g.computeVertexNormals(); scene.add(new THREE.Mesh(g,mt)); } }
 
 /* ---------- the rocket: one NASA model, cut into stage 1 / stage 2 / two fairing halves with clipping planes ---------- */
 const rocket=new THREE.Group(); scene.add(rocket);

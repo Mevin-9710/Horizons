@@ -6,8 +6,11 @@
   document.querySelector('.hud .t-round').addEventListener('click',()=>hzGo('select'));
   dockEl.addEventListener('click',e=>{ const t=e.target.closest('.tile'); if(t&&t.dataset.z==='') hzGo('select'); },true);
   // Delta-v: can this rocket and engine reach the destination? (HTML4 mission design maths)
-  const PLAN=hzPlan(M); if(PLAN.total>0){ const _tot=totals; totals=function(){ const r=_tot(), cap=hzDvCap(pick);
-      r.M.push({k:'dv',icon:'rocket',label:'Delta-v',val:`${cap.toFixed(1)}/${PLAN.total.toFixed(1)} km/s`,r:PLAN.total/cap,hint:`Not enough delta-v to reach ${names[M]}. It needs ${PLAN.total.toFixed(1)} km/s. Pick a bigger rocket or a stronger engine.`}); return r; }; const st=document.createElement('style'); st.textContent='#res{flex-wrap:nowrap}#res .metric{padding-left:7px;padding-right:9px;gap:6px;font-size:11px}#res .metric .mb{width:26px}@media (max-width:1100px){#res .metric .mb{display:none}}'; document.head.appendChild(st); renderHUD(); }
+  // Delta-v appears only in the launch pad's pre-launch check (the HUD keeps its original six gauges).
+  const PLAN=hzPlan(M); if(PLAN.total>0){ const _tot=totals, _rw=renderWin; let inPad=false;
+    totals=function(){ const r=_tot(); if(!inPad) return r; const cap=hzDvCap(pick);
+      r.M.push({k:'dv',icon:'rocket',label:'Delta-v',val:`${cap.toFixed(1)}/${PLAN.total.toFixed(1)} km/s`,r:PLAN.total/cap,hint:`Not enough delta-v to reach ${names[M]}. It needs ${PLAN.total.toFixed(1)} km/s. Pick a bigger rocket or a stronger engine.`}); return r; };
+    renderWin=function(){ inPad=openZone==='pad'; try{ _rw(); } finally{ inPad=false; } }; }
   // Launch: dive the camera into the pad, then hand over to the launch screen (hangar cinematic, count, ascent).
   const design=()=>({rocket:opt('rocket').name,inst:opt('inst')?opt('inst').name:'camera',orbit:opt('orbit').name});
   doLaunch=function(){ closeWin(); transition(new THREE.Vector3(0,0,-16),()=>hzGo('launch',{mission:M,pick:Object.assign({},pick),design:design(),skipCine:false})); };

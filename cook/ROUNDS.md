@@ -20,7 +20,7 @@ Made without asking, one line each.
 
 ## User feedback inbox
 
-(none yet)
+- 08:03 "continue, but don't change anything from the og design" | round 04 | done: base HUD restored to its original six gauges (proof: cook/stills/r03/base-pad.png); later rounds add only new screens or rows in existing styles
 
 ---
 
@@ -84,3 +84,17 @@ Measured: select lists 10 missions on 9 bodies + Moon; base (Saturn, Jupiter-C +
 Not checked: Moon and flyby transfers in the browser (next), critics, phones.
 Decisions: New Horizons uses only the STL "body" part (NASA ships it as loose print parts). Flyby missions still show an orbit ring in mission control.
 Stop check: build order complete; now critics and polish until the cap.
+
+## Round 04
+
+Time: 03:44 to 08:03 IST (run paused by the usage limit from about 03:50 to 08:00)
+Focus: user feedback "don't change anything from the og design", then polish.
+
+Changes:
+- Base: the delta-v gauge no longer joins the HUD (which had needed a restyle to fit 7 gauges). The HUD is back to its original six gauges and style; delta-v is a row in the launch pad's pre-launch check and blocks the launch when red.
+- Launch: the 140 trees are merged into 3 meshes. Draw calls went from 249 to 10 (measured, renderer.info).
+- Home Settings: Music toggle (same switch style as the other rows), as the brief asked.
+
+Measured: SLS ascent 31.3 s game time, 5 of 5 cues, orbit 206 x 847 km; 10 draw calls, 58.6k triangles.
+Not checked: fresh-context critics (both failed on the usage limit at 03:50 and were not rerun before the 09:00 cap), phone layouts of the new launch screen, audio by ear.
+Stop check: hard cap at 09:00 reached soon -> ship: PR with known issues.
