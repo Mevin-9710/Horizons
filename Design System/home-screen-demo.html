@@ -242,6 +242,8 @@ header .right{display:flex;gap:10px;align-items:center}
    <div class="set"><div class="l"><b>Music</b><span>A quiet score during the launch and the cruise.</span></div><button class="sw" type="button" role="switch" data-k="music" aria-label="Music"></button></div>
    <div class="set"><div class="l"><b>Reduce motion</b><span>Stops floating, spinning and twinkling.</span></div><button class="sw" type="button" role="switch" data-k="motion" aria-label="Reduce motion"></button></div>
    <div class="set"><div class="l"><b>Tutorial hints</b><span>Step-by-step callouts in the base.</span></div><button class="sw" type="button" role="switch" data-k="hints" aria-label="Tutorial hints"></button></div>
+   <div class="set"><div class="l"><b>Difficulty</b><span>Cadet: more money and push. Commander: less, and a score bonus.</span></div><div class="seg" data-k="diff" role="radiogroup" aria-label="Difficulty"><button type="button" data-v="cadet">Cadet</button><button type="button" data-v="pilot">Pilot</button><button type="button" data-v="commander">Cmdr</button></div></div>
+   <div class="set"><div class="l"><b>Sandbox</b><span>No budget or time limits. Scores are not ranked.</span></div><button class="sw" type="button" role="switch" data-k="sandbox" aria-label="Sandbox"></button></div>
    <div class="set"><div class="l"><b>Graphics</b><span>Low runs smoother on older phones.</span></div><div class="seg" data-k="gfx" role="radiogroup" aria-label="Graphics"><button type="button" data-v="low">Low</button><button type="button" data-v="high">High</button></div></div>
   </div>
   <div class="w-foot"><button class="t-btn ghost" type="button" id="set-reset">Reset</button><button class="t-btn primary" type="button" data-close>Done</button></div>
@@ -269,7 +271,7 @@ header .right{display:flex;gap:10px;align-items:center}
 <script>
 const OS_REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Settings are kept per browser; the game state (window.HZ) wins when the shell passes them on.
-const SET_DEF={sfx:true,music:true,motion:OS_REDUCE,hints:true,gfx:'high',rocket:2};
+const SET_DEF={sfx:true,music:true,motion:OS_REDUCE,hints:true,gfx:'high',rocket:2,diff:'pilot',sandbox:false};
 const SET=(()=>{let v={};try{v=JSON.parse(localStorage.getItem('hz-settings')||'{}')||{}}catch(e){}
   return Object.assign({},SET_DEF,v,(window.HZ&&window.HZ.settings)||{})})();
 let reduce=SET.motion;
@@ -346,7 +348,10 @@ function fetchModel(n){ return fetch(`models/${n}.txt`).then(r=>{ if(!r.ok) thro
 function dominant(img){ try{ const c=document.createElement('canvas'); c.width=c.height=24; const g=c.getContext('2d'); g.drawImage(img,0,0,24,24);
   const d=g.getImageData(0,0,24,24).data, n={}; let best=null,bc=0; for(let i=0;i<d.length;i+=4){ const k=(d[i]>>4)+','+(d[i+1]>>4)+','+(d[i+2]>>4); n[k]=(n[k]||0)+1; if(n[k]>bc){bc=n[k];best=[d[i],d[i+1],d[i+2]];} }
   return new THREE.Color(best[0]/255,best[1]/255,best[2]/255); }catch(e){ return new THREE.Color(1,1,1); } }
-function bake(gltf){ gltf.scene.updateMatrixWorld(true); const byMat=new Map(), v=new THREE.Vector3();
+// Some NASA rocket models stand on a display plinth (a flat dark slab under the engines). A rocket on our pads needs no plinth: drop it.
+function stripPlinth(sc){ sc.updateMatrixWorld(true); const A=new THREE.Box3().setFromObject(sc), H=A.max.y-A.min.y, W=Math.max(A.max.x-A.min.x,A.max.z-A.min.z); if(!(H>2*W)) return; const rm=[];
+  sc.traverse(o=>{ if(!o.isMesh) return; const b=new THREE.Box3().setFromObject(o); if(b.max.y-b.min.y<H*.05&&b.min.y-A.min.y<H*.01&&Math.max(b.max.x-b.min.x,b.max.z-b.min.z)>W*.8) rm.push(o); }); rm.forEach(o=>o.parent.remove(o)); }
+function bake(gltf){ if(typeof stripPlinth==='function') stripPlinth(gltf.scene); gltf.scene.updateMatrixWorld(true); const byMat=new Map(), v=new THREE.Vector3();
   gltf.scene.traverse(o=>{ if(!o.isMesh||!o.geometry) return; const g=o.geometry,P=g.getAttribute('position'),I=g.index,arr=[];
     const n=I?I.count:P.count; for(let i=0;i<n;i++){ v.fromBufferAttribute(P,I?I.getX(i):i).applyMatrix4(o.matrixWorld); arr.push(v.x,v.y,v.z); }
     const m=Array.isArray(o.material)?o.material[0]:o.material; if(!byMat.has(m)) byMat.set(m,[]); { const t=byMat.get(m); for(let i=0;i<arr.length;i++) t.push(arr[i]); } });

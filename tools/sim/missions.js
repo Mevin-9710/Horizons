@@ -89,4 +89,29 @@ const HZ_LIMITS={earth:{budget:180,time:12},moon:{budget:320,time:18},mars:{budg
   jupiter:{budget:560,time:36},saturn:{budget:620,time:40},uranus:{budget:520,time:36},neptune:{budget:540,time:36},pluto:{budget:500,time:36}};
 
 // sunlight at the destination, as a share of Earth's (solar wings make this much less; an RTG does not care)
-function hzSunK(key){ const M=HZ_MISSIONS[key]; if(!M||M.planet==='earth'||M.planet==='moon') return 1; const a=HZ_PL[M.planet]?HZ_PL[M.planet].a:1; return Math.min(6.7,1/(a*a)); }
+function hzSunK(key){ const M=HZ_MISSIONS[key]; if(!M||M.planet==='earth'||M.planet==='moon') return 1; const a=HZ_PL[M.planet]?HZ_PL[M.planet].a:1; return Math.min(2,Math.pow(a,-1.25)); }
+
+/* ===== Difficulty and sandbox (Settings) ===== */
+const HZ_DIFF={cadet:{name:'Cadet',dv:1.2,budget:1.25,grace:1.6,score:.9},pilot:{name:'Pilot',dv:1,budget:1,grace:1,score:1},commander:{name:'Commander',dv:.88,budget:.85,grace:.6,score:1.15}};
+function hzDiff(){ const S=(window.HZ&&HZ.settings)||{}; return HZ_DIFF[S.diff]||HZ_DIFF.pilot; }
+function hzSandbox(){ return !!(window.HZ&&HZ.settings&&HZ.settings.sandbox); }
+{ const _cap=hzDvCap; hzDvCap=function(p,m){ return _cap(p,m)*hzDiff().dv; }; }
+
+/* ===== The real NASA mission behind each game mission (for "a real mission like yours" in the report) ===== */
+const HZ_REAL={
+  earth:  {n:'Landsat 8',y:2013,rocket:'Atlas V',mass:2623,power:'solar',inst:['cam','ir'],txt:'An imaging camera (OLI) and a thermal infrared sensor (TIRS), in a sun-synchronous orbit at 705 km.'},
+  moon:   {n:'Lunar Reconnaissance Orbiter',y:2009,rocket:'Atlas V',mass:1916,power:'solar',inst:['cam','ir','neutron','radar'],txt:'Cameras, a thermal radiometer, a neutron detector and a small radar, in a low polar orbit.'},
+  mars:   {n:'MAVEN',y:2013,rocket:'Atlas V',mass:2454,power:'solar',inst:['spec','mag','hyper'],txt:'A mass spectrometer, a magnetometer and an ultraviolet imaging spectrograph, in an elliptical orbit.'},
+  mercury:{n:'MESSENGER',y:2004,rocket:'Delta II',mass:1107,power:'solar',inst:['cam','mag','neutron'],txt:'Cameras, a magnetometer and a neutron spectrometer. It used six planet flybys to slow down instead of a huge rocket.'},
+  venus:  {n:'Magellan',y:1989,rocket:'Space Shuttle Atlantis',mass:3449,power:'solar',inst:['radar','grav'],txt:'A radar that mapped 98% of Venus through the clouds, and radio tracking for gravity.'},
+  jupiter:{n:'Juno',y:2011,rocket:'Atlas V',mass:3625,power:'solar',inst:['grav','mag','ir'],txt:'Huge solar wings (the farthest solar-powered craft), a magnetometer, gravity science and a microwave radiometer.'},
+  saturn: {n:'Cassini-Huygens',y:1997,rocket:'Titan IV-B',mass:5712,power:'rtg',inst:['cam','radar','spec','mag'],txt:'Three RTGs, cameras, a radar that saw through Titan\'s haze, and particle instruments.'},
+  uranus: {n:'Voyager 2',y:1977,rocket:'Titan IIIE',mass:722,power:'rtg',inst:['cam','mag','ir'],txt:'RTG power, cameras, a magnetometer and an infrared spectrometer: still the only visitor to Uranus.'},
+  neptune:{n:'Voyager 2',y:1977,rocket:'Titan IIIE',mass:722,power:'rtg',inst:['cam','mag','ir'],txt:'The same Voyager 2, twelve years after launch: still the only visitor to Neptune.'},
+  pluto:  {n:'New Horizons',y:2006,rocket:'Atlas V',mass:478,power:'rtg',inst:['cam','spec','ir'],txt:'A light, fast craft with an RTG, cameras and an ultraviolet spectrometer for Pluto\'s thin air.'}};
+
+/* ===== Saved flights (this browser): compare with your last design, local leaderboard ===== */
+const HZ_FLIGHTS={ all(){ try{ return JSON.parse(localStorage.getItem('hz-flights')||'[]'); }catch(e){ return []; } },
+  save(f){ try{ const a=this.all(); a.push(f); localStorage.setItem('hz-flights',JSON.stringify(a.slice(-200))); }catch(e){} },
+  of(m){ return this.all().filter(f=>f.mission===m); },
+  best(m){ return this.of(m).filter(f=>!f.sandbox).sort((a,b)=>b.score-a.score); } };

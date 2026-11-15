@@ -87,7 +87,10 @@ const fetchModel=n=>fetch(`models/${n}.txt`).then(r=>{ if(!r.ok) throw 0; return
 function dominant(img){ try{ const c=document.createElement('canvas'); c.width=c.height=24; const g=c.getContext('2d'); g.drawImage(img,0,0,24,24); const d=g.getImageData(0,0,24,24).data, n={}; let best=null,bc=0;
   for(let i=0;i<d.length;i+=4){ const k=(d[i]>>4)+','+(d[i+1]>>4)+','+(d[i+2]>>4); n[k]=(n[k]||0)+1; if(n[k]>bc){bc=n[k];best=[d[i],d[i+1],d[i+2]];} } return new THREE.Color(best[0]/255,best[1]/255,best[2]/255); }catch(e){ return new THREE.Color(1,1,1); } }
 // -> [{geo,mat}] : one merged geometry per material, upright, base at y=0, height = size (or largest side when !upright)
-function bake(gltf,size,upright){ gltf.scene.updateMatrixWorld(true); const byMat=new Map(), v=new THREE.Vector3();
+// Some NASA rocket models stand on a display plinth (a flat dark slab under the engines). A rocket on our pads needs no plinth: drop it.
+function stripPlinth(sc){ sc.updateMatrixWorld(true); const A=new THREE.Box3().setFromObject(sc), H=A.max.y-A.min.y, W=Math.max(A.max.x-A.min.x,A.max.z-A.min.z); if(!(H>2*W)) return; const rm=[];
+  sc.traverse(o=>{ if(!o.isMesh) return; const b=new THREE.Box3().setFromObject(o); if(b.max.y-b.min.y<H*.05&&b.min.y-A.min.y<H*.01&&Math.max(b.max.x-b.min.x,b.max.z-b.min.z)>W*.8) rm.push(o); }); rm.forEach(o=>o.parent.remove(o)); }
+function bake(gltf,size,upright){ if(typeof stripPlinth==='function') stripPlinth(gltf.scene); gltf.scene.updateMatrixWorld(true); const byMat=new Map(), v=new THREE.Vector3();
   gltf.scene.traverse(o=>{ if(!o.isMesh||!o.geometry) return; const P=o.geometry.getAttribute('position'),I=o.geometry.index,n=I?I.count:P.count; const m=Array.isArray(o.material)?o.material[0]:o.material;
     if(!byMat.has(m)) byMat.set(m,[]); const t=byMat.get(m); for(let i=0;i<n;i++){ v.fromBufferAttribute(P,I?I.getX(i):i).applyMatrix4(o.matrixWorld); t.push(v.x,v.y,v.z); } });
   const bb=new THREE.Box3(); for(const a of byMat.values()) for(let i=0;i<a.length;i+=3) bb.expandByPoint(v.set(a[i],a[i+1],a[i+2]));
@@ -106,9 +109,18 @@ function fallbackRocket(){ const w=new THREE.MeshStandardMaterial({color:0xF2F0E
 const PS_=Math.max(.9,HT*.075);
 const ready=Promise.all([
   loadModel(RK,HT,true).catch(()=>fallbackRocket()).then(fillRocket),
-  loadModel(BUS,PS_,false).then(ms=>{ for(const m of ms){ const o=new THREE.Mesh(m.geo,m.mat); o.position.y=PS_*.5; pay.add(o); } }).catch(()=>{ box(PS_*.6,PS_*.9,PS_*.6,GOLD,0,PS_*.5,0,pay); }),
-  loadModel(WING,PS_*2.6,false).then(ms=>{ for(const m of ms){ const o=new THREE.Mesh(m.geo,m.mat); wings.add(o); } wings.position.y=PS_*.5; }).catch(()=>{})]);
+  parent!==window&&(()=>{ try{ return parent.HZ_CRAFT3D; }catch(e){ return null; } })()?Promise.resolve():loadModel(BUS,PS_,false).then(ms=>{ for(const m of ms){ const o=new THREE.Mesh(m.geo,m.mat); o.position.y=PS_*.5; pay.add(o); } }).catch(()=>{ box(PS_*.6,PS_*.9,PS_*.6,GOLD,0,PS_*.5,0,pay); }),
+  parent!==window&&(()=>{ try{ return parent.HZ_CRAFT3D; }catch(e){ return null; } })()?Promise.resolve():loadModel(WING,PS_*2.6,false).then(ms=>{ for(const m of ms){ const o=new THREE.Mesh(m.geo,m.mat); wings.add(o); } wings.position.y=PS_*.5; }).catch(()=>{})]);
 wings.scale.set(.05,1,1);
+// The spacecraft you built in the workshop, mesh for mesh (handed over by the base). Without it (screen opened on its own) the kit bus + wings above stay.
+const CR3=(()=>{ try{ return parent.HZ_CRAFT3D||null; }catch(e){ return null; } })();
+if(CR3){ const MK={}, body=new THREE.Group(), wg=new THREE.Group();
+  for(const d of CR3){ const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(d.p),3));
+    if(d.n) g.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(d.n),3)); if(d.i) g.setIndex(new THREE.BufferAttribute(d.i.BYTES_PER_ELEMENT===4?new Uint32Array(d.i):new Uint16Array(d.i),1)); if(!d.n) g.computeVertexNormals();
+    const key=d.std?'s'+d.std.c+d.std.mt:d.cols.join()+d.ax.join()+d.fq, m=new THREE.Mesh(g,MK[key]||(MK[key]=d.std?new THREE.MeshStandardMaterial({color:d.std.c,roughness:d.std.r,metalness:d.std.mt,side:THREE.DoubleSide}):mat(d.cols,d.ax,d.fq))); m.applyMatrix4(new THREE.Matrix4().fromArray(d.mx)); (d.cat==='power'?wg:body).add(m); }
+  const bb=new THREE.Box3().setFromObject(body), sz=bb.getSize(new THREE.Vector3()), k=PS_*1.2/Math.max(sz.x,sz.y,sz.z,.001), ctr=bb.getCenter(new THREE.Vector3());
+  for(const [grp,par] of [[body,pay],[wg,wings]]){ const h=new THREE.Group(); h.add(grp); grp.position.set(-ctr.x,-bb.min.y,-ctr.z); h.scale.setScalar(k); par.add(h); }
+  [...pay.children].forEach(c=>{ if(c!==wings&&!c.children.includes(body)) pay.remove(c); }); window.HZ_OWN_CRAFT=true; }
 
 /* ---------- flame, fire and smoke (pooled particles) ---------- */
 const flame=new THREE.Group(); rocket.add(flame);
@@ -200,8 +212,8 @@ function startTransfer(){
     tr.parkR=1.9; }
   const pts=[]; for(let k=0;k<=160;k++) pts.push(hel(k/160,new THREE.Vector3())); const pg=new THREE.BufferGeometry().setFromPoints(pts);
   sscene.add(new THREE.Line(pg,new THREE.LineBasicMaterial({color:0xF2A541,transparent:true,opacity:.28}))); tr.path=new THREE.Line(pg.clone(),new THREE.LineBasicMaterial({color:0xF2A541})); tr.path.geometry.setDrawRange(0,0); sscene.add(tr.path);
-  tr.craft=new THREE.Group(); const cm=new THREE.Group(); pay.traverse(o=>{ if(o.isMesh) { const c=new THREE.Mesh(o.geometry,o.material); c.position.copy(o.position); cm.add(c); } }); cm.scale.setScalar(1.5/PS_); cm.position.y=-.75; tr.craft.add(cm);
-  if(MIS.model&&MIS.model!=='landsat-8') loadModel(MIS.model,2.6,false).then(ms=>{ cm.clear(); cm.scale.setScalar(1); cm.position.y=0; for(const m of ms) cm.add(new THREE.Mesh(m.geo,m.mat)); }).catch(()=>{});   // the real NASA spacecraft for this mission
+  tr.craft=new THREE.Group(); const cm=new THREE.Group(); pay.updateMatrixWorld(true); const pinv=new THREE.Matrix4().copy(pay.matrixWorld).invert(); pay.traverse(o=>{ if(o.isMesh) { const c=new THREE.Mesh(o.geometry,o.material); c.applyMatrix4(new THREE.Matrix4().multiplyMatrices(pinv,o.matrixWorld)); cm.add(c); } }); cm.scale.setScalar(1.5/PS_); cm.position.y=-.75; tr.craft.add(cm);
+  // the cruise shows the same spacecraft that was built, launched and deployed
   tr.plume=fm(0xF2893A,.35,2.6,.95); tr.plume.position.y=-.8; tr.plume.visible=false; tr.craft.add(tr.plume); sscene.add(tr.craft);
   dayEl.style.opacity=0; duskEl.style.opacity=0; nightEl.style.opacity=1; nightEl.style.filter='brightness(.42) saturate(.75)'; thrEl.style.display='none'; $('alt-l').textContent='MISSION DAY'; $('vel-l').textContent='DELTA-V LEFT'; $('bcam').style.display='none';
   if(telOn) toggleTel(); $('btel').style.display='none'; $('adi-w').style.display='none';
@@ -321,7 +333,7 @@ function frame(now){ if(!running) return; const dt=Math.min((now-last)/1000,.05)
     if(S.fail){ explode(S.fail); }
     else { const o=orbitOf(S); let want=null;
       if(S.stage==='C1') want='sep'; else if(S.stage==='C2') want='ses'; else if(S.fair&&S.alt>=110e3) want='fairing'; else if(S.stage==='S2'&&S.engine&&o.peri>=150e3) want='seco'; else if(S.stage==='C3'&&o.peri>=140e3) want='deploy';
-      setCue(want); if(cue){ cueT+=dt; if(!LX.tutCue&&cueT>=CUES[cue][1]) fireCue(false); }
+      setCue(want); if(cue){ cueT+=dt; if(!LX.tutCue&&cueT>=CUES[cue][1]*hzDiff().grace) fireCue(false); }
       if(S.stage==='C3'&&!S.dep&&o.peri<140e3&&S.f2<=.001&&mode==='fly'){ mode='fail'; setCue(null); setPhase('Suborbital'); card('Not in orbit',`<p>Stage 2 ran dry at a perigee of ${(o.peri/1e3).toFixed(0)} km. The spacecraft falls back to Earth.</p><p>Try a bigger rocket or a lighter spacecraft.</p><div class="btns"><button class="t-btn primary" type="button" id="c-retry">Launch again</button><button class="t-btn" type="button" id="c-base">Back to base</button></div>`); } }
     elClock.textContent=fmtT(S.met); }
   if(mode==='orbit'){ orbT+=dt; prevP.copy(P); stepAscent(S,V,dt*16,null); place(); pay.position.copy(P).addScaledVector(dirv,H2+1+orbT*1.6); pay.quaternion.copy(rocket.quaternion); wings.scale.x=.05+.95*sstep(1,3.2,orbT);

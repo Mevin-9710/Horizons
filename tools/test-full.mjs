@@ -10,7 +10,10 @@ let n = 0; const shot = async (t, pg = p) => { await pg.screenshot({ path: `${O}
 const plan = async () => f().evaluate(() => [...document.querySelectorAll('.plan li')].map(li => (li.classList.contains('ok') ? '✓' : li.classList.contains('bad') ? '✗' : '·') + ' ' + li.innerText.split('\n')[0]).join(' | '));
 const fit = async (c, id) => { await f().click(`[data-tab="${c}"]`); await p.waitForTimeout(250); await f().click(`[data-fit="${c}:${id}"]`); await p.waitForTimeout(300); };
 
-await p.goto('http://localhost:8765/'); await p.reload(); await p.waitForTimeout(3500); await shot('home');
+await p.goto('http://localhost:8765/');
+if (process.env.DIFF) await p.evaluate(([d, m]) => { localStorage.setItem('hz-settings', JSON.stringify({ diff: d })); localStorage.setItem('hz-flights', JSON.stringify([{ mission: m, score: 71, sandbox: false, diff: 'Pilot', date: 1, rocket: 'Saturn V', orbit: 'Low circular', power: 'Small solar wings', batt: 'Small battery', comms: 'Small dish', store: 'Small storage', insts: ['cam'], mass: 900, cost: 300 }])); }, [process.env.DIFF, MIS]);
+await p.reload(); await p.waitForTimeout(3500); await shot('home');
+if (process.env.DIFF) { await f().evaluate(() => document.getElementById('open-settings').click()); await p.waitForTimeout(700); await shot('settings'); await f().evaluate(() => document.querySelector('#settings [data-close]').click()); await p.waitForTimeout(400); }
 await f().click('.t-btn.primary.btn'); await p.waitForFunction(() => location.hash === '#select'); await p.waitForTimeout(3500);
 await f().evaluate(m => select(m), MIS); await p.waitForTimeout(2500); await shot('select-brief');
 await f().click('#start'); await p.waitForFunction(() => location.hash === '#base'); await p.waitForTimeout(3000);
@@ -19,7 +22,7 @@ await shot('base-arrival'); console.log('  HUD:', await f().evaluate(() => docum
 await f().click('.plan li[data-go="craft"]'); await f().waitForFunction(() => where === 'craft', null, { timeout: 60000 }); await p.waitForTimeout(2500); await shot('craft-enter');
 await f().evaluate(() => { hero.position.set(0, 0, 4.6); }); await p.waitForTimeout(900); await p.keyboard.press('KeyE'); await p.waitForTimeout(900); await shot('design-panel');
 // a sensible design for the mission's goals
-const D = { jupiter: [['inst', 'grav'], ['inst', 'mag'], ['inst', 'ir'], ['power', 'p4'], ['batt', 'bt2'], ['store', 's2'], ['comms', 'c4'], ['engine', 'e2'], ['tank', 't3']], mars: [['inst', 'spec'], ['inst', 'mag'], ['inst', 'cam'], ['power', 'p3'], ['batt', 'bt2'], ['store', 's2'], ['comms', 'c3'], ['engine', 'e2'], ['tank', 't2']] }[MIS];
+const D = { jupiter: [['inst', 'grav'], ['inst', 'mag'], ['inst', 'ir'], ['power', process.env.PW || 'p4'], ['batt', 'bt2'], ['store', 's2'], ['comms', 'c4'], ['engine', 'e2'], ['tank', 't3']], mars: [['inst', 'spec'], ['inst', 'mag'], ['inst', 'cam'], ['power', 'p3'], ['batt', 'bt2'], ['store', 's2'], ['comms', 'c3'], ['engine', 'e2'], ['tank', 't2']] }[MIS];
 for (const [c, id] of D) await fit(c, id);
 await shot('design-done'); console.log('  plan:', await plan()); console.log('  HUD:', await f().evaluate(() => document.getElementById('res').innerText.replace(/\n/g, ' | ')));
 await f().click('[data-close]'); await p.waitForTimeout(500);

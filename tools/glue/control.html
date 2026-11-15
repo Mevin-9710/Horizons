@@ -1,4 +1,5 @@
 <script>
+if(window.HZ&&HZ.craftImg){ window.CRAFT_IMG=new Image(); CRAFT_IMG.src=HZ.craftImg; }
 document.querySelector('.tl .t-round').addEventListener('click',()=>hzGo('base',{mission:HZ.mission,pick:HZ.pick}));
 document.addEventListener('click',e=>{ const b=e.target.closest('.report .t-btn.primary'); if(b) hzGo('base',{mission:HZ.mission,pick:HZ.pick}); });
 </script><script>
@@ -17,7 +18,7 @@ if(window.HZ&&HZ.flight){ const F=HZ.flight;
 const CR=window.HZ&&HZ.design&&HZ.design.craft;
 if(CR){
   const AU=MKEY==='moon'||MKEY==='earth'?1:(HZ_PL[MI.planet]?HZ_PL[MI.planet].a:1), FLYBY=MI.kind==='flyby';
-  const sunK=1/(AU*AU), comK=1/Math.max(1,AU*AU*.6);
+  const sunK=hzSunK(MKEY), comK=1/Math.max(1,AU*AU*.6);
   const instData=CR.insts.reduce((a,id)=>a+(HZ_INST.find(i=>i.id===id)||{data:0}).data,0);
   const goals=hzGoalsMet(MKEY,CR.insts), gMet=goals.filter(g=>g.ok).length;
   const M={E:CR.wh,lowN:0,lowT:0,safe:false,fullN:0,full:false,lost:0,prod:0,home:0,stored:0,deficit:0,pass:false,sunGen:CR.rtg?CR.gen:CR.gen*sunK};
@@ -45,7 +46,9 @@ if(CR){
     const TR=(HZ.flight&&HZ.flight.transfer)||null, bud=CR.budget?Math.max(0,Math.min(1,(CR.budget-CR.cost)/(CR.budget*.35))):.5, dvm=TR?Math.max(0,Math.min(1,TR.dvLeft/1.5)):Math.max(0,Math.min(1,S.fuel/60));
     const pMargin=M.lowN?0:M.deficit>2?3:6, effS=Math.round(Math.max(0,Math.min(20,8*bud+6*dvm+pMargin)));
     const dec=Math.max(0,Math.min(20,Math.round(S.dec+4))), res=Math.max(0,Math.min(20,Math.round(Math.min(20,S.res+4)-M.lowN*5-M.fullN*2)));
-    const total=perf+effS+dec+res, st=total>=80?3:total>=60?2:1, pct=Math.round(eff*100);
+    const raw=perf+effS+dec+res, DF=hzDiff(), total=Math.min(100,Math.round(raw*DF.score)), st=total>=80?3:total>=60?2:1, pct=Math.round(eff*100);
+    const flight={mission:MKEY,score:total,sandbox:hzSandbox(),diff:DF.name,date:Date.now(),rocket:HZ.design.rocket,orbit:(CR.orbit&&CR.orbit.name)||'',power:CR.power,batt:CR.batt,comms:CR.comms,store:CR.storeName,insts:CR.insts.slice(),mass:CR.mass,cost:CR.cost};
+    const prev=HZ_FLIGHTS.of(MKEY).slice(-1)[0]; HZ_FLIGHTS.save(flight); const board=HZ_FLIGHTS.best(MKEY).slice(0,5), rank=flight.sandbox?0:board.indexOf(board.find(f=>f.date===flight.date))+1;
     const why=[]; if(gMet<3) why.push(goals.filter(g=>!g.ok).map(g=>`"${g.t}" needed ${g.need.map(n=>HZ_INST.find(i=>i.id===n).name).join(' or ')}`).join('; ')+'.');
     if(M.fullN) why.push(`Storage filled up and ${Math.round(M.lost)} Gb of data was lost. More storage or a faster dish would save it.`);
     else if(pct<70) why.push(`Only ${pct}% of the data reached Earth: the ${CR.comms} could not send it fast enough${AU>1.6?' from this far away':''}.`);
@@ -60,10 +63,18 @@ if(CR){
     modal.innerHTML=`<span class="t-ribbon">Mission report</span><h3>${total>=80?'Outstanding mission':total>=60?'Mission success':'Mission complete'}</h3>
      <div class="ringwrap"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="rgba(26,18,6,.12)" stroke-width="14"/><circle id="ring" cx="60" cy="60" r="50" fill="none" stroke="#2C5B65" stroke-width="14" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" style="transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)"/></svg><b>${total}</b><small>out of 100</small></div>
      <div class="stars">${[1,2,3].map(i=>`<svg style="--sf:${i<=st?'#F2A541':'#E4DED2'}"><use href="#i-star"/></svg>`).join('')}</div>
-     <div class="why">${rows.map(r=>`<div class="r"><b>${r[0]}</b><em>${r[1]}/${r[2]}</em><div class="tr"><i data-w="${r[1]/r[2]*100}"></i></div><p>${r[3]}</p></div>`).join('')}${goalList}</div>
+     <div class="why">${DF.score!==1||flight.sandbox?`<div class="r"><b>${flight.sandbox?'Sandbox':DF.name}</b><em>${flight.sandbox?'not ranked':'x'+DF.score}</em><p>${flight.sandbox?'No limits, so this flight is not on the leaderboard.':'Difficulty bonus applied to '+raw+' points.'}</p></div>`:''}${rows.map(r=>`<div class="r"><b>${r[0]}</b><em>${r[1]}/${r[2]}</em><div class="tr"><i data-w="${r[1]/r[2]*100}"></i></div><p>${r[3]}</p></div>`).join('')}${goalList}${extras(flight,prev,board,rank)}</div>
      <div class="row"><button class="t-btn ghost" type="button" onclick="location.reload()">Fly again</button><button class="t-btn primary" type="button">Redesign spacecraft</button></div>`;
     requestAnimationFrame(()=>{ document.getElementById('ring').style.strokeDashoffset=314-314*total/100; modal.querySelectorAll('.tr i').forEach(i=>i.style.width=i.dataset.w+'%'); });
-    window.LAST_REPORT={total,perf,effS,dec,res,gMet,pct,lowN:M.lowN,fullN:M.fullN,lost:Math.round(M.lost)}; };
+    window.LAST_REPORT={raw,rank,total,perf,effS,dec,res,gMet,pct,lowN:M.lowN,fullN:M.fullN,lost:Math.round(M.lost)}; };
+  function extras(f,prev,board,rank){ const R=HZ_REAL[MKEY]; let h='';
+    if(R){ const shared=f.insts.filter(i=>R.inst.includes(i)).map(i=>HZ_INST.find(x=>x.id===i).name), pw=(f.power||'').includes('RTG')?'rtg':'solar';
+      h+=`<div class="r"><b>The real mission: ${R.n}</b><em>${R.y}</em><p>${R.txt} It weighed ${R.mass.toLocaleString()} kg and flew on ${R.rocket}. Yours: ${f.mass} kg on ${f.rocket}, ${pw===R.power?'same kind of power':'different power ('+(R.power==='rtg'?'they used an RTG':'they used solar')+')'}${shared.length?`, and you share the ${shared.join(', ')}`:''}.</p></div>`; }
+    if(prev){ const ch=[]; for(const [k,l] of [['rocket','rocket'],['orbit','orbit'],['power','power'],['batt','battery'],['comms','comms'],['store','storage']]) if(prev[k]!==f[k]) ch.push(`${l}: ${prev[k]} → ${f[k]}`);
+      const ia=prev.insts.join(','), ib=f.insts.join(','); if(ia!==ib) ch.push('instruments changed'); const d=f.score-prev.score;
+      h+=`<div class="r"><b>Compared with your last flight</b><em>${d>0?'+':''}${d}</em><p>${ch.length?ch.join('; ')+'.':'Same design as last time.'}</p></div>`; }
+    if(board.length) h+=`<div class="r"><b>Your best ${MI.name} flights</b><em>${rank?'#'+rank:''}</em><p>${board.map((b,i)=>`${i+1}. ${b.score} (${b.rocket}, ${b.diff})`).join(' · ')}</p></div>`;
+    return h; }
   PH[2].t=`Systems switch on: ${CR.power}, ${CR.batt}, ${CR.comms}. ${CR.rtg?'The RTG gives steady power.':AU>1.6?`Sunlight here is ${Math.round(sunK*100)}% of Earth's.`:'Solar wings unfold and charge the battery.'}`;
   addLog(`Design: ${HZ.design.inst||'no instrument'}; goals covered ${gMet} of 3`); renderUI();
 }

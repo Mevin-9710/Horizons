@@ -258,6 +258,7 @@ function draw(now){ const {x,w,h,R,cx,cy,earth,stars,fires}=C; x.clearRect(0,0,w
       x.fillStyle='#FBFAF4'; x.strokeStyle='#1A1206'; x.lineWidth=2.5; x.beginPath(); x.moveTo(14,0); x.lineTo(4,-5); x.lineTo(-10,-5); x.lineTo(-10,5); x.lineTo(4,5); x.closePath(); x.fill(); x.stroke(); x.restore(); return; }
     const sc=.8+.25*z; x.save(); x.translate(px,py); x.scale(sc,sc);
     if(mode==='burn'){ x.fillStyle='#F2A541'; x.beginPath(); x.arc(-14,2,5+Math.random()*3,0,7); x.fill(); }
+    if(window.CRAFT_IMG&&CRAFT_IMG.naturalWidth){ x.drawImage(CRAFT_IMG,-26,-26,52,52); x.restore(); return; }
     x.fillStyle='#2C5B65'; x.strokeStyle='#1A1206'; x.lineWidth=2; x.fillRect(-20,-3,12,6); x.strokeRect(-20,-3,12,6); x.fillRect(8,-3,12,6); x.strokeRect(8,-3,12,6);
     x.fillStyle='#FBFAF4'; x.lineWidth=2.5; x.beginPath(); x.rect(-7,-7,14,14); x.fill(); x.stroke(); x.restore(); };
   // far side: orbit + trail + ship behind Earth

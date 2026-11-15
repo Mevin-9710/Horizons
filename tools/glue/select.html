@@ -2,7 +2,8 @@
 /* Show what the mission gives you before it starts: budget, build time and the delta-v it needs. */
 for(const k in MISSIONS){ const L=HZ_LIMITS[k], P=hzPlan(k), m=MISSIONS[k]; if(!L) continue;
   m.specs=m.specs.filter(s=>!/Budget|Duration|Delta-v|Mass limit/.test(s[0]));
-  m.specs.unshift(['Budget','$'+L.budget+'M'],['Build time',L.time+' months']); if(P.total) m.specs.push(['Delta-v needed',P.total.toFixed(1)+' km/s']); }
+  m.specs.unshift(['Budget','$'+L.budget+'M'],['Build time',L.time+' months']); if(P.total) m.specs.push(['Delta-v needed',P.total.toFixed(1)+' km/s']);
+  const best=HZ_FLIGHTS.best(k)[0]; m.specs.push(['Your best',best?best.score+' / 100':'not flown yet']); }
 </script>
 <script>
 document.addEventListener('click',e=>{ if(e.target.closest('#start')) hzGo('base',{mission:selected}); if(e.target.closest('#home')&&!selected) hzGo('home'); },true);

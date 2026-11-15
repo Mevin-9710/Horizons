@@ -228,10 +228,10 @@ const PARTS = {
     {id:'b2',name:'Smallsat frame', src:'NASA Satellite Kit', model:'kit-body-3', mass:180, cost:35, time:8, pw:80, note:'The all-rounder'},
     {id:'b3',name:'Large frame',    src:'NASA Satellite Kit', model:'kit-body-1', mass:320, cost:55, time:10, pw:110, note:'Room for big instruments'}]},
   power:{label:'Power', where:'craft', opts:[
-    {id:'p1',name:'Solar wings S', src:'NASA Satellite Kit', model:'kit-wings-1', mass:20, cost:6,  time:2, gen:250},
-    {id:'p2',name:'Solar wings M', src:'NASA Satellite Kit', model:'kit-wings-2', mass:42, cost:14, time:3, gen:450},
-    {id:'p3',name:'Solar wings L', src:'NASA Satellite Kit', model:'kit-wings-3', mass:75, cost:26, time:4, gen:800},
-    {id:'p4',name:'Nuclear RTG',   proc:'rtg', mass:57, cost:70, time:6, gen:300, note:'Same power anywhere, even far from the Sun'}]},
+    {id:'p1',name:'Solar wings S', src:'NASA Satellite Kit', model:'kit-wings-1', mass:20, cost:6,  time:2, gen:400},
+    {id:'p2',name:'Solar wings M', src:'NASA Satellite Kit', model:'kit-wings-2', mass:42, cost:14, time:3, gen:900},
+    {id:'p3',name:'Solar wings L', src:'NASA Satellite Kit', model:'kit-wings-3', mass:95, cost:30, time:4, gen:2400, note:'Juno-size wings: enough even at Jupiter'},
+    {id:'p4',name:'Nuclear RTG',   proc:'rtg', mass:57, cost:70, time:6, gen:450, note:'Same power anywhere, even far from the Sun'}]},
   batt:{label:'Battery', where:'craft', opts:[
     {id:'bt1',name:'Battery S', proc:'batt1', mass:8,  cost:2,  time:1, wh:400,  note:'Short eclipses only'},
     {id:'bt2',name:'Battery M', proc:'batt2', mass:18, cost:5,  time:2, wh:1000, note:'Rides through most eclipses'},
@@ -262,7 +262,7 @@ const INST_SLOTS=['inst','inst2','inst3'], CRAFT_CATS=['bus','power','batt','com
 const mountedInst=()=>INST_SLOTS.map(c=>pick[c]).filter(Boolean);
 function isMounted(s){ return s.cat==='inst'?mountedInst().includes(s.id):pick[s.cat]===s.id; }
 const SUNK=hzSunK((window.HZ&&HZ.mission)||'earth'), DESTN=((window.HZ&&HZ_MISSIONS[HZ.mission])?(HZ.mission==='moon'?'the Moon':HZ_PL[HZ_MISSIONS[HZ.mission].planet].n):'Earth');
-const LIMIT = Object.assign({budget:180, time:12}, (window.HZ&&HZ_LIMITS[HZ.mission])||{});
+const LIMIT = Object.assign({budget:180, time:12}, (window.HZ&&HZ_LIMITS[HZ.mission])||{}); LIMIT.budget=Math.round(LIMIT.budget*hzDiff().budget); if(hzSandbox()){ LIMIT.budget=99999; LIMIT.time=999; }
 const optOf=(cat,id)=>PARTS[cat].opts.find(o=>o.id===id);
 const opt=(cat)=>optOf(cat,pick[cat]);
 function totals(){
@@ -363,7 +363,10 @@ const MODEL_FILES=[...(SHOW!=='landsat-8'?[SHOW]:[]),'kit-body-1','kit-body-2','
 function dominant(img){ try{ const c=document.createElement('canvas'); c.width=c.height=24; const g=c.getContext('2d'); g.drawImage(img,0,0,24,24);
   const d=g.getImageData(0,0,24,24).data, n={}; let best=null,bc=0; for(let i=0;i<d.length;i+=4){ const k=(d[i]>>4)+','+(d[i+1]>>4)+','+(d[i+2]>>4); n[k]=(n[k]||0)+1; if(n[k]>bc){bc=n[k];best=[d[i],d[i+1],d[i+2]];} }
   return new THREE.Color(best[0]/255,best[1]/255,best[2]/255); }catch(e){ return new THREE.Color(1,1,1); } }
-function bake(gltf){ gltf.scene.updateMatrixWorld(true); const all=[], byMat=new Map(); const v=new THREE.Vector3();
+// Some NASA rocket models stand on a display plinth (a flat dark slab under the engines). A rocket on our pads needs no plinth: drop it.
+function stripPlinth(sc){ sc.updateMatrixWorld(true); const A=new THREE.Box3().setFromObject(sc), H=A.max.y-A.min.y, W=Math.max(A.max.x-A.min.x,A.max.z-A.min.z); if(!(H>2*W)) return; const rm=[];
+  sc.traverse(o=>{ if(!o.isMesh) return; const b=new THREE.Box3().setFromObject(o); if(b.max.y-b.min.y<H*.05&&b.min.y-A.min.y<H*.01&&Math.max(b.max.x-b.min.x,b.max.z-b.min.z)>W*.8) rm.push(o); }); rm.forEach(o=>o.parent.remove(o)); }
+function bake(gltf){ if(typeof stripPlinth==='function') stripPlinth(gltf.scene); gltf.scene.updateMatrixWorld(true); const all=[], byMat=new Map(); const v=new THREE.Vector3();
   gltf.scene.traverse(o=>{ if(!o.isMesh||!o.geometry) return; const g=o.geometry, P=g.getAttribute('position'), I=g.index; const arr=[];
     const n=I?I.count:P.count; for(let i=0;i<n;i++){ const k=I?I.getX(i):i; v.fromBufferAttribute(P,k).applyMatrix4(o.matrixWorld); arr.push(v.x,v.y,v.z); }
     for(let i=0;i<arr.length;i++) all.push(arr[i]); const m=Array.isArray(o.material)?o.material[0]:o.material; if(!byMat.has(m)) byMat.set(m,[]); { const t=byMat.get(m); for(let i=0;i<arr.length;i++) t.push(arr[i]); }; });
@@ -538,15 +541,28 @@ function standAct(){ if(!carry){ openWin('stand'); return; }
   pick[slot]=s.o.id; justMounted=slot; carry=null; if(carryObj){ hero.remove(carryObj); carryObj=null; } A().spots.find(x=>x.id==='stand').label='Design spacecraft';
   renderHUD(); refreshBuildBay(); drawGoals(); toastMsg(s.o.name+' mounted'); if(s.cat==='inst'&&step===1) setStep(2); }
 function refreshBuildBay(){ if(!buildBay) return; buildBay.clear(); const s=new THREE.Group(); buildBay.add(s); s.scale.setScalar(2.6);
-  const put=(cat,o,size,x,y,z,ry=0,rx=0)=>{ if(!o) return; const g=partObject(cat,o,size); g.position.set(x,y,z); g.rotation.set(rx,ry,0); s.add(g);
+  const put=(cat,o,size,x,y,z,ry=0,rx=0)=>{ if(!o) return; const g=partObject(cat,o,size); g.userData.cat=cat+(o.proc==='rtg'?'-rtg':''); g.position.set(x,y,z); g.rotation.set(rx,ry,0); s.add(g);
     if(justMounted===cat||(justMounted&&cat===justMounted.replace(/[0-9]/,''))&&false){} if(justMounted&&(justMounted===cat)){ g.userData.pop=0; pops.push(g); } return g; };
   const bus=opt('bus'); put('bus',bus,1.8,0,0,0);
   const pw=opt('power'); if(pw){ if(pw.proc==='rtg') put('power',pw,1.1,0,.3,-1.5,0,0); else for(const side of [-1,1]) put('power',pw,1.6,side*1.6,.6,0,side>0?0:Math.PI); }
   put('comms',opt('comms'),1.0,0,1.75,0);
   put('batt',opt('batt'),.55,-.62,1.62,.45); put('store',opt('store'),.5,.62,1.62,.45);
   const tk=opt('tank'); put('tank',tk,.9,0,.25,-1.05,0,-Math.PI/2); put('engine',opt('engine'),.7,0,.25,tk?-1.75:-1.1,0,-Math.PI/2);
-  INST_SLOTS.forEach((c,i)=>{ const id=pick[c]; if(!id) return; const o=HZ_INST.find(x=>x.id===id); const g=partObject('inst',o,.7); g.position.set((i-1)*.62,.12,1.05); s.add(g); if(justMounted===c){ g.userData.pop=0; pops.push(g); } });
-  justMounted=null; }
+  INST_SLOTS.forEach((c,i)=>{ const id=pick[c]; if(!id) return; const o=HZ_INST.find(x=>x.id===id); const g=partObject('inst',o,.7); g.userData.cat='inst'; g.position.set((i-1)*.62,.12,1.05); s.add(g); if(justMounted===c){ g.userData.pop=0; pops.push(g); } });
+  justMounted=null; snugCraft(s); }
+// Pull every part flush against the body so the stand shows one connected spacecraft (wings on its sides, dish and boxes on top,
+// instruments on the front, tank and engine on the back). Works from real bounding boxes, so any bus/part size fits.
+function snugCraft(s){ const sc=s.scale.x; s.scale.setScalar(1); const pos=s.position.clone(); s.position.set(0,0,0); const par=s.parent; if(par) par.remove(s); s.updateMatrixWorld(true);
+  const B=o=>{ o.updateMatrixWorld(true); return new THREE.Box3().setFromObject(o); }, by=c=>s.children.filter(g=>(g.userData.cat||'')===c);
+  const bus=by('bus')[0]; if(bus){ const bb=B(bus), cy=(bb.min.y+bb.max.y)/2, cz=(bb.min.z+bb.max.z)/2;
+    for(const w of by('power')){ const wb=B(w), side=w.position.x>=0?1:-1; w.position.x+=side>0?bb.max.x+.02-wb.min.x:bb.min.x-.02-wb.max.x; w.position.y+=cy-(wb.min.y+wb.max.y)/2; w.position.z+=cz-(wb.min.z+wb.max.z)/2; }
+    for(const r of by('power-rtg')){ const rb=B(r); r.position.x+=bb.max.x+.06-rb.min.x; r.position.y+=bb.min.y-rb.min.y; r.position.z+=cz-(rb.min.z+rb.max.z)/2; }
+    const top=[...by('comms'),...by('batt'),...by('store')]; for(const t of top){ const tb=B(t); t.position.y+=bb.max.y-tb.min.y-.01; }
+    for(const t of by('batt').concat(by('store'))){ const tb=B(t); t.position.z+=Math.min(0,bb.max.z-tb.max.z); t.position.x+=(t.position.x<0?bb.min.x-tb.min.x:bb.max.x-tb.max.x); }
+    const ins=by('inst'), sp=(bb.max.x-bb.min.x)*.38; ins.forEach((g,i)=>{ const ib=B(g); g.position.x+=(bb.min.x+bb.max.x)/2+(i-(ins.length-1)/2)*sp-(ib.min.x+ib.max.x)/2; }); for(const g of ins){ const ib=B(g); g.position.z+=bb.max.z-ib.min.z-.01; g.position.y+=bb.min.y+(bb.max.y-bb.min.y)*.15-ib.min.y; }
+    let back=bb.min.z; for(const t of by('tank')){ const tb=B(t); t.position.z+=back+.01-tb.max.z; t.position.y+=cy-(tb.min.y+tb.max.y)/2; t.position.x+=-(tb.min.x+tb.max.x)/2; back=B(t).min.z; }
+    for(const e of by('engine')){ const eb=B(e); e.position.z+=back+.01-eb.max.z; e.position.y+=cy-(eb.min.y+eb.max.y)/2; e.position.x+=-(eb.min.x+eb.max.x)/2; } }
+  if(par) par.add(s); s.position.copy(pos); s.scale.setScalar(sc); }
 const pops=[]; (function popLoop(){ for(let i=pops.length-1;i>=0;i--){ const g=pops[i]; g.userData.pop+=.035; const t=Math.min(1,g.userData.pop), e=1+2.7*Math.pow(t-1,3)+1.7*Math.pow(t-1,2); g.scale.setScalar(Math.max(.01,e)); if(t>=1){ g.scale.setScalar(1); pops.splice(i,1);} } requestAnimationFrame(popLoop); })();
 
 // ---------- ROCKET WORKSHOP ----------

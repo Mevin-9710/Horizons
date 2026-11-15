@@ -19,7 +19,22 @@
     const insts=mountedInst(), names=insts.map(id=>HZ_INST.find(i=>i.id===id).name);
     return {rocket:opt('rocket').name,inst:names.length?names.join(', '):'no instrument',orbit:opt('orbit').name,
       craft:{cost:totals().M[1].val.match(/\$(\d+)/)[1]*1,budget:LIMIT.budget,gen,draw,down:down*link,store,wh,mass,insts,rtg:pick.power==='p4',orbit:(({ecl,link,sci,oiK,name})=>({ecl,link,sci,oiK,name}))(opt('orbit')),power:opt('power').name,batt:opt('batt').name,comms:opt('comms').name,storeName:opt('store').name}}; };
-  doLaunch=function(){ closeWin(); transition(new THREE.Vector3(0,0,-16),()=>hzGo('launch',{mission:M,pick:Object.assign({},pick),design:design(),skipCine:false})); };
+  // The spacecraft on the build stand is THE spacecraft: launch (hangar, crane, fairing, deploy), the cruise and mission control all show it.
+  function exportCraft(){ if(typeof buildBay==='undefined'||!buildBay) return null; refreshBuildBay(); const root=buildBay.children[0]; if(!root) return null;
+    root.updateMatrixWorld(true); const inv=new THREE.Matrix4().copy(root.matrixWorld).invert(), out=[];
+    root.traverse(o=>{ if(!o.isMesh||!o.visible||!o.geometry||!o.geometry.attributes.position) return; let cat=null; for(let q=o;q&&q!==root;q=q.parent) if(q.userData.cat){ cat=q.userData.cat; break; }
+      const m=Array.isArray(o.material)?o.material[0]:o.material, u=m&&m.uniforms, g=o.geometry;
+      const cols=u&&u.c0?['c0','c1','c2','c3'].map(k=>'#'+u[k].value.getHexString()):(()=>{ const c=m&&m.color?'#'+m.color.getHexString():'#D7D0C0'; return [c,c,c,'#1A1206']; })();
+      out.push({cat,p:g.attributes.position.array,n:g.attributes.normal?g.attributes.normal.array:null,i:g.index?g.index.array:null,mx:new THREE.Matrix4().multiplyMatrices(inv,o.matrixWorld).toArray(),cols,ax:u&&u.ax?u.ax.value.toArray():[1,0,.3],fq:u&&u.fq?u.fq.value:.35,std:!u&&m&&m.isMeshStandardMaterial?{c:'#'+m.color.getHexString(),r:m.roughness,mt:m.metalness}:null}); });
+    return out.length?out:null; }
+  function craftImage(){ try{ const root=buildBay.children[0]; const sc=new THREE.Scene(), c=root.clone(); c.position.set(0,0,0); c.rotation.set(0,0,0); c.scale.setScalar(1); sc.add(c); sc.add(new THREE.HemisphereLight(0xFFF6E8,0x6E6457,1.05)); const dl=new THREE.DirectionalLight(0xFFFFFF,.9); dl.position.set(3,5,4); sc.add(dl);
+      const bb=new THREE.Box3().setFromObject(c), ctr=bb.getCenter(new THREE.Vector3()), r=bb.getSize(new THREE.Vector3()).length()/2;
+      const cam=new THREE.PerspectiveCamera(30,1,.01,200); cam.position.copy(ctr).add(new THREE.Vector3(r*2.3,r*1.5,r*2.7)); cam.lookAt(ctr);
+      const R=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true}); R.setSize(192,192); R.setClearColor(0,0); R.render(sc,cam);
+      const url=R.domElement.toDataURL('image/png'); R.dispose(); if(R.forceContextLoss) R.forceContextLoss(); return url; }catch(e){ return null; } }
+  window.exportCraft=exportCraft; window.craftImage=craftImage;
+  doLaunch=function(){ closeWin(); const C3=exportCraft(), img=C3?craftImage():null; try{ parent.HZ_CRAFT3D=C3; }catch(e){}
+    transition(new THREE.Vector3(0,0,-16),()=>hzGo('launch',{mission:M,pick:Object.assign({},pick),design:design(),craftImg:img,skipCine:false})); };
   const _open=openWin; openWin=function(z){ if(z==='control'&&launched){ return hzGo('control',{mission:M,pick:Object.assign({},pick),design:{rocket:opt('rocket').name,inst:opt('inst')?opt('inst').name:'camera',orbit:opt('orbit').name}}); } return _open(z); };
 })();
 </script><script>
@@ -106,7 +121,7 @@
       [by.budget.r<=1&&by.time.r<=1,by.budget.r>1||by.time.r>1,`Budget ${by.budget.val}, time ${by.time.val}`,by.budget.r>1?'Over budget: swap a part for a cheaper one.':by.time.r>1?'Too slow to build: simpler parts.':'Within the limits.','craft'],
       [false,null,'Launch from the pad','When everything above is green.','pad']];
     el.innerHTML=`<span class="t-ribbon">Mission plan</span><button class="t-round pl-tg" type="button" aria-label="Show or hide the plan">${el.classList.contains('min')?'+':'−'}</button>
-      <div class="pl-lim">Budget $${LIMIT.budget}M · ${LIMIT.time} months${need?` · needs ${need.toFixed(1)} km/s`:''}</div>
+      <div class="pl-lim">${hzSandbox()?'Sandbox: no limits':`Budget $${LIMIT.budget}M · ${LIMIT.time} months`}${need?` · needs ${need.toFixed(1)} km/s`:''} · ${hzDiff().name}</div>
       <ol>${items.map((it,i)=>`<li class="${it[0]?'ok':it[1]?'bad':''}" data-go="${it[4]}"><i>${it[0]?'✓':i+1}</i><span>${it[2]}<small>${it[3]}</small></span></li>`).join('')}</ol>`; }
   el.addEventListener('click',e=>{ if(e.target.closest('.pl-tg')){ el.classList.toggle('min'); render(); return; } const li=e.target.closest('[data-go]'); if(!li) return; const z=li.dataset.go;
     if(z==='craft'){ if(where==='craft') openWin('stand'); else if(where==='base') enterRoom('craft'); else exitRoom(()=>enterRoom('craft')); }
