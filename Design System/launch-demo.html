@@ -75,6 +75,12 @@ canvas#fx{pointer-events:none}
 .stats div{background:var(--tile);border:2.5px solid var(--ink);border-radius:12px;box-shadow:0 3px 0 var(--ink);padding:7px 8px;font:400 11px var(--f-num)}
 .stats b{display:block;font:400 17px var(--f-display)}
 #skip{display:none}
+.side{align-items:center}.side .t-btn{font-size:15px;padding:8px 14px 10px}.side .t-btn kbd{margin-left:8px}
+#btel.on{--c:var(--amber);--cd:var(--amber-d)}
+#adi-w{right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));display:none;flex-direction:column;align-items:center;gap:8px}
+#adi{width:168px;height:168px;border-radius:50%;box-shadow:0 5px 0 var(--ink)}
+#tel{top:calc(76px + env(safe-area-inset-top,0px));max-height:calc(100% - 380px);overflow:auto}
+@media (max-width:760px){#adi,#adi-w canvas{width:120px;height:120px}#adi-w{bottom:calc(150px + env(safe-area-inset-bottom,0px))}.side .t-btn{font-size:13px;padding:7px 10px 9px}}
 .lbl{display:none;transform:translate(-50%,-190%);pointer-events:none;font-size:10px;padding:3px 9px;z-index:2}
 #load{left:50%;top:50%;transform:translate(-50%,-50%)}
 .credit{left:max(12px,env(safe-area-inset-left,0px));top:calc(70px + env(safe-area-inset-top,0px));font:400 10px var(--f-num);color:var(--muted);max-width:240px;display:none}
@@ -98,7 +104,8 @@ canvas#fx{pointer-events:none}
   </div>
   <div class="ui read" id="read" style="display:none"><div class="tile"><span id="alt-l">ALTITUDE</span><b id="alt">0 km</b></div><div class="tile"><span id="vel-l">SPEED</span><b id="vel">0 m/s</b></div></div>
   <div class="ui actbar"><button class="t-btn" type="button" id="thr">Hold: throttle down<kbd>S</kbd></button><button class="t-btn primary" type="button" id="act" disabled>Stand by</button><button class="t-btn" type="button" id="skip">Skip<kbd>Esc</kbd></button></div>
-  <div class="ui side"><button class="t-round" type="button" id="bcam" aria-label="Change camera (C)"><svg><use href="#i-cam"/></svg></button><button class="t-round" type="button" id="btel" aria-label="Telemetry (T)" aria-pressed="false"><svg><use href="#i-tel"/></svg></button></div>
+  <div class="ui side"><button class="t-round" type="button" id="bcam" aria-label="Change camera (C)"><svg><use href="#i-cam"/></svg></button><button class="t-btn" type="button" id="btel" aria-pressed="false">Telemetry<kbd>T</kbd></button></div>
+  <div class="ui" id="adi-w"><canvas id="adi" width="168" height="168" aria-label="Attitude indicator"></canvas><span class="t-pill">Attitude</span></div>
   <div class="ui t-win" id="tel"><span class="t-ribbon">Telemetry</span>
     <div class="row"><span>ACCEL</span><b id="t-acc">0.0 g</b></div><div class="row"><span>DYN PRESSURE</span><b id="t-q">0 kPa</b></div>
     <div class="row"><span>PITCH / AOA</span><b id="t-pit">0 / 0</b></div><div class="row"><span>PERIGEE</span><b id="t-pe">-</b></div><div class="row"><span>APOGEE</span><b id="t-ap">-</b></div>
@@ -127,11 +134,11 @@ const RE=6371e3, MU=3.986e14, RAD=Math.PI/180;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 // a1/a2: initial thrust acceleration (m/s2), b1/b2: burn time at full throttle (s). h: display height factor.
 const VEHICLES={
-  'rocket-jupiter-c':{name:'Jupiter-C',     a1:15.5,b1:150,a2:12.5,b2:420, s1:.52, fair:.80},
-  'rocket-ares-1':   {name:'Ares I',        a1:16,  b1:150,a2:12,  b2:380, s1:.50, fair:.84},
-  'rocket-saturn-v': {name:'Saturn V',      a1:19,  b1:170,a2:13.5,b2:430, s1:.42, fair:.80},
+  'rocket-jupiter-c':{name:'Jupiter-C',     a1:15.5,b1:150,a2:12.5,b2:420, s1:.52, fair:.74},
+  'rocket-ares-1':   {name:'Ares I',        a1:16,  b1:150,a2:12,  b2:380, s1:.50, fair:.79},
+  'rocket-saturn-v': {name:'Saturn V',      a1:19,  b1:170,a2:13.5,b2:430, s1:.42, fair:.71},
   'rocket-shuttle':  {name:'Space Shuttle', a1:17,  b1:160,a2:13,  b2:420, s1:.45, fair:.82},
-  'rocket-sls':      {name:'SLS',           a1:19.5,b1:175,a2:13.5,b2:440, s1:.55, fair:.82}};
+  'rocket-sls':      {name:'SLS',           a1:19.5,b1:175,a2:13.5,b2:440, s1:.55, fair:.76}};
 function newAscent(){ return {met:0,alt:0,vr:0,vt:0,th:0,thr:1,pitch:0,theta:0,f1:1,f2:1,stage:'S1',engine:false,fair:true,auto:true,
   q:0,qmax:0,acc:0,maxq:false,thrQ:false,dmg:false,lifted:false,aoa:0,stress:0,dep:false,s1gone:false,fail:null,ev:[]}; }
 function orbitOf(S){ const r=RE+S.alt,v2=S.vr*S.vr+S.vt*S.vt,e=v2/2-MU/r,h=r*S.vt; if(e>=0) return {peri:S.alt,ap:Infinity};
@@ -271,8 +278,15 @@ const clamps=[]; for(let i=0;i<4;i++){ const a=i*1.5708+.785; clamps.push(box(.6
 box(34,.3,5.4,STONE,27,gy(27,0)-.1,0).rotation.z=-.045;                         // road from the hangar to the pad
 const HGX=52, hg=new THREE.Group(); hg.position.set(HGX,gy(HGX,0),0); hg.rotation.z=-HGX/R; scene.add(hg);   // cutaway hangar, like the workshop halls
 box(36,.5,26,STONE,0,-.25,0,hg); box(36,13,.5,CREAM,0,6.5,-13,hg); box(.5,13,26,CREAM,18,6.5,0,hg); box(36.6,.5,1,RUST,0,13.2,-13,hg); box(1,.5,26.6,RUST,18,13.2,0,hg);
-for(const x of [-12,-4,4,12]) box(.4,.4,26,DARK,x,12.6,0,hg);
-const crane=box(.7,.7,26,GOLD,0,11.8,0,hg), cable=box(.12,1,.12,DARK,0,9,0,hg);
+// gantry crane: two legs on floor rails, a bridge beam, a trolley, a cable, a hook block and a spreader bar
+const gantry=new THREE.Group(); hg.add(gantry); const GH=11.5;
+// jib crane: it runs on a rail along the back wall, its boom reaches out over the rocket (nothing between the camera and the work)
+box(.8,GH+.6,.8,GOLD,0,(GH+.6)/2,-11.6,gantry); box(.9,.9,12.4,GOLD,0,GH,-5.8,gantry); box(.5,.5,12.4,RUST,0,GH+.7,-5.8,gantry);
+const brace=box(.3,.3,5.4,GOLD,0,GH-1.8,-9.6,gantry); brace.rotation.x=-.62;
+box(36,.5,.5,DARK,0,GH+1.4,-12.3,hg); box(36,.3,.6,RUST,0,.15,-12.2,hg);            // wall rail and floor track
+const trolley=box(1.4,.8,1.4,DARK,0,GH-.6,0,gantry), cable=box(.08,1,.08,DARK,0,GH-1,0,gantry), hook=new THREE.Group(); gantry.add(hook);
+box(.9,.6,.9,RUST,0,.3,0,hook); const spreader=box(1,.18,.3,DARK,0,-.1,0,hook);
+gantry.position.x=-9; cable.visible=hook.visible=false;
 for(const x of [-9,0,9]){ const w=new THREE.Mesh(new THREE.PlaneGeometry(4,2.6),mat(['#A9D2EE','#CFE4F0','#8FC3E8','#6E9BB8'],[.2,1,0],.5)); w.position.set(x,7.5,-12.7); hg.add(w); }
 const tp=box(HT*.9,1,3.2,DARK,0,0,0); for(const dx of [-.35,-.12,.12,.35]) for(const z of [-1.6,1.6]){ const w=new THREE.Mesh(new THREE.CylinderGeometry(.8,.8,.5,14),DARK); w.rotation.x=1.5708; w.position.set(dx*HT,-.7,z); tp.add(w); }
 // trees: ~140 of them, merged into three meshes (trunks, leaves, pines) so the whole forest costs three draw calls
@@ -414,7 +428,7 @@ function startTransfer(){
   if(MIS.model&&MIS.model!=='landsat-8') loadModel(MIS.model,2.6,false).then(ms=>{ cm.clear(); cm.scale.setScalar(1); cm.position.y=0; for(const m of ms) cm.add(new THREE.Mesh(m.geo,m.mat)); }).catch(()=>{});   // the real NASA spacecraft for this mission
   tr.plume=fm(0xF2893A,.35,2.6,.95); tr.plume.position.y=-.8; tr.plume.visible=false; tr.craft.add(tr.plume); sscene.add(tr.craft);
   dayEl.style.opacity=0; duskEl.style.opacity=0; nightEl.style.opacity=1; nightEl.style.filter='brightness(.42) saturate(.75)'; thrEl.style.display='none'; $('alt-l').textContent='MISSION DAY'; $('vel-l').textContent='DELTA-V LEFT'; $('bcam').style.display='none';
-  if(telOn) toggleTel(); $('btel').style.display='none';
+  if(telOn) toggleTel(); $('btel').style.display='none'; $('adi-w').style.display='none';
   if(DVCAP<PLAN.tpi){ tr.st='short'; setPhase('Parking orbit'); card('Not enough delta-v',`<p>Leaving Earth for ${TGT.n} needs a burn of ${PLAN.tpi.toFixed(1)} km/s. This rocket and engine can give ${DVCAP.toFixed(1)} km/s.</p><p>Pick a bigger rocket or a stronger engine in the workshops.</p><div class="btns"><button class="t-btn primary" type="button" id="c-base">Back to base</button></div>`); return; }
   setPhase('Parking orbit',`Fire the transfer burn to leave Earth for ${TGT.n}. It needs ${PLAN.tpi.toFixed(1)} of your ${DVCAP.toFixed(1)} km/s.`); say('Parking orbit. Stand by for the transfer burn.'); setCue('tpi'); }
 const TRA={
@@ -454,18 +468,22 @@ function transferFrame(dt,now){ const T=PLAN.T, CR=MOON?6:9;
 $('back').onclick=()=>go('base',{mission:HZ.mission,pick:HZ.pick});
 
 /* ---------- hangar cinematic (HTML4's hangar and pad operations, as one skippable auto cutscene) ---------- */
-const CINE=[[4.2,'Payload processing','The spacecraft is checked out and fuelled in the clean hangar.'],[3.8,'Fairing encapsulation','The crane lowers the second fairing half over the spacecraft.'],
+const CINE=[[4.2,'Payload processing','The spacecraft is checked out and fuelled in the clean hangar.'],[4.6,'Fairing encapsulation','The gantry crane lowers the top fairing half over the spacecraft.'],
   [3.8,'Stage mating','The upper stage is mated to the first stage and inspected.'],[5.6,'Rollout','The transporter carries the rocket out to the pad.'],[4.4,'Erection','The rocket is raised upright against the service tower.'],[2.4,'All stations go','Propellant loaded. Launch control has the count.']];
 const HX=44; let cs=0, ct_=0;
 function cinePose(s,e){      // s = step, e = eased 0..1 inside the step
-  const open=s===0?1:s===1?1-e:0, off=s<2?2.6:s===2?2.6*(1-e):0; parts.fB.position.x=-3.4*open; upper.position.y=off;
+  const open=s===0?1:s===1?1-sstep(.08,.85,e):0, off=s<2?2.6:s===2?2.6*(1-e):0; parts.fB.position.x=-4.6*open; upper.position.y=off;
   let x=s<3?HX:s===3?HX*(1-e):0; const er=s<4?0:s===4?e:1, yy=1.9+gy(x,0);
   rocket.position.set(x,yy*(1-er)+.05*er,0); rocket.rotation.set(0,0,-Math.PI/2*(1-er));
   tp.visible=er<.25; tp.position.set(x+HT*.45,yy-1.1,0); tp.rotation.z=-x/R;
-  const cr=open>0.02; cable.visible=cr; if(cr){ parts.fB.getWorldPosition(t1); hg.worldToLocal(t1); crane.position.x=t1.x+ (H2+HT)*.0; cable.position.set(t1.x,(11.8+t1.y)/2,0); cable.scale.y=Math.max(.1,11.8-t1.y); }
+  const cr=s<=1||(s===2&&e<.5); cable.visible=hook.visible=cr;
+  if(cr){ const rad=HT*.06; rocket.updateMatrixWorld(true); parts.fB.localToWorld(t1.set(-rad,H2+(HT-H2)*.32,0)); hg.worldToLocal(t1);   // top of the fairing half
+    const top=s===2?t1.y+(GH-1.6-t1.y)*sstep(0,.5,e):t1.y;                                                                 // after release the hook rises again
+    gantry.position.x=t1.x; hook.position.set(0,top+.08,t1.z); spreader.scale.x=(HT-H2)*.7; cable.position.set(0,(GH-1+top+.6)/2,t1.z); cable.scale.y=Math.max(.1,GH-1-(top+.6)); }
+  else gantry.position.x+=(-9-gantry.position.x)*.04;
   for(const a of arms) a.scale.x=s>=5?1:.25;
   const px=x+H2+.6;      // where the payload sits while the rocket lies down
-  if(s===0){ dP.set(px+1.5-e*2,yy+4.6,14.5); dT.set(px-3,yy+.8,0); } else if(s===1){ dP.set(px-.5-e*1.5,yy+4,12.5); dT.set(px-2.5,yy+1,0); } else if(s===2){ dP.set(x+H1-2+e*3,yy+4.4,15); dT.set(x+H1+1,yy+.4,0); }
+  if(s===0){ dP.set(px+2.5-e*2,yy+6.2,16); dT.set(px-3,yy+2,0); } else if(s===1){ dP.set(px+3-e*2,yy+6.5,15.5); dT.set(px-2.5,yy+2.4,0); } else if(s===2){ dP.set(x+H1-2+e*3,yy+4.4,15); dT.set(x+H1+1,yy+.4,0); }
   else if(s===3){ dP.set(x+HT*.5+7,7.5,23); dT.set(x+HT*.45,2.5,0); } else if(s===4){ dP.set(13,6.5,25); dT.set(1.5,HT*.42,0); } else { dP.set(-19,4.5,29); dT.set(0,HT*.5,0); } }
 function startCine(){ mode='cine'; cs=0; ct_=0; $('skip').style.display='inline-block'; actEl.style.display='none'; setPhase(CINE[0][1],CINE[0][2]); cinePose(0,0); camP.copy(dP); camT.copy(dT); cam.position.copy(camP); say(CINE[0][1]); }
 function endCine(){ cinePose(5,1); $('skip').style.display='none'; actEl.style.display=''; startCount(); }
@@ -477,11 +495,24 @@ addEventListener('keydown',e=>{ if(e.repeat&&e.code!=='KeyS') return; K[e.code]=
   if(e.code==='Space'||e.code==='Enter'){ e.preventDefault(); press(); } else if(e.code==='Escape'&&mode==='cine') endCine();
   else if(e.code==='KeyT') toggleTel(); else if(e.code==='KeyC') nextCam(); else if(e.code==='KeyG'){ S.auto=!S.auto; toast(S.auto?'Autopilot':'Manual','',false); } else if(e.code==='KeyF'&&mode==='fly'&&S.fair){ if(act.fairing(S)){ onAction('fairing'); if(cue==='fairing') setCue(null); } } });
 addEventListener('keyup',e=>{ K[e.code]=0; });
-function toggleTel(){ telOn=!telOn; $('tel').classList.toggle('s',telOn); $('btel').classList.toggle('on',telOn); $('btel').setAttribute('aria-pressed',telOn); }
-function nextCam(){ camMode=(camMode+1)%4; autoCam=false; }
+function toggleTel(){ telOn=!telOn; $('tel').classList.toggle('s',telOn); $('btel').classList.toggle('on',telOn); $('btel').setAttribute('aria-pressed',telOn); showAdi(); }
+function showAdi(){ $('adi-w').style.display=(telOn||camMode===4)&&(mode==='fly'||mode==='orbit'||mode==='count')?'flex':'none'; }
+const CAMN=['Pad camera','Chase camera','Wide camera','Orbit camera','Onboard camera'];
+function nextCam(){ camMode=(camMode+1)%5; autoCam=false; toast(CAMN[camMode],'',false); showAdi(); }
 $('btel').onclick=toggleTel; $('bcam').onclick=nextCam;
 thrEl.onpointerdown=()=>{ thrHeld=true; thrEl.classList.add('down'); audio(); }; thrEl.onpointerup=thrEl.onpointerleave=()=>{ thrHeld=false; thrEl.classList.remove('down'); };
 canvas.addEventListener('pointerdown',()=>{ audio(); if((mode==='fly'||mode==='ss')&&cue) fireCue(true); });
+
+/* ---------- attitude ball (HTML4's cockpit ADI): nose elevation above the local horizon, flight path marker ---------- */
+const adiC=$('adi'), ax=adiC.getContext('2d'); const adiOn=()=>$('adi-w').style.display==='flex';
+function drawAdi(){ const W=adiC.width, c=W/2, r=c-4, k=r/50; ax.clearRect(0,0,W,W); ax.save(); ax.beginPath(); ax.arc(c,c,r,0,7); ax.clip();
+  const el=90-S.pitch, fpa=Math.hypot(S.vr,S.vt)>30?90-Math.atan2(S.vt,S.vr)/RAD:el, hy=c+el*k*1;
+  ax.fillStyle='#8FC3E8'; ax.fillRect(0,0,W,hy); ax.fillStyle='#B48B5E'; ax.fillRect(0,hy,W,W); ax.strokeStyle='#1A1206'; ax.lineWidth=2.5; ax.beginPath(); ax.moveTo(0,hy); ax.lineTo(W,hy); ax.stroke();
+  ax.lineWidth=1.5; ax.font="400 10px 'Silkscreen',monospace"; ax.fillStyle='#1A1206'; ax.textAlign='left';
+  for(let d=-80;d<=80;d+=10){ if(!d) continue; const y=hy-d*k; if(y<-10||y>W+10) continue; const w=d%30===0?r*.5:r*.28; ax.beginPath(); ax.moveTo(c-w/2,y); ax.lineTo(c+w/2,y); ax.stroke(); if(d%30===0) ax.fillText(String(Math.abs(d)),c+w/2+4,y+3); }
+  ax.restore(); const fy=c+(el-fpa)*k; ax.strokeStyle='#C2643A'; ax.lineWidth=2.5; ax.beginPath(); ax.arc(c,fy,6,0,7); ax.moveTo(c-14,fy); ax.lineTo(c-6,fy); ax.moveTo(c+6,fy); ax.lineTo(c+14,fy); ax.moveTo(c,fy-6); ax.lineTo(c,fy-12); ax.stroke();
+  ax.fillStyle='#F2A541'; ax.strokeStyle='#1A1206'; ax.lineWidth=2; ax.beginPath(); ax.moveTo(c-r*.55,c); ax.lineTo(c-r*.18,c); ax.lineTo(c,c+r*.12); ax.lineTo(c+r*.18,c); ax.lineTo(c+r*.55,c); ax.lineTo(c+r*.55,c+5); ax.lineTo(c+r*.2,c+5); ax.lineTo(c,c+r*.2); ax.lineTo(c-r*.2,c+5); ax.lineTo(c-r*.55,c+5); ax.closePath(); ax.fill(); ax.stroke();
+  ax.beginPath(); ax.arc(c,c,r,0,7); ax.lineWidth=3; ax.stroke(); }
 
 /* ---------- shooting stars on the 2D layer once the sky is dark ---------- */
 const fx=$('fx'), fxc=fx.getContext('2d'); let FW=0, FH=0; const MET=[]; let nextMet=0;
@@ -503,7 +534,7 @@ function frame(now){ if(!running) return; const dt=Math.min((now-last)/1000,.05)
   if(mode==='count'){ tc+=dt; elClock.textContent=fmtT(tc); const n=Math.ceil(-tc); if(n!==cdN&&n>=1&&n<=5){ cdN=n; beep(n<=2?1200:800); say(String(n)); }
     if(tc>-2&&!S.engine){ S.engine=true; setPhase('Ignition','Engines spooling up.'); }
     if(S.engine) S.th=Math.min(1,S.th+dt*.6);
-    if(tc>=0){ mode='fly'; tReal=0; S.met=0; for(const c of clamps) c.visible=false; for(const a of arms) a.scale.x=.25; setPhase('Liftoff'); toast('Liftoff','',"Liftoff. We have liftoff."); setCue(null); } }
+    if(tc>=0){ mode='fly'; tReal=0; S.met=0; for(const c of clamps) c.visible=false; for(const a of arms) a.scale.x=.25; setPhase('Liftoff'); toast('Liftoff','',"Liftoff. We have liftoff."); setCue(null); showAdi(); } }
   if(mode==='fly'){ tReal+=dt; const TS=7+9*sstep(5,8,tReal);
     const maxqWin=S.q>9e3&&!S.maxq&&S.alt<45e3; thrEl.style.display=maxqWin?'inline-block':'none';
     const down=(thrHeld||K.KeyS||K.ArrowDown)&&maxqWin; inp.down=!!down; inp.up=!down&&S.thr<1; inp.left=!!(K.ArrowLeft||K.KeyA); inp.right=!!(K.ArrowRight||K.KeyD);
@@ -545,16 +576,18 @@ function frame(now){ if(!running) return; const dt=Math.min((now-last)/1000,.05)
     if(mode==='count'||(camMode===0)){ dP.set(-19,4.5,29); dT.copy(mode==='count'||S.alt<60?t3.set(0,HT*.5,0):mid); }
     else if(camMode===1){ const up=sstep(20e3,120e3,S.alt); t3.set(Math.sin(S.theta),Math.cos(S.theta),0); dP.copy(mid).addScaledVector(dirv,-HT*1.5).addScaledVector(ZV,HT*(.8+up*.5)).addScaledVector(t3,HT*up*1.1); dT.copy(mid).addScaledVector(t3,-HT*up*.9); }
     else if(camMode===2){ dP.copy(mid).addScaledVector(dirv,-HT*4.6).addScaledVector(ZV,HT*4); dP.x-=Math.sin(S.theta)*15; dP.y-=Math.cos(S.theta)*15; dT.copy(mid); }
+    else if(camMode===4&&mode==='fly'){ t3.set(dirv.y,-dirv.x,0); dP.copy(P).addScaledVector(dirv,HT*.82).addScaledVector(t3,HT*.1).addScaledVector(ZV,HT*.07); dT.copy(P).addScaledVector(dirv,-HT*3); }
     else { const c=mode==='orbit'?pay.position:mid, t=now/4000; dP.set(c.x+Math.cos(t)*HT*.8,c.y+HT*.33,c.z+Math.sin(t)*HT*.8); dT.copy(c); }
     if(mode==='fly'||mode==='orbit'){ camP.add(t3.copy(rv).multiplyScalar(dt)); camT.add(t3); } }   // ride along, then ease
-  const kp=1-Math.exp(-dt*(mode==='cine'?2.2:camMode===0?6:3.2)); camP.lerp(dP,kp); camT.lerp(dT,1-Math.exp(-dt*6));
+  if(camMode===4&&mode==='fly'){ camP.copy(dP); camT.copy(dT); } else { const kp=1-Math.exp(-dt*(mode==='cine'?2.2:camMode===0?6:3.2)); camP.lerp(dP,kp); camT.lerp(dT,1-Math.exp(-dt*6)); }
+  if(adiOn()) drawAdi();
   shake=reduce?0:(mode==='count'&&S.engine?S.th*.1:(mode==='fly'&&S.alt<2500&&S.th>0?S.th*.09*(1-S.alt/2500):0));
   cam.position.set(camP.x+rnd(shake),camP.y+rnd(shake),camP.z+rnd(shake)); cam.up.set(0,1,0); cam.lookAt(camT);
   sun.position.set(P.x-300,P.y+260,320); sun.target.position.copy(P);
 
   /* readouts */
   if(mode==='fly'||mode==='orbit'||mode==='count'){ const v=Math.hypot(S.vr,S.vt); elAlt.textContent=(S.alt/1e3).toFixed(S.alt<1e4?1:0)+' km'; elVel.textContent=v.toFixed(0)+' m/s';
-    if(telOn){ const o=orbitOf(S); $('t-acc').textContent=(S.th>0?S.acc:0).toFixed(1)+' g'; $('t-q').textContent=(S.q/1e3).toFixed(1)+' kPa'; $('t-pit').textContent=S.pitch.toFixed(0)+' / '+S.aoa.toFixed(1); $('t-pe').textContent=S.lifted?(o.peri/1e3).toFixed(0)+' km':'-'; $('t-ap').textContent=S.lifted?(isFinite(o.ap)?(o.ap/1e3).toFixed(0)+' km':'escape'):'-';
+    if(telOn){ const o=orbitOf(S); $('t-acc').textContent=(S.th>0?S.acc:0).toFixed(1)+' g'; $('t-q').textContent=(S.q/1e3).toFixed(1)+' kPa'; $('t-pit').textContent=S.pitch.toFixed(0)+' / '+S.aoa.toFixed(1); $('t-pe').textContent=S.lifted&&o.peri>0?(o.peri/1e3).toFixed(0)+' km':'-'; $('t-ap').textContent=S.lifted?(isFinite(o.ap)?(o.ap/1e3).toFixed(0)+' km':'escape'):'-';
       $('t-thr').textContent=(S.thr*100).toFixed(0)+'%'; $('b-thr').style.width=S.thr*100+'%'; $('t-f1').textContent=(S.f1*100).toFixed(0)+'%'; $('b-f1').style.width=S.f1*100+'%'; $('t-f2').textContent=(S.f2*100).toFixed(0)+'%'; $('b-f2').style.width=S.f2*100+'%';
       const sl=clamp(S.stress/220,0,1); $('t-st').textContent=(sl*100).toFixed(0)+'%'; $('b-st').style.width=sl*100+'%'; $('b-st').style.background=sl>.6?'var(--bad)':'var(--warn)'; $('t-ap2').textContent=S.auto?'ON':'OFF'; } }
   if(ngain) ngain.gain.value=SET.sfx?th*.45*(.15+.85*atmo)*(mode==='fail'?0:1):0;

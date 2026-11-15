@@ -75,6 +75,12 @@ canvas#fx{pointer-events:none}
 .stats div{background:var(--tile);border:2.5px solid var(--ink);border-radius:12px;box-shadow:0 3px 0 var(--ink);padding:7px 8px;font:400 11px var(--f-num)}
 .stats b{display:block;font:400 17px var(--f-display)}
 #skip{display:none}
+.side{align-items:center}.side .t-btn{font-size:15px;padding:8px 14px 10px}.side .t-btn kbd{margin-left:8px}
+#btel.on{--c:var(--amber);--cd:var(--amber-d)}
+#adi-w{right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));display:none;flex-direction:column;align-items:center;gap:8px}
+#adi{width:168px;height:168px;border-radius:50%;box-shadow:0 5px 0 var(--ink)}
+#tel{top:calc(76px + env(safe-area-inset-top,0px));max-height:calc(100% - 380px);overflow:auto}
+@media (max-width:760px){#adi,#adi-w canvas{width:120px;height:120px}#adi-w{bottom:calc(150px + env(safe-area-inset-bottom,0px))}.side .t-btn{font-size:13px;padding:7px 10px 9px}}
 .lbl{display:none;transform:translate(-50%,-190%);pointer-events:none;font-size:10px;padding:3px 9px;z-index:2}
 #load{left:50%;top:50%;transform:translate(-50%,-50%)}
 .credit{left:max(12px,env(safe-area-inset-left,0px));top:calc(70px + env(safe-area-inset-top,0px));font:400 10px var(--f-num);color:var(--muted);max-width:240px;display:none}
@@ -98,7 +104,8 @@ canvas#fx{pointer-events:none}
   </div>
   <div class="ui read" id="read" style="display:none"><div class="tile"><span id="alt-l">ALTITUDE</span><b id="alt">0 km</b></div><div class="tile"><span id="vel-l">SPEED</span><b id="vel">0 m/s</b></div></div>
   <div class="ui actbar"><button class="t-btn" type="button" id="thr">Hold: throttle down<kbd>S</kbd></button><button class="t-btn primary" type="button" id="act" disabled>Stand by</button><button class="t-btn" type="button" id="skip">Skip<kbd>Esc</kbd></button></div>
-  <div class="ui side"><button class="t-round" type="button" id="bcam" aria-label="Change camera (C)"><svg><use href="#i-cam"/></svg></button><button class="t-round" type="button" id="btel" aria-label="Telemetry (T)" aria-pressed="false"><svg><use href="#i-tel"/></svg></button></div>
+  <div class="ui side"><button class="t-round" type="button" id="bcam" aria-label="Change camera (C)"><svg><use href="#i-cam"/></svg></button><button class="t-btn" type="button" id="btel" aria-pressed="false">Telemetry<kbd>T</kbd></button></div>
+  <div class="ui" id="adi-w"><canvas id="adi" width="168" height="168" aria-label="Attitude indicator"></canvas><span class="t-pill">Attitude</span></div>
   <div class="ui t-win" id="tel"><span class="t-ribbon">Telemetry</span>
     <div class="row"><span>ACCEL</span><b id="t-acc">0.0 g</b></div><div class="row"><span>DYN PRESSURE</span><b id="t-q">0 kPa</b></div>
     <div class="row"><span>PITCH / AOA</span><b id="t-pit">0 / 0</b></div><div class="row"><span>PERIGEE</span><b id="t-pe">-</b></div><div class="row"><span>APOGEE</span><b id="t-ap">-</b></div>

@@ -5,11 +5,11 @@ const RE=6371e3, MU=3.986e14, RAD=Math.PI/180;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 // a1/a2: initial thrust acceleration (m/s2), b1/b2: burn time at full throttle (s). h: display height factor.
 const VEHICLES={
-  'rocket-jupiter-c':{name:'Jupiter-C',     a1:15.5,b1:150,a2:12.5,b2:420, s1:.52, fair:.80},
-  'rocket-ares-1':   {name:'Ares I',        a1:16,  b1:150,a2:12,  b2:380, s1:.50, fair:.84},
-  'rocket-saturn-v': {name:'Saturn V',      a1:19,  b1:170,a2:13.5,b2:430, s1:.42, fair:.80},
+  'rocket-jupiter-c':{name:'Jupiter-C',     a1:15.5,b1:150,a2:12.5,b2:420, s1:.52, fair:.74},
+  'rocket-ares-1':   {name:'Ares I',        a1:16,  b1:150,a2:12,  b2:380, s1:.50, fair:.79},
+  'rocket-saturn-v': {name:'Saturn V',      a1:19,  b1:170,a2:13.5,b2:430, s1:.42, fair:.71},
   'rocket-shuttle':  {name:'Space Shuttle', a1:17,  b1:160,a2:13,  b2:420, s1:.45, fair:.82},
-  'rocket-sls':      {name:'SLS',           a1:19.5,b1:175,a2:13.5,b2:440, s1:.55, fair:.82}};
+  'rocket-sls':      {name:'SLS',           a1:19.5,b1:175,a2:13.5,b2:440, s1:.55, fair:.76}};
 function newAscent(){ return {met:0,alt:0,vr:0,vt:0,th:0,thr:1,pitch:0,theta:0,f1:1,f2:1,stage:'S1',engine:false,fair:true,auto:true,
   q:0,qmax:0,acc:0,maxq:false,thrQ:false,dmg:false,lifted:false,aoa:0,stress:0,dep:false,s1gone:false,fail:null,ev:[]}; }
 function orbitOf(S){ const r=RE+S.alt,v2=S.vr*S.vr+S.vt*S.vt,e=v2/2-MU/r,h=r*S.vt; if(e>=0) return {peri:S.alt,ap:Infinity};
