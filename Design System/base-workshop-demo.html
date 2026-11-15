@@ -91,6 +91,23 @@ svg.i{width:18px;height:18px;flex:none}
 .opt:hover{transform:translateY(-2px)}
 .opt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .opt.on{background:rgba(242,165,65,.55)}
+.win.wide{width:min(780px,calc(100% - 24px));max-height:calc(100% - 120px)}
+.dz{display:grid;grid-template-columns:190px 1fr;gap:12px;min-height:0}
+.dz-tabs{display:flex;flex-direction:column;gap:7px}
+.dz-tab{position:relative;text-align:left;border:2.5px solid var(--ink);border-radius:12px;background:#FFFDF8;box-shadow:0 3px 0 var(--ink);padding:6px 10px 7px;cursor:pointer;font:600 13px var(--f-ui);color:var(--ink)}
+.dz-tab small{display:block;font:500 11px var(--f-ui);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dz-tab.on{background:#F7D29C!important}
+.dz-tab i{position:absolute;top:6px;right:8px;font:400 10px var(--f-num);font-style:normal;background:var(--bad);color:#fff;border:2px solid var(--ink);border-radius:6px;padding:0 4px}
+.dz-tab i.ok{background:var(--ok)}
+.dz-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:9px;align-content:start}
+.dz-opts .opt{grid-template-columns:auto 1fr}
+.dz-opts .opt .nt{grid-column:2;font:500 11.5px var(--f-ui);color:var(--muted)}
+.dz-opts .fx span.good{background:rgba(76,195,138,.3)}
+.dz-tip{grid-column:1/-1;margin:0;font-size:12.5px;color:var(--muted)}
+.dz-goals{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.dz-goals span{font:600 12px var(--f-ui);border:2px solid var(--ink);border-radius:999px;padding:3px 10px;background:#F8D6D3}
+.dz-goals span.ok{background:rgba(76,195,138,.35)}
+@media (max-width:760px){.dz{grid-template-columns:minmax(0,1fr)}.dz-tabs{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;min-width:0;padding:2px 2px 8px;flex:none;min-height:62px}.dz-tab{flex:none;min-width:118px}.dz-opts{grid-template-columns:minmax(0,1fr)}.win.wide{top:calc(70px + env(safe-area-inset-top,0px));bottom:calc(98px + env(safe-area-inset-bottom,0px));max-height:none}.win.wide .w-head p{display:none}}
 .opt .dot{grid-row:span 2;width:22px;height:22px;border-radius:50%;border:2.5px solid var(--ink);background:#fff;display:grid;place-items:center}
 .opt.on .dot::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--ink)}
 .opt .nm{font:700 14.5px var(--f-ui)}
@@ -244,20 +261,21 @@ const pick = {rocket:'r1', orbit:'o1', bus:'b1', power:'p1', batt:'bt1', comms:'
 const INST_SLOTS=['inst','inst2','inst3'], CRAFT_CATS=['bus','power','batt','comms','store','inst','engine','tank'];
 const mountedInst=()=>INST_SLOTS.map(c=>pick[c]).filter(Boolean);
 function isMounted(s){ return s.cat==='inst'?mountedInst().includes(s.id):pick[s.cat]===s.id; }
-const LIMIT = {budget:180, time:12};
+const SUNK=hzSunK((window.HZ&&HZ.mission)||'earth'), DESTN=((window.HZ&&HZ_MISSIONS[HZ.mission])?(HZ.mission==='moon'?'the Moon':HZ_PL[HZ_MISSIONS[HZ.mission].planet].n):'Earth');
+const LIMIT = Object.assign({budget:180, time:12}, (window.HZ&&HZ_LIMITS[HZ.mission])||{});
 const optOf=(cat,id)=>PARTS[cat].opts.find(o=>o.id===id);
 const opt=(cat)=>optOf(cat,pick[cat]);
 function totals(){
   let mass=0,cost=0,time=0,pw=0,gen=0,data=0,down=0,store=0,cap=300,link=1;
-  for(const c in PARTS){const o=opt(c); if(!o) continue; mass+=o.mass||0; cost+=o.cost||0; time=Math.max(time,o.time||0); pw+=o.pw||0; gen+=o.gen||0; data+=o.data||0; down+=o.down||0; store+=o.store||0; if(o.cap) cap=o.cap; if(o.link) link=o.link;}
+  for(const c in PARTS){const o=opt(c); if(!o) continue; mass+=o.mass||0; cost+=o.cost||0; time=Math.max(time,o.time||0); pw+=o.pw||0; gen+=(o.gen||0)*(c==='power'&&o.proc!=='rtg'?SUNK:1); data+=o.data||0; down+=o.down||0; store+=o.store||0; if(o.cap) cap=o.cap; if(o.link) link=o.link;}
   down*=link;
   return {M:[
-    {k:'mass',icon:'mass',label:'Mass',val:`${mass} kg`,r:mass/cap,hint:`Too heavy for ${opt('rocket').name} (${cap} kg). Pick a bigger rocket or lighter parts.`},
-    {k:'budget',icon:'coin',label:'Budget',val:`$${cost}M`,r:cost/LIMIT.budget,hint:`Over the $${LIMIT.budget}M budget. Swap a part for a cheaper one.`},
-    {k:'power',icon:'bolt',label:'Power',val:`${pw}/${gen} W`,r:gen?pw/gen:2,hint:`Parts draw more power than the panels make. Fit bigger solar wings.`},
-    {k:'data',icon:'data',label:'Data',val:`${data}/${store} Gb`,r:store?data/store:0,hint:`The instrument fills storage too fast. Use a bigger bus.`},
-    {k:'comms',icon:'comms',label:'Comms',val:`${Math.round(down)} Gb/d`,r:data?data/Math.max(down,1):0,hint:`The radio can't send all the data home. Pick a faster radio.`},
-    {k:'time',icon:'time',label:'Time',val:`${time} mo`,r:time/LIMIT.time,hint:`Building takes longer than the ${LIMIT.time}-month deadline.`}]};
+    {k:'mass',icon:'mass',label:'Mass',val:`${mass}/${cap} kg`,r:mass/cap,hint:`Too heavy for ${opt('rocket').name} (${cap} kg). Pick a bigger rocket or lighter parts.`},
+    {k:'budget',icon:'coin',label:'Budget',val:`$${cost}/${LIMIT.budget}M`,r:cost/LIMIT.budget,hint:`Over the $${LIMIT.budget}M budget. Swap a part for a cheaper one.`},
+    {k:'power',icon:'bolt',label:'Power',val:`${pw}/${Math.round(gen)} W`,r:gen?pw/gen:2,hint:SUNK<.9?`At ${DESTN} sunlight is ${Math.round(SUNK*100)}% of Earth's, so the wings make less. Fit bigger wings or the RTG.`:`Parts draw more power than the panels make. Fit bigger solar wings.`},
+    {k:'data',icon:'data',label:'Data',val:`${data}/${store} Gb`,r:store?data/store:0,hint:`The instruments fill storage too fast. Fit bigger data storage.`},
+    {k:'comms',icon:'comms',label:'Comms',val:`${data}/${Math.round(down)} Gb/d`,r:data?data/Math.max(down,1):0,hint:`The dish can't send all the data home. Fit a bigger dish or the laser.`},
+    {k:'time',icon:'time',label:'Time',val:`${time}/${LIMIT.time} mo`,r:time/LIMIT.time,hint:`Building takes longer than the ${LIMIT.time}-month deadline.`}]};
 }
 function fx(o){const a=[]; if(o.ecl!=null&&o.proc==='orbit'){ a.push([Math.round(o.ecl*100)+'% in shadow',o.ecl>.3?'up':'good']); a.push([(o.link>1?'more':o.link<1?'fewer':'normal')+' ground passes',o.link>=1?'good':'up']); a.push(['science x'+o.sci,o.sci>=1?'good':'up']); if(o.oiK&&o.oiK!==1) a.push(['insertion fuel x'+o.oiK,o.oiK<1?'good':'up']); } if(o.wh) a.push([o.wh+' Wh stored','good']); if(o.id&&HZ_TANK_DV[o.id]) a.push(['x'+HZ_TANK_DV[o.id]+' engine delta-v','good']); if(o.id&&HZ_ENGINE_K[o.id]) a.push([(HZ_ENGINE_K[o.id]*2).toFixed(1)+' km/s with tank M','good']); if(o.mass) a.push(['+'+o.mass+' kg','up']); if(o.cost) a.push([(o.cost>0?'+$':'-$')+Math.abs(o.cost)+'M',o.cost>0?'up':'good']); if(o.pw) a.push(['+'+o.pw+' W use','up']); if(o.gen) a.push([o.gen+' W','good']); if(o.data) a.push([o.data+' Gb/d','']); if(o.down) a.push([o.down+' Gb/d link','good']); if(o.cap) a.push(['lifts '+o.cap+' kg','good']); if(o.store) a.push([o.store+' Gb store','good']); if(o.time) a.push([o.time+' mo','']); if(o.note) a.push([o.note,'']); return a.map(x=>`<span class="${x[1]}">${x[0]}</span>`).join('')}
 
@@ -483,7 +501,7 @@ function buildCraftRoom(){
   cyl(4.4,4.7,.5,DARK,0,.25,-1,48); cyl(4.1,4.1,.05,GLOWA,0,.52,-1,48); cyl(3.9,3.9,.06,STONE,0,.56,-1,48); cyl(.5,.7,2.9,DARK,0,1.95,-1,16);
   label('BUILD STAND',0,11.2,-1,6); A.block.push([-4.5,-5.5,4.5,3.2]);
   buildBay=new THREE.Group(); buildBay.position.set(0,3.3,-1); root.add(buildBay); exhibits.push({obj:buildBay,stand:true});
-  A.spots.push({id:'stand',pos:new THREE.Vector3(0,0,4.6),ring:ring(0,4.6,1.2,1.45),label:'Build stand',act:()=>standAct()});
+  A.spots.push({id:'stand',pos:new THREE.Vector3(0,0,4.6),ring:ring(0,4.6,1.2,1.45),label:'Design spacecraft',act:()=>standAct()});
   // mission goals board on the back wall
   goalBoard=new THREE.Mesh(new THREE.PlaneGeometry(17,6.8),new THREE.MeshBasicMaterial({map:goalTex,transparent:true})); goalBoard.position.set(0,5.2,-19.7); root.add(goalBoard); drawGoals();
   // the mission's NASA spacecraft on display
@@ -507,12 +525,17 @@ function drawGoals(){ const g=goalCv.getContext('2d'), W=1300, H=520; g.clearRec
   goalTex.needsUpdate=true; }
 /* ---------- carry and mount ---------- */
 let carry=null, carryObj=null, justMounted=null;
+function fitPart(c,id){ let slot=c;
+  if(c==='inst'){ const at=INST_SLOTS.find(k=>pick[k]===id); if(at){ pick[at]=null; const left=mountedInst(); INST_SLOTS.forEach((k,i)=>pick[k]=left[i]||null); renderHUD(); refreshBuildBay(); drawGoals(); return; }
+    slot=INST_SLOTS.find(k=>!pick[k]); if(!slot){ toastMsg('All 3 instrument slots are full: remove one first'); return; } }
+  pick[slot]=id; justMounted=slot; if(carry&&carry.id===id){ carry=null; if(carryObj){ hero.remove(carryObj); carryObj=null; } }
+  renderHUD(); refreshBuildBay(); drawGoals(); if(c==='inst'&&step===1) setStep(2); }
 function startCarry(s){ carry=s; if(carryObj) hero.remove(carryObj); carryObj=partObject(s.cat,s.o,.9); carryObj.position.set(0,2.35,.15); hero.add(carryObj);
   toastMsg('Carrying '+s.o.name); const st=A().spots.find(x=>x.id==='stand'); if(st) st.label='Mount '+s.o.name; showInfo(s,true); }
 function standAct(){ if(!carry){ openWin('stand'); return; }
   const s=carry; let slot=s.cat;
   if(s.cat==='inst'){ if(mountedInst().includes(s.o.id)){ toastMsg('Already mounted'); return; } slot=INST_SLOTS.find(c=>!pick[c]); if(!slot){ toastMsg('All 3 instrument slots are full'); openWin('stand'); return; } }
-  pick[slot]=s.o.id; justMounted=slot; carry=null; if(carryObj){ hero.remove(carryObj); carryObj=null; } A().spots.find(x=>x.id==='stand').label='Build stand';
+  pick[slot]=s.o.id; justMounted=slot; carry=null; if(carryObj){ hero.remove(carryObj); carryObj=null; } A().spots.find(x=>x.id==='stand').label='Design spacecraft';
   renderHUD(); refreshBuildBay(); drawGoals(); toastMsg(s.o.name+' mounted'); if(s.cat==='inst'&&step===1) setStep(2); }
 function refreshBuildBay(){ if(!buildBay) return; buildBay.clear(); const s=new THREE.Group(); buildBay.add(s); s.scale.setScalar(2.6);
   const put=(cat,o,size,x,y,z,ry=0,rx=0)=>{ if(!o) return; const g=partObject(cat,o,size); g.position.set(x,y,z); g.rotation.set(rx,ry,0); s.add(g);
@@ -602,15 +625,23 @@ function renderWin(){ const z=openZone; if(!z) return; let body='',foot='';
   if(z==='pad'){ const {M}=totals(); const bad=M.filter(m=>m.r>1); const missing=Object.keys(PARTS).filter(c=>!pick[c]&&!PARTS[c].optional);
     body=`<ul class="check">${M.map(m=>`<li class="${m.r>1?'bad':''}"><i></i>${m.label}<small>${m.val}</small></li>`).join('')}</ul>`+(missing.length?`<div class="hint">Missing: ${missing.map(c=>PARTS[c].label).join(', ')}. Visit the spacecraft workshop.</div>`:bad.length?`<div class="hint">${bad[0].hint}</div>`:'');
     foot=`<button class="t-btn primary" type="button" id="launch" ${bad.length||missing.length||launched?'disabled':''}>${launched?'Launched':'Launch on '+opt('rocket').name}</button>`; }
-  else if(z==='stand'){ const rows=CRAFT_CATS.concat(['inst2','inst3']).filter(c=>c!=='inst'||true).map(c=>{ const o=c.startsWith('inst')?HZ_INST.find(x=>x.id===pick[c]):opt(c);
-        return `<li class="${o?'':'bad'}"><i></i>${PARTS[c].label}<small>${o?o.name:'empty'}</small>${o&&c.startsWith('inst')?`<button class="t-btn ghost" type="button" data-rm="${c}" style="margin-left:8px;padding:2px 10px 4px;font-size:12px">Remove</button>`:''}</li>`; }).join('');
-      const gl=hzGoalsMet(MKEY_B,mountedInst());
-      body=`<ul class="check">${rows}</ul><div class="hint" style="background:${gl.every(g=>g.ok)?'rgba(76,195,138,.2)':''}">Goals met: ${gl.filter(g=>g.ok).length} of 3. ${gl.filter(g=>!g.ok).map(g=>g.t+' needs '+g.need.map(n=>HZ_INST.find(i=>i.id===n).name).join(' or ')).join('. ')}</div>`;
-      foot=`<button class="t-btn ghost" type="button" data-close>Done</button>`; }
+  else if(z==='stand'){   // the design panel: every subsystem and its options side by side
+      const TABS=[['bus','Structure'],['power','Power'],['batt','Battery'],['comms','Comms'],['store','Storage'],['engine','Engine'],['tank','Fuel tank'],['inst','Instruments']];
+      const gl=hzGoalsMet(MKEY_B,mountedInst()), names=Object.fromEntries(HZ_INST.map(i=>[i.id,i.name]));
+      const cur=c=>c==='inst'?(mountedInst().length?mountedInst().map(id=>names[id]).join(', '):'none yet'):(opt(c)?opt(c).name:'none');
+      const tabs=TABS.map(([c,n])=>`<button type="button" class="dz-tab ${designTab===c?'on':''}" data-tab="${c}"><b>${n}</b><small>${cur(c)}</small>${c==='inst'?`<i class="${gl.every(g=>g.ok)?'ok':''}">${gl.filter(g=>g.ok).length}/3</i>`:''}</button>`).join('');
+      const serves=id=>gl.filter(g=>g.need.includes(id)).map(g=>g.t);
+      const cards=(designTab==='inst'?HZ_INST:PARTS[designTab].opts).map(o=>{ const on=designTab==='inst'?mountedInst().includes(o.id):pick[designTab]===o.id, sv=designTab==='inst'?serves(o.id):[];
+        return `<button type="button" class="opt ${on?'on':''}" data-fit="${designTab}:${o.id}"><span class="dot"></span><span class="nm">${o.name}${designTab==='inst'?(on?' · fitted':''):''}</span><span class="fx">${fx(o)}${sv.length?`<span class="good">Goal: ${sv.join(', ')}</span>`:designTab==='inst'?'<span>No goal on this mission</span>':''}</span>${designTab==='power'&&o.proc!=='rtg'&&SUNK!==1?`<small class="nt">${Math.round(o.gen*SUNK)} W at ${DESTN}</small>`:''}</button>`; }).join('');
+      body=`<div class="dz-goals">${gl.map(g=>`<span class="${g.ok?'ok':''}">${g.ok?'✓':'○'} ${g.t}</span>`).join('')}</div><div class="dz"><div class="dz-tabs">${tabs}</div><div class="dz-opts">${designTab==='inst'?`<p class="dz-tip">Tap to add or remove. Up to 3 instruments (${mountedInst().length}/3).</p>`:''}${cards}</div></div>`;
+      foot=`<button class="t-btn primary" type="button" data-close>Done</button>`; }
   else { body=`<div class="hint" style="background:rgba(76,195,138,.2)">Your spacecraft is on its way. The full mission control console comes next.</div>`; foot=`<button class="t-btn ghost" type="button" data-close>Close</button>`; }
-  winEl.innerHTML=`<div class="w-head"><span class="t-ribbon">${z==='pad'?'Launch pad':z==='stand'?'Build stand':'Mission control'}</span><h3>${z==='pad'?'Pre-launch check':z==='stand'?'Your spacecraft':'Mission control'}</h3><p>${z==='pad'?'All bars must be green to launch.':z==='stand'?'Carry parts here from the stations. Up to 3 instruments.':''}</p><button class="t-round x" type="button" data-close aria-label="Close">${ic('x')}</button></div><div class="w-body">${body}</div><div class="w-foot">${foot}</div>`;
-  winEl.classList.add('open'); const L=document.getElementById('launch'); if(L) L.onclick=doLaunch; }
-winEl.addEventListener('click',e=>{ const rm=e.target.closest('[data-rm]'); if(rm){ const c=rm.dataset.rm; pick[c]=null; if(c==='inst'){ pick.inst=pick.inst2; pick.inst2=pick.inst3; pick.inst3=null; } else if(c==='inst2'){ pick.inst2=pick.inst3; pick.inst3=null; } renderHUD(); refreshBuildBay(); drawGoals(); renderWin(); return; } if(e.target.closest('[data-close]')) closeWin(); });
+  winEl.innerHTML=`<div class="w-head"><span class="t-ribbon">${z==='pad'?'Launch pad':z==='stand'?'Build stand':'Mission control'}</span><h3>${z==='pad'?'Pre-launch check':z==='stand'?'Design your spacecraft':'Mission control'}</h3><p>${z==='pad'?'All bars must be green to launch.':z==='stand'?'Pick one part for each subsystem. Every choice moves the gauges at the top.':''}</p><button class="t-round x" type="button" data-close aria-label="Close">${ic('x')}</button></div><div class="w-body">${body}</div><div class="w-foot">${foot}</div>`;
+  winEl.classList.add('open'); winEl.classList.toggle('wide',z==='stand'); const L=document.getElementById('launch'); if(L) L.onclick=doLaunch; }
+let designTab='inst';
+winEl.addEventListener('click',e=>{ const tb=e.target.closest('[data-tab]'); if(tb){ designTab=tb.dataset.tab; renderWin(); return; }
+  const ft=e.target.closest('[data-fit]'); if(ft){ const [c,id]=ft.dataset.fit.split(':'); fitPart(c,id); renderWin(); return; }
+  const rm=e.target.closest('[data-rm]'); if(rm){ const c=rm.dataset.rm; pick[c]=null; if(c==='inst'){ pick.inst=pick.inst2; pick.inst2=pick.inst3; pick.inst3=null; } else if(c==='inst2'){ pick.inst2=pick.inst3; pick.inst3=null; } renderHUD(); refreshBuildBay(); drawGoals(); renderWin(); return; } if(e.target.closest('[data-close]')) closeWin(); });
 function toastMsg(t){const el=document.getElementById('toast');el.textContent=t;el.style.display='none';void el.offsetWidth;el.style.display='block';clearTimeout(toastMsg.t);toastMsg.t=setTimeout(()=>el.style.display='none',1600);}
 let launchT=-1; function doLaunch(){ launched=true; closeWin(); launchT=0; toastMsg('Liftoff!'); setStep(3); renderDock(); }
 

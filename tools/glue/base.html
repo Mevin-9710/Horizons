@@ -6,9 +6,10 @@
   document.querySelector('.hud .t-round').addEventListener('click',()=>hzGo('select'));
   dockEl.addEventListener('click',e=>{ const t=e.target.closest('.tile'); if(t&&t.dataset.z==='') hzGo('select'); },true);
   // Delta-v: can this rocket and engine reach the destination? (HTML4 mission design maths)
+  const totalMass=()=>{ let m=0; for(const c in PARTS){ if(c==='rocket'||c==='orbit') continue; const o=opt(c); if(o) m+=o.mass||0; } return m; }; window.totalMass=totalMass;
   // Delta-v appears only in the launch pad's pre-launch check (the HUD keeps its original six gauges).
   const PLAN=hzPlan(M); if(PLAN.total>0){ const _tot=totals, _rw=renderWin; let inPad=false;
-    totals=function(){ const r=_tot(); if(!inPad) return r; const cap=hzDvCap(pick), ok=(opt('orbit')&&opt('orbit').oiK!=null)?opt('orbit').oiK:1; PLAN.total=PLAN.tpi+PLAN.oi*ok;
+    totals=function(){ const r=_tot(); if(!inPad) return r; const cap=hzDvCap(pick,totalMass()), ok=(opt('orbit')&&opt('orbit').oiK!=null)?opt('orbit').oiK:1; PLAN.total=PLAN.tpi+PLAN.oi*ok;
       r.M.push({k:'dv',icon:'rocket',label:'Delta-v',val:`${cap.toFixed(1)}/${PLAN.total.toFixed(1)} km/s`,r:PLAN.total/cap,hint:`Not enough delta-v to reach ${names[M]}. It needs ${PLAN.total.toFixed(1)} km/s. Pick a bigger rocket or a stronger engine.`}); return r; };
     renderWin=function(){ inPad=openZone==='pad'; try{ _rw(); } finally{ inPad=false; } }; }
   // Launch: dive the camera into the pad, then hand over to the launch screen (hangar cinematic, count, ascent).
@@ -17,7 +18,7 @@
       gen+=o.gen||0; draw+=o.pw||0; down+=o.down||0; store+=o.store||0; wh+=o.wh||0; mass+=o.mass||0; }
     const insts=mountedInst(), names=insts.map(id=>HZ_INST.find(i=>i.id===id).name);
     return {rocket:opt('rocket').name,inst:names.length?names.join(', '):'no instrument',orbit:opt('orbit').name,
-      craft:{gen,draw,down:down*link,store,wh,mass,insts,rtg:pick.power==='p4',orbit:(({ecl,link,sci,oiK,name})=>({ecl,link,sci,oiK,name}))(opt('orbit')),power:opt('power').name,batt:opt('batt').name,comms:opt('comms').name,storeName:opt('store').name}}; };
+      craft:{cost:totals().M[1].val.match(/\$(\d+)/)[1]*1,budget:LIMIT.budget,gen,draw,down:down*link,store,wh,mass,insts,rtg:pick.power==='p4',orbit:(({ecl,link,sci,oiK,name})=>({ecl,link,sci,oiK,name}))(opt('orbit')),power:opt('power').name,batt:opt('batt').name,comms:opt('comms').name,storeName:opt('store').name}}; };
   doLaunch=function(){ closeWin(); transition(new THREE.Vector3(0,0,-16),()=>hzGo('launch',{mission:M,pick:Object.assign({},pick),design:design(),skipCine:false})); };
   const _open=openWin; openWin=function(z){ if(z==='control'&&launched){ return hzGo('control',{mission:M,pick:Object.assign({},pick),design:{rocket:opt('rocket').name,inst:opt('inst')?opt('inst').name:'camera',orbit:opt('orbit').name}}); } return _open(z); };
 })();
@@ -74,4 +75,44 @@
     {say:'Pick an orbit. Read each card: shadow, ground passes and science.',why:'More shadow needs a bigger battery; more passes send more data home.',target:()=>W(-6,2.5,3.5),until:()=>orbitPicked},
     {say:'Exit and walk to the <b>Launch pad</b>.',target:()=>where==='rocket'?W(14,1.5,8.6):W(0,2.5,-9.4),until:()=>openZone==='pad'},
     {say:'The pre-launch check: if every bar is green, press <b>Launch</b>.',why:'Red rows tell you what to fix.',target:()=>document.getElementById('launch')}]); })();
+</script>
+<script>
+/* Mission checklist: what to do, and what is available, always on screen (outside the tutorial). Ticks live; tap an item to go there. */
+(function plan(){ if(typeof AREAS==='undefined'||!AREAS.base||typeof totals!=='function'){ setTimeout(plan,250); return; }
+  if(window.HZ&&HZ.tutorial) return; calloutEl.style.display='none';
+  const M=(window.HZ&&HZ_MISSIONS[HZ.mission])?HZ.mission:'earth';
+  const st=document.createElement('style'); st.textContent=`.plan{top:calc(78px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));width:min(300px,calc(100% - 24px));padding:24px 12px 10px;overflow:visible;animation:tpop .45s cubic-bezier(.34,1.56,.64,1) both}
+  .plan .t-ribbon{position:absolute;top:-17px;left:14px;font-size:14px;padding:4px 12px 6px}
+  .plan .pl-tg{position:absolute;top:-14px;right:10px;width:30px;height:30px;font:700 15px var(--f-ui)}
+  .plan .pl-lim{font:400 10px var(--f-num);color:var(--muted);line-height:1.6;margin:0 2px 6px}
+  .plan ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+  .plan li{display:flex;gap:8px;align-items:flex-start;font:600 12.5px/1.3 var(--f-ui);padding:5px 7px;border:2px solid var(--ink);border-radius:10px;background:#F6F1E6;cursor:pointer}
+  .plan li i{flex:none;width:17px;height:17px;border-radius:50%;border:2px solid var(--ink);background:#fff;font:700 10px/13px var(--f-ui);text-align:center;font-style:normal;margin-top:1px}
+  .plan li.ok{background:rgba(76,195,138,.22)} .plan li.ok i{background:var(--ok);color:#fff}
+  .plan li.bad{background:#F8D6D3} .plan li small{display:block;font:500 11px var(--f-ui);color:var(--muted)}
+  .plan.min ol,.plan.min .pl-lim{display:none} .plan.min{padding-bottom:4px;padding-top:16px}
+  @media (max-width:760px){.plan{top:calc(156px + env(safe-area-inset-top,0px));bottom:auto;width:min(270px,64vw);max-height:46vh;overflow:auto}.plan li small{display:none}.plan li{font-size:12px;padding:4px 6px}}
+  .plan.hidden{display:none}`; document.head.appendChild(st);
+  const el=document.createElement('div'); el.className='ui t-win plan'+(innerWidth<760?' min':''); document.getElementById('app').appendChild(el);
+  const P=hzPlan(M), names=Object.fromEntries(HZ_INST.map(i=>[i.id,i.name]));
+  function render(){ const T=totals().M, by=Object.fromEntries(T.map(m=>[m.k,m])), gl=hzGoalsMet(M,mountedInst()), g=gl.filter(x=>x.ok).length;
+    const mass=totalMass(), cap=hzDvCap(pick,mass), need=P.total?P.tpi+P.oi*((opt('orbit')&&opt('orbit').oiK!=null)?opt('orbit').oiK:1):0;
+    const items=[
+      [g===3,g?false:null,`Instruments for the goals (${g}/3)`,g<3?gl.filter(x=>!x.ok).map(x=>x.t+': '+x.need.map(n=>names[n]).join(' or ')).join('. '):'All goals covered.','craft'],
+      [by.power.r<=1,by.power.r>1,`Power at ${DESTN}: use ${by.power.val}`,by.power.r>1?by.power.hint:SUNK<.9?`Sunlight there is ${Math.round(SUNK*100)}% of Earth's; you still have enough.`:'Wings make enough.','craft'],
+      [by.data.r<=1&&by.comms.r<=1,by.data.r>1||by.comms.r>1,'Data: storage and dish keep up',by.data.r>1?'Fit bigger storage.':by.comms.r>1?'Fit a bigger dish or the laser.':`${by.data.val} stored, ${by.comms.val} sent.`,'craft'],
+      [by.mass.r<=1,by.mass.r>1,`Rocket lifts it: ${by.mass.val}`,by.mass.r>1?'Too heavy: a bigger rocket or lighter parts.':opt('rocket').name+' can lift it.','rocket'],
+      ...(need?[[cap>=need,cap<need,`Delta-v: ${cap.toFixed(1)} of ${need.toFixed(1)} km/s`,cap<need?'Lighter spacecraft, a bigger rocket, a stronger engine or a bigger tank.':'Enough push to get there.','rocket']]:[]),
+      [by.budget.r<=1&&by.time.r<=1,by.budget.r>1||by.time.r>1,`Budget ${by.budget.val}, time ${by.time.val}`,by.budget.r>1?'Over budget: swap a part for a cheaper one.':by.time.r>1?'Too slow to build: simpler parts.':'Within the limits.','craft'],
+      [false,null,'Launch from the pad','When everything above is green.','pad']];
+    el.innerHTML=`<span class="t-ribbon">Mission plan</span><button class="t-round pl-tg" type="button" aria-label="Show or hide the plan">${el.classList.contains('min')?'+':'−'}</button>
+      <div class="pl-lim">Budget $${LIMIT.budget}M · ${LIMIT.time} months${need?` · needs ${need.toFixed(1)} km/s`:''}</div>
+      <ol>${items.map((it,i)=>`<li class="${it[0]?'ok':it[1]?'bad':''}" data-go="${it[4]}"><i>${it[0]?'✓':i+1}</i><span>${it[2]}<small>${it[3]}</small></span></li>`).join('')}</ol>`; }
+  el.addEventListener('click',e=>{ if(e.target.closest('.pl-tg')){ el.classList.toggle('min'); render(); return; } const li=e.target.closest('[data-go]'); if(!li) return; const z=li.dataset.go;
+    if(z==='craft'){ if(where==='craft') openWin('stand'); else if(where==='base') enterRoom('craft'); else exitRoom(()=>enterRoom('craft')); }
+    else if(z==='rocket'){ if(where==='base') enterRoom('rocket'); else if(where!=='rocket') exitRoom(()=>enterRoom('rocket')); }
+    else { if(where==='base') openWin('pad'); else exitRoom(()=>openWin('pad')); } });
+  const _hud=renderHUD; renderHUD=function(){ _hud(); render(); }; render(); window.renderPlan=render;
+  const joy=document.getElementById('joy'); setInterval(()=>{ if(joy) joy.style.visibility=winEl.classList.contains('open')?'hidden':''; const rn=document.getElementById('roomname'); if(rn&&innerWidth<760) rn.style.visibility=winEl.classList.contains('open')?'hidden':''; },250);
+  setInterval(()=>el.classList.toggle('hidden',winEl.classList.contains('open')&&(innerWidth<760||(winEl.classList.contains('wide')&&innerWidth<1150))),250); })();
 </script>

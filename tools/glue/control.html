@@ -42,8 +42,9 @@ if(CR){
   var pick_engine=(HZ.pick&&HZ.pick.engine)||'e1';
   report=function(){ const ORB=CR.orbit||{sci:1,name:'orbit'}, eff=M.prod?M.home/M.prod:0, gFrac=gMet/3*Math.min(1.15,ORB.sci||1);
     const perf=Math.round(Math.max(0,Math.min(40,40*gFrac*Math.min(1,eff*1.2)+(gMet?Math.max(-4,Math.min(4,M.bonus*.15)):0))));
-    const pMargin=M.lowN?0:M.deficit>2?5:10, effS=Math.round(Math.max(0,Math.min(20,S.fuel/100*10+pMargin)));
-    const dec=Math.max(0,Math.min(20,Math.round(S.dec))), res=Math.max(0,Math.min(20,Math.round(Math.min(20,S.res)-M.lowN*6-M.fullN*3)));
+    const TR=(HZ.flight&&HZ.flight.transfer)||null, bud=CR.budget?Math.max(0,Math.min(1,(CR.budget-CR.cost)/(CR.budget*.35))):.5, dvm=TR?Math.max(0,Math.min(1,TR.dvLeft/1.5)):Math.max(0,Math.min(1,S.fuel/60));
+    const pMargin=M.lowN?0:M.deficit>2?3:6, effS=Math.round(Math.max(0,Math.min(20,8*bud+6*dvm+pMargin)));
+    const dec=Math.max(0,Math.min(20,Math.round(S.dec+4))), res=Math.max(0,Math.min(20,Math.round(Math.min(20,S.res+4)-M.lowN*5-M.fullN*2)));
     const total=perf+effS+dec+res, st=total>=80?3:total>=60?2:1, pct=Math.round(eff*100);
     const why=[]; if(gMet<3) why.push(goals.filter(g=>!g.ok).map(g=>`"${g.t}" needed ${g.need.map(n=>HZ_INST.find(i=>i.id===n).name).join(' or ')}`).join('; ')+'.');
     if(M.fullN) why.push(`Storage filled up and ${Math.round(M.lost)} Gb of data was lost. More storage or a faster dish would save it.`);
@@ -51,7 +52,7 @@ if(CR){
     if(M.lowN) why.push(`The battery ran flat ${M.lowN} time${M.lowN>1?'s':''} and the instruments sat in safe mode. ${CR.rtg?'':AU>3?`At ${PNAME} sunlight is ${Math.round(sunK*100)}% of Earth's: an RTG or bigger wings would help.`:'A bigger battery or bigger wings would help.'}`);
     if(!CR.insts.length) why.push('No instruments were mounted, so there was no science.');
     const rows=[['Performance',perf,40,`Goals your instruments could meet: ${gMet} of 3. Data that made it home: ${pct}%. Orbit: ${ORB.name} (science x${ORB.sci||1}). ${why[0]||'Every goal was covered and the data got home. Great design.'}`],
-      ['Efficiency',effS,20,`${M.lowN?'Power ran out during the mission.':M.deficit>2?'The parts used more power than the wings made in sunlight.':'Power stayed positive the whole mission.'} Fuel left: ${Math.round(S.fuel)}%.`],
+      ['Efficiency',effS,20,`${CR.budget?`Spent $${CR.cost}M of $${CR.budget}M. `:''}${TR?`Delta-v left on arrival: ${TR.dvLeft} km/s. `:''}${M.lowN?'Power ran out during the mission.':M.deficit>2?'The parts used more power than the wings made in sunlight.':'Power stayed positive the whole mission.'}`],
       ['Decisions',dec,20,'How well your choices during events paid off.'],
       ['Resilience',res,20,why.slice(1).join(' ')||'The spacecraft handled the surprises.']];
     const goalList=goals.map(g=>`<div class="r"><b>${g.ok?'Met':'Missed'}</b><em>${g.ok?'✓':'✗'}</em><p>${g.t}</p></div>`).join('');

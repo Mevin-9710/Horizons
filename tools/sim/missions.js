@@ -79,3 +79,14 @@ const HZ_ORBITS={
     {id:'o1',name:'Close pass',      ecl:0,  link:1,  sci:1.25,oiK:0,   note:'Skims close: sharper data, a riskier aim'},
     {id:'o2',name:'Safe distance',   ecl:0,  link:1,  sci:.9,  oiK:0,   note:'Passes wider: safe, but less detail'}]};
 function hzOrbitsFor(key){ const M=HZ_MISSIONS[key]||HZ_MISSIONS.earth; return M.kind==='orbit'?HZ_ORBITS.orbit:M.kind==='flyby'?HZ_ORBITS.flyby:HZ_ORBITS.around; }
+
+/* ===== Balance (v2): the rocket's push depends on how heavy your spacecraft is, and every mission has its own limits =====
+   A light spacecraft can ride a small rocket a long way; a heavy one needs a big rocket. */
+const HZ_ROCKET={r1:{cap:300,dv:6.4},r2:{cap:800,dv:7.2},r3:{cap:2000,dv:10.5},r4:{cap:2600,dv:8.4},r5:{cap:4000,dv:12.5}};
+function hzRocketDv(rk,mass){ const R=HZ_ROCKET[rk]||HZ_ROCKET.r1; return Math.max(0,R.dv*(1-.55*Math.min(1,(mass||0)/R.cap))); }
+hzDvCap=function(pick,mass){ return hzRocketDv(pick&&pick.rocket,mass)+(HZ_ENGINE_K[pick&&pick.engine]||.35)*(HZ_TANK_DV[pick&&pick.tank]||1); };
+const HZ_LIMITS={earth:{budget:180,time:12},moon:{budget:320,time:18},mars:{budget:450,time:24},mercury:{budget:480,time:30},venus:{budget:360,time:24},
+  jupiter:{budget:560,time:36},saturn:{budget:620,time:40},uranus:{budget:520,time:36},neptune:{budget:540,time:36},pluto:{budget:500,time:36}};
+
+// sunlight at the destination, as a share of Earth's (solar wings make this much less; an RTG does not care)
+function hzSunK(key){ const M=HZ_MISSIONS[key]; if(!M||M.planet==='earth'||M.planet==='moon') return 1; const a=HZ_PL[M.planet]?HZ_PL[M.planet].a:1; return Math.min(6.7,1/(a*a)); }
