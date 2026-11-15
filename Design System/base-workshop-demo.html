@@ -205,9 +205,7 @@ const PARTS = {
     {id:'r3',name:'Saturn V',      src:'NASA', model:'rocket-saturn-v',  h:12, cost:90,  time:3, cap:2000},
     {id:'r4',name:'Space Shuttle', src:'NASA', model:'rocket-shuttle',   h:9,  cost:110, time:4, cap:2600},
     {id:'r5',name:'SLS',           src:'NASA', model:'rocket-sls',       h:12, cost:140, time:4, cap:4000}]},
-  orbit:{label:'Orbit', where:'rocket', opts:[
-    {id:'o1',name:'Sun-sync 550 km', proc:'orbit', link:1, note:'Same light every pass'},
-    {id:'o2',name:'Low 400 km', proc:'orbit', cost:-3, link:.8, note:'Cheaper, fewer ground passes'}]},
+  orbit:{label:'Orbit', where:'rocket', opts:hzOrbitsFor((window.HZ&&HZ.mission)||'earth').map(o=>Object.assign({proc:'orbit'},o))},
   bus:{label:'Structure', where:'craft', opts:[
     {id:'b1',name:'Microsat frame', src:'NASA Satellite Kit', model:'kit-body-2', mass:90,  cost:20, time:6, pw:60, note:'Light, room for little'},
     {id:'b2',name:'Smallsat frame', src:'NASA Satellite Kit', model:'kit-body-3', mass:180, cost:35, time:8, pw:80, note:'The all-rounder'},
@@ -261,7 +259,7 @@ function totals(){
     {k:'comms',icon:'comms',label:'Comms',val:`${Math.round(down)} Gb/d`,r:data?data/Math.max(down,1):0,hint:`The radio can't send all the data home. Pick a faster radio.`},
     {k:'time',icon:'time',label:'Time',val:`${time} mo`,r:time/LIMIT.time,hint:`Building takes longer than the ${LIMIT.time}-month deadline.`}]};
 }
-function fx(o){const a=[]; if(o.wh) a.push([o.wh+' Wh stored','good']); if(o.id&&HZ_TANK_DV[o.id]) a.push(['x'+HZ_TANK_DV[o.id]+' engine delta-v','good']); if(o.id&&HZ_ENGINE_K[o.id]) a.push([(HZ_ENGINE_K[o.id]*2).toFixed(1)+' km/s with tank M','good']); if(o.mass) a.push(['+'+o.mass+' kg','up']); if(o.cost) a.push([(o.cost>0?'+$':'-$')+Math.abs(o.cost)+'M',o.cost>0?'up':'good']); if(o.pw) a.push(['+'+o.pw+' W use','up']); if(o.gen) a.push([o.gen+' W','good']); if(o.data) a.push([o.data+' Gb/d','']); if(o.down) a.push([o.down+' Gb/d link','good']); if(o.cap) a.push(['lifts '+o.cap+' kg','good']); if(o.store) a.push([o.store+' Gb store','good']); if(o.time) a.push([o.time+' mo','']); if(o.note) a.push([o.note,'']); return a.map(x=>`<span class="${x[1]}">${x[0]}</span>`).join('')}
+function fx(o){const a=[]; if(o.ecl!=null&&o.proc==='orbit'){ a.push([Math.round(o.ecl*100)+'% in shadow',o.ecl>.3?'up':'good']); a.push([(o.link>1?'more':o.link<1?'fewer':'normal')+' ground passes',o.link>=1?'good':'up']); a.push(['science x'+o.sci,o.sci>=1?'good':'up']); if(o.oiK&&o.oiK!==1) a.push(['insertion fuel x'+o.oiK,o.oiK<1?'good':'up']); } if(o.wh) a.push([o.wh+' Wh stored','good']); if(o.id&&HZ_TANK_DV[o.id]) a.push(['x'+HZ_TANK_DV[o.id]+' engine delta-v','good']); if(o.id&&HZ_ENGINE_K[o.id]) a.push([(HZ_ENGINE_K[o.id]*2).toFixed(1)+' km/s with tank M','good']); if(o.mass) a.push(['+'+o.mass+' kg','up']); if(o.cost) a.push([(o.cost>0?'+$':'-$')+Math.abs(o.cost)+'M',o.cost>0?'up':'good']); if(o.pw) a.push(['+'+o.pw+' W use','up']); if(o.gen) a.push([o.gen+' W','good']); if(o.data) a.push([o.data+' Gb/d','']); if(o.down) a.push([o.down+' Gb/d link','good']); if(o.cap) a.push(['lifts '+o.cap+' kg','good']); if(o.store) a.push([o.store+' Gb store','good']); if(o.time) a.push([o.time+' mo','']); if(o.note) a.push([o.note,'']); return a.map(x=>`<span class="${x[1]}">${x[0]}</span>`).join('')}
 
 /* ================= HUD / callout / dock ================= */
 const ic=(n)=>`<svg class="i"><use href="#i-${n}"/></svg>`;
@@ -537,7 +535,7 @@ function buildRocketRoom(){
     label(o.name.toUpperCase(),x,o.h+1.8,z,3.6);
     A.spots.push({id:o.id,cat:'rocket',o,pos:new THREE.Vector3(x,0,z+3),ring:ring(x,z,2.15,2.4),kind:'part'}); A.block.push([x-2.1,z-2.1,x+2.1,z+2.1]); });
   label('ORBIT',-10,2,3.5,3);
-  PARTS.orbit.opts.forEach((o,i)=>{ const x=-3+i*7, z=3.5; cyl(.7,.9,1.1,DARK,x,.55,z,24); const p=procPart('orbit'); p.position.set(x,.9,z); root.add(p); exhibits.push({obj:p,cat:'orbit',id:o.id});
+  PARTS.orbit.opts.forEach((o,i)=>{ const x=-6+i*5, z=3.5; cyl(.7,.9,1.1,DARK,x,.55,z,24); const p=procPart('orbit'); p.position.set(x,.9,z); root.add(p); exhibits.push({obj:p,cat:'orbit',id:o.id});
     label(o.name.toUpperCase(),x,3.6,z,4.2); A.spots.push({id:o.id,cat:'orbit',o,pos:new THREE.Vector3(x+1.6,0,z+1.6),ring:ring(x,z,1.05,1.3),kind:'part'}); A.block.push([x-.95,z-.95,x+.95,z+.95]); });
   // NASA capsules on display (hall of fame)
   [['orion','ORION',-14,6,2.2],['capsule-mercury','MERCURY',-9.5,6,1.9]].forEach(([m,n,x,z,sz])=>{ pedestal(x,z); const c=fromModel(m,null,sz); c.position.set(x,.56,z); root.add(c); exhibits.push({obj:c}); label(n,x,3.6,z,3); A.block.push([x-1.1,z-1.1,x+1.1,z+1.1]); });

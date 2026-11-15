@@ -227,3 +227,7 @@ Resources tab: could not be read (site returned 503/502 to this container). Sear
 - **Mission goals board** on the back wall: 3 goals per mission, each met by any one of its instruments, ticked live.
 - Spacecraft delta-v now comes from engine x tank (plus the rocket's upper stage).
 - Next: mission control simulates this design (power with batteries through eclipses, data vs storage and downlink, science from goals met), and the report checks each goal.
+
+## Added 15 Nov: fully interactive tutorial (requested)
+A complete guided first mission that teaches by doing, across every screen: mission select, walking, carrying and mounting a part, the gauges and goals board, rocket and orbit, the pad check, the launch cues and Max-Q, mission control gauges and a decision, and the report. Every step waits for the player's action, points at the thing to use, and can be skipped.
+Also finishing the design task: more orbits, each explained, with real effects in the simulation.

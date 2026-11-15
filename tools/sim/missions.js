@@ -61,3 +61,21 @@ function hzGoalsMet(key,ids){ return (HZ_GOALS[key]||HZ_GOALS.earth).map(([t,nee
 // propulsion: engine efficiency x tank size gives the spacecraft's own delta-v
 const HZ_ENGINE_K={e1:.35,e2:1,e3:1.9}, HZ_TANK_DV={t1:1,t2:2,t3:3.4};
 function hzDvCap(pick){ return (HZ_STAGE_DV[pick&&pick.rocket]||3.2)+(HZ_ENGINE_K[pick&&pick.engine]||.35)*(HZ_TANK_DV[pick&&pick.tank]||1); }
+
+/* ===== Orbits: each choice has real effects in mission control =====
+   ecl: share of each orbit spent in shadow (batteries), link: ground passes (downlink), sci: science per pass,
+   oiK: insertion delta-v factor at the destination. */
+const HZ_ORBITS={
+  orbit:[ // Earth missions
+    {id:'o1',name:'Sun-sync 550 km', ecl:.35,link:1,  sci:1,   oiK:1,  note:'Passes over every place at the same local time: fair, repeatable pictures'},
+    {id:'o2',name:'Low 400 km',      ecl:.4, link:.8, sci:1.15,oiK:1,  cost:-3,note:'Closer means sharper pictures, but fewer ground passes and more shadow'},
+    {id:'o3',name:'Polar 800 km',    ecl:.32,link:1.3,sci:.9, oiK:1,  note:'Flies over the polar ground stations every orbit: lots of downlink'},
+    {id:'o4',name:'Dawn-dusk 700 km',ecl:.04,link:1,  sci:.85,oiK:1,  cost:4,note:'Rides the line between day and night: almost never in shadow'}],
+  around:[ // orbiters and the Moon
+    {id:'o1',name:'Low circular',    ecl:.4, link:.9, sci:1.2, oiK:1.15,note:'Close to the surface: best science, more shadow, costs more fuel to reach'},
+    {id:'o2',name:'High elliptical', ecl:.15,link:1.1,sci:.85, oiK:.85, note:'Swoops low then far out: little shadow, cheap to enter, less science'},
+    {id:'o3',name:'Polar',           ecl:.3, link:1,  sci:1.05,oiK:1,   note:'Passes over the poles: sees the whole surface over time'}],
+  flyby:[
+    {id:'o1',name:'Close pass',      ecl:0,  link:1,  sci:1.25,oiK:0,   note:'Skims close: sharper data, a riskier aim'},
+    {id:'o2',name:'Safe distance',   ecl:0,  link:1,  sci:.9,  oiK:0,   note:'Passes wider: safe, but less detail'}]};
+function hzOrbitsFor(key){ const M=HZ_MISSIONS[key]||HZ_MISSIONS.earth; return M.kind==='orbit'?HZ_ORBITS.orbit:M.kind==='flyby'?HZ_ORBITS.flyby:HZ_ORBITS.around; }

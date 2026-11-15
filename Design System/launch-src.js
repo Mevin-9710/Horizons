@@ -175,6 +175,7 @@ function explode(why){ rocket.localToWorld(t1.set(0,HT*.5,0)); for(let i=0;i<260
 function card(title,html){ $('card-t').textContent=title; $('card-b').innerHTML=html; $('card').classList.add('s'); const b=$('card-b').querySelector('button'); if(b) b.focus();
   const r=$('c-retry'), bb=$('c-base'), n=$('c-next'); if(r) r.onclick=()=>go('launch',{mission:HZ.mission,pick:HZ.pick,design:HZ.design,skipCine:true}); if(bb) bb.onclick=()=>go('base',{mission:HZ.mission,pick:HZ.pick}); if(n) n.onclick=next; }
 const MKEY=HZ_MISSIONS[HZ.mission]?HZ.mission:'earth', MIS=HZ_MISSIONS[MKEY], PLAN=hzPlan(MKEY), DVCAP=hzDvCap(pick);
+const OIK=(HZ.design&&HZ.design.craft&&HZ.design.craft.orbit&&HZ.design.craft.orbit.oiK)||1; if(PLAN.oi) PLAN.oi*=OIK;   // the chosen science orbit changes the braking burn
 function toControl(){ go('control',{mission:HZ.mission,pick:HZ.pick,design:HZ.design,flight}); }
 function next(){ if(MIS.kind==='orbit'||(tr&&tr.st==='done')) return toControl(); if(!tr) startTransfer(); }
 
