@@ -16,4 +16,13 @@
   doLaunch=function(){ closeWin(); transition(new THREE.Vector3(0,0,-16),()=>hzGo('launch',{mission:M,pick:Object.assign({},pick),design:design(),skipCine:false})); };
   const _open=openWin; openWin=function(z){ if(z==='control'&&launched){ return hzGo('control',{mission:M,pick:Object.assign({},pick),design:{rocket:opt('rocket').name,inst:opt('inst')?opt('inst').name:'camera',orbit:opt('orbit').name}}); } return _open(z); };
 })();
+</script><script>
+/* Tap to enter: the door button follows the camera every frame, so on touch screens the browser drops the click.
+   Act on the tap release instead (keyboard and mouse clicks still work as before). */
+(function(){ const el=document.getElementById('enter'); let down=false;
+  el.addEventListener('pointerdown',e=>{ down=true; },true);
+  el.addEventListener('pointerup',e=>{ if(!down) return; down=false; e.preventDefault(); el._tapT=performance.now(); interact(); },true);
+  el.addEventListener('pointercancel',()=>{ down=false; },true);
+  el.onclick=e=>{ if(el._tapT&&performance.now()-el._tapT<600) return; interact(); };
+})();
 </script>
